@@ -1,49 +1,44 @@
 <?php
 
+use App\Http\Controllers\CatalogItemController;
+use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\PurchaseRequestController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\ProfileController;
 
-// -------------------------------------------------------
-// Public routes — no auth needed
-// -------------------------------------------------------
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-// -------------------------------------------------------
-// Authenticated routes — any role can access
-// -------------------------------------------------------
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('dashboard');
+    Route::get('/dashboard', function () {
+        return inertia('Dashboard');
+    })->name('dashboard');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // -------------------------------------------------------
-    // Employee + above — catalog browsing and PR submission
+    // All roles — every authenticated user
     // -------------------------------------------------------
     Route::middleware(['role:tenant_admin,department_manager,warehouse_staff,employee'])
         ->group(function () {
-
-            Route::get('/catalog', [CatalogController::class, 'index'])
-                ->name('catalog.index');
-
             Route::resource('/purchase-requests', PurchaseRequestController::class)
                 ->only(['index', 'create', 'store', 'show']);
         });
 
     // -------------------------------------------------------
-    // Manager + above — approvals
+    // Manager + Admin — approvals
     // -------------------------------------------------------
     Route::middleware(['role:tenant_admin,department_manager'])
         ->group(function () {
-
             Route::patch(
-                '/purchase-requests/{pr}/approve',
+                '/purchase-requests/{purchaseRequest}/approve',
                 [PurchaseRequestController::class, 'approve']
             )
                 ->name('purchase-requests.approve');
 
             Route::patch(
-                '/purchase-requests/{pr}/reject',
+                '/purchase-requests/{purchaseRequest}/reject',
                 [PurchaseRequestController::class, 'reject']
             )
                 ->name('purchase-requests.reject');
@@ -52,29 +47,16 @@ Route::middleware(['auth'])->group(function () {
                 ->only(['index', 'show']);
         });
 
-    // -------------------------------------------------------
-    // Warehouse staff + above — inventory and GRN
-    // -------------------------------------------------------
-    Route::middleware(['role:tenant_admin,warehouse_staff'])
-        ->group(function () {
 
-            Route::resource('/warehouses', WarehouseController::class);
-
-            Route::resource('/grn', GrnController::class)
-                ->only(['index', 'create', 'store', 'show']);
-
-            Route::get('/inventory', [InventoryController::class, 'index'])
-                ->name('inventory.index');
-        });
 
     // -------------------------------------------------------
-    // Tenant admin only — full system control
+    // Admin only
     // -------------------------------------------------------
-    Route::middleware(['role:tenant_admin'])
-        ->group(function () {
+    Route::middleware(['role:tenant_admin'])->group(function () {
+        Route::resource('/suppliers', SupplierController::class);
+        Route::resource('/catalog-items', CatalogItemController::class);
+    });
 
-            Route::resource('/users', UserController::class);
-            Route::resource('/suppliers', SupplierController::class);
-            Route::resource('/catalog-items', CatalogItemController::class);
-        });
 });
+
+require __DIR__ . '/auth.php';

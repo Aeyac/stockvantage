@@ -12,7 +12,8 @@ return new class extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('tenant_id'); // no constrained() here
+            // $table->foreignId('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('email');
             $table->string('password');
@@ -27,7 +28,7 @@ return new class extends Migration {
 
             $table->rememberToken();
             // email unique per tenant, not globally
-            $table->unique(['tenant_id', 'email']);
+            // $table->unique(['tenant_id', 'email']);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

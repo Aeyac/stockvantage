@@ -9,16 +9,31 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ResolveTenant
 {
+    // these routes don't need tenant resolution
+    protected array $except = [         
+        'login',
+        'logout',
+        'register',
+        'forgot-password',
+        'reset-password',
+        'dashboard'
+    ];
+
     public function handle(Request $request, Closure $next): Response
     {
+        // skip tenant resolution for auth routes
+        if ($request->is(...$this->except)) {
+            return $next($request);
+        }
+
         $host = $request->getHost();
-        // aaron.platform.com → ['aaron', 'platform', 'com']
         $subdomain = explode('.', $host)[0];
 
         // local development fallback
         if (app()->environment('local') && $subdomain === 'localhost') {
-            $subdomain = 'tenant1'; // hardcode a test tenant locally
+            $subdomain = 'tenant1';
         }
+
 
         $tenant = Tenant::where('subdomain', $subdomain)
             ->where('is_active', true)
@@ -28,7 +43,6 @@ class ResolveTenant
             abort(404, 'Tenant not found.');
         }
 
-        // store in session so BelongsToTenant trait can read it
         session(['tenant_id' => $tenant->id]);
 
         return $next($request);
