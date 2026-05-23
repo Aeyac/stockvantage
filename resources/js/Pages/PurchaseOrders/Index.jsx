@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import FlashMessage from '@/Components/FlashMessage'
 
 const C = {
     bg: '#0D0E11',
@@ -77,7 +78,7 @@ function formatPrId(id) {
     return 'PR-' + String(id).padStart(4, '0')
 }
 
-export default function Index({ purchaseOrders }) {
+export default function Index({ purchaseOrders, flash }) {
     return (
         <AuthenticatedLayout header="Purchase Orders">
             <Head title="Purchase Orders" />
@@ -143,6 +144,7 @@ export default function Index({ purchaseOrders }) {
                 .po-pr-link:hover { background: ${C.secondary}20; }
             `}</style>
 
+            <FlashMessage flash={flash} />
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <p style={{ fontSize: 14, color: C.onSurfaceVar }}>

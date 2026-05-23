@@ -1,5 +1,4 @@
 import { Head, Link, useForm } from '@inertiajs/react'
-import { useState } from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 
 const C = {
@@ -24,7 +23,7 @@ function formatCurrency(value) {
     })
 }
 
-export default function Create({ catalogItems }) {
+export default function Create({ catalogItems, flash }) {
     const { data, setData, post, processing, errors } = useForm({
         justification: '',
         items: [{ catalog_item_id: '', quantity: 1 }],
@@ -164,6 +163,7 @@ export default function Create({ catalogItems }) {
                     .pr-line-total { display: none; }
                 }
             `}</style>
+
 
             {/* Back */}
             <Link href="/purchase-requests" style={{

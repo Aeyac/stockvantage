@@ -40,45 +40,49 @@ class PurchaseRequestController extends Controller
 
     public function store(StorePurchaseRequestRequest $request): RedirectResponse
     {
-        DB::transaction(function () use ($request) {
-            // 1. calculate total from DB prices, never from client
-            $total = 0;
-            $items = [];
-            foreach ($request->items as $item) {
-                $catalogItem = CatalogItem::findOrFail($item['catalog_item_id']);
-                $lineTotal = $item['quantity'] * $catalogItem->unit_cost;
-                $total += $lineTotal;
-                $items[] = [
-                    'catalog_item_id' => $item['catalog_item_id'],
-                    'quantity' => $item['quantity'],
-                    'unit_cost' => $catalogItem->unit_cost, // snapshot
-                    'line_total' => $lineTotal,
-                ];
-            }
+        try {
+            DB::transaction(function () use ($request) {
+                // 1. calculate total from DB prices, never from client
+                $total = 0;
+                $items = [];
+                foreach ($request->items as $item) {
+                    $catalogItem = CatalogItem::findOrFail($item['catalog_item_id']);
+                    $lineTotal = $item['quantity'] * $catalogItem->unit_cost;
+                    $total += $lineTotal;
+                    $items[] = [
+                        'catalog_item_id' => $item['catalog_item_id'],
+                        'quantity' => $item['quantity'],
+                        'unit_cost' => $catalogItem->unit_cost, // snapshot
+                        'line_total' => $lineTotal,
+                    ];
+                }
 
-            // 2. determine status
-            $status = $total < 5000
-                ? PurchaseRequest::STATUS_AUTO_APPROVED
-                : PurchaseRequest::STATUS_AWAITING_APPROVAL;
+                // 2. determine status
+                $status = $total < 5000
+                    ? PurchaseRequest::STATUS_AUTO_APPROVED
+                    : PurchaseRequest::STATUS_AWAITING_APPROVAL;
 
-            // 3. create the PR
-            $pr = PurchaseRequest::create([
-                'requested_by' => auth()->id(),
-                'status' => $status,
-                'total_amount' => $total,
-                'justification' => $request->justification,
-            ]);
+                // 3. create the PR
+                $pr = PurchaseRequest::create([
+                    'requested_by' => auth()->id(),
+                    'status' => $status,
+                    'total_amount' => $total,
+                    'justification' => $request->justification,
+                ]);
 
-            // 4. create line items
-            foreach ($items as $item) {
-                $pr->lineItems()->create($item);
-            }
+                // 4. create line items
+                foreach ($items as $item) {
+                    $pr->lineItems()->create($item);
+                }
 
-            // 5. auto-generate PO if auto approved
-            if ($status === PurchaseRequest::STATUS_AUTO_APPROVED) {
-                $this->generatePurchaseOrder($pr);
-            }   
-        });
+                // 5. auto-generate PO if auto approved
+                if ($status === PurchaseRequest::STATUS_AUTO_APPROVED) {
+                    $this->generatePurchaseOrder($pr);
+                }
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong. Please try again.');
+        }
 
         return redirect()
             ->route('purchase-requests.index')

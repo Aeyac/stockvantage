@@ -1,5 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import FlashMessage from '@/Components/FlashMessage'
+
 
 const C = {
     bg: '#0D0E11',
@@ -80,7 +82,7 @@ function formatPrId(id) {
     return 'PR-' + String(id).padStart(4, '0')
 }
 
-export default function Index({ purchaseRequests }) {
+export default function Index({ purchaseRequests, flash = "" }) {
     const { auth } = usePage().props
     const user = auth.user
 
@@ -151,6 +153,9 @@ export default function Index({ purchaseRequests }) {
                     New Request
                 </Link>
             </div>
+
+            <FlashMessage flash={flash} />
+
 
             {/* Table */}
             <div className="pr-card">

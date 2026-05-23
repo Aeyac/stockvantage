@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, usePage } from '@inertiajs/react'
 
 const NAV_ITEMS = [
@@ -110,7 +110,17 @@ const NAV_ITEMS = [
 export default function AuthenticatedLayout({ children, header }) {
     const { auth } = usePage().props
     const user = auth.user
-    const [collapsed, setCollapsed] = useState(false)
+
+    const [collapsed, setCollapsed] = useState(() => {
+        const saved = localStorage.getItem('sidebar-collapsed')
+        return saved ? JSON.parse(saved) : false
+    })
+
+    useEffect(() => {
+        localStorage.setItem('sidebar-collapsed', JSON.stringify(collapsed))
+    }, [collapsed])
+
+
     const currentPath = window.location.pathname
 
     const visibleNavItems = NAV_ITEMS.filter(item =>

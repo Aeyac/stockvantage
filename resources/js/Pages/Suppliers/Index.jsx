@@ -1,7 +1,8 @@
 import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import FlashMessage from '@/Components/FlashMessage'
 
-export default function Index({ suppliers }) {
+export default function Index({ suppliers, flash }) {
     function handleDelete(id) {
         if (confirm('Are you sure you want to delete this supplier?')) {
             router.delete(`/suppliers/${id}`)
@@ -151,6 +152,8 @@ export default function Index({ suppliers }) {
                     color: #4b4b56;
                 }
             `}</style>
+
+            <FlashMessage flash={flash} />
 
             {/* Header row */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
