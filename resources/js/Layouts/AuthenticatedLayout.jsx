@@ -312,7 +312,7 @@ export default function AuthenticatedLayout({ children, header }) {
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                prefetch
+                                // prefetch
                                 className={`nav-item ${isActive ? 'active' : ''}`}
                                 title={collapsed ? item.label : undefined}
                             >

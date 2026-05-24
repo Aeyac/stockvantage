@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\CatalogItemController;
+use App\Http\Controllers\GrnController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PurchaseRequestController;
+use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ProfileController;
@@ -46,6 +49,19 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('/purchase-orders', PurchaseOrderController::class)
                 ->only(['index', 'show']);
         });
+
+
+    // -------------------------------------------------------
+    // Warehouse Staff + Admin — approvals
+    // -------------------------------------------------------
+    Route::middleware(['role:tenant_admin,warehouse_staff'])->group(function () {
+        Route::resource('/warehouses', WarehouseController::class);
+        Route::get('/inventory', [InventoryController::class, 'index'])
+            ->name('inventory.index');
+
+
+        Route::resource('/grn', GrnController::class);
+    });
 
 
 
