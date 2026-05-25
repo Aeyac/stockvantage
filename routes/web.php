@@ -5,6 +5,7 @@ use App\Http\Controllers\GrnController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PurchaseRequestController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SupplierController;
@@ -69,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
     // Admin only
     // -------------------------------------------------------
     Route::middleware(['role:tenant_admin'])->group(function () {
+        Route::resource('/users', UserController::class);
         Route::resource('/suppliers', SupplierController::class);
         Route::resource('/catalog-items', CatalogItemController::class);
     });

@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import FlashMessage from '@/Components/FlashMessage'
 
 const C = {
     bg: '#0D0E11',
@@ -49,7 +50,7 @@ function formatDate(dateStr) {
     })
 }
 
-export default function Index({ grns }) {
+export default function Index({ grns, flash }) {
     return (
         <AuthenticatedLayout header="Goods Received Notes">
             <Head title="GRN" />
@@ -113,6 +114,8 @@ export default function Index({ grns }) {
                     border: 1px solid ${C.secondary}20; padding: 3px 9px; border-radius: 6px;
                 }
             `}</style>
+
+            <FlashMessage flash={flash} />
 
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>

@@ -41,13 +41,15 @@ export default function Create({ openPurchaseOrders, warehouses }) {
         setSelectedPo(po)
 
         // pre-fill line items from the PO's PR line items
-        const lineItems = po?.purchase_request?.line_items?.map(li => ({
-            catalog_item_id: li.catalog_item_id,
-            catalog_item_name: li.catalog_item?.name ?? '—',
-            catalog_item_sku: li.catalog_item?.sku ?? '—',
-            quantity_ordered: li.quantity,
-            quantity_received: li.quantity, // default to full receipt
-        })) ?? []
+        const lineItems = po?.purchase_request?.line_items
+            ?.filter(li => li.remaining_quantity > 0) // ← add this
+            ?.map(li => ({
+                catalog_item_id: li.catalog_item_id,
+                catalog_item_name: li.catalog_item?.name ?? '—',
+                catalog_item_sku: li.catalog_item?.sku ?? '—',
+                quantity_ordered: li.remaining_quantity,
+                quantity_received: li.remaining_quantity,
+            })) ?? []
 
         setData('line_items', lineItems)
     }
@@ -61,7 +63,7 @@ export default function Create({ openPurchaseOrders, warehouses }) {
 
     function handleSubmit(e) {
         e.preventDefault()
-        post('/grns')
+        post('/grn')
     }
 
     return (
@@ -156,7 +158,7 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                 .grn-po-info-value { font-size: 13px; color: ${C.onSurface}; font-weight: 500; }
             `}</style>
 
-            <Link href="/grns" style={{
+            <Link href="/grn" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13,
                 color: C.onSurfaceVar, textDecoration: 'none', marginBottom: 24, transition: 'color 0.15s',
             }}
@@ -351,7 +353,7 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                         >
                             {processing ? 'Saving...' : 'Submit GRN'}
                         </button>
-                        <Link href="/grns" className="grn-btn-ghost">Cancel</Link>
+                        <Link href="/grn" className="grn-btn-ghost">Cancel</Link>
                     </div>
 
                 </form>

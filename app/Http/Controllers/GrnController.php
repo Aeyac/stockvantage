@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreGrnRequest;
+use App\Models\GrnLineItem;
 use App\Models\GrnRecord;
 use App\Models\PurchaseOrder;
 use App\Models\StockLedger;
@@ -26,13 +27,31 @@ class GrnController extends Controller
 
     public function create(): Response
     {
+        $openPos = PurchaseOrder::with('purchaseRequest.lineItems.catalogItem')
+            ->whereIn('status', ['open', 'partially_received'])
+            ->get()
+            ->map(function ($po) {
+                // calculate remaining qty per line item
+                $po->purchaseRequest->lineItems->map(function ($li) use ($po) {
+                    $alreadyReceived = GrnLineItem::whereHas('grnRecord', function ($q) use ($po) {
+                        $q->where('po_id', $po->id);
+                    })
+                        ->where('catalog_item_id', $li->catalog_item_id)
+                        ->sum('quantity_received');
+
+                    $li->remaining_quantity = $li->quantity - $alreadyReceived;
+                    return $li;
+                })->filter(fn($li) => $li->remaining_quantity > 0);
+                return $po;
+            });
+
         return Inertia::render('Grns/Create', [
-            'openPurchaseOrders' => PurchaseOrder::with('purchaseRequest.lineItems.catalogItem')
-                ->whereIn('status', ['open', 'partially_received'])
-                ->get(),
+            'openPurchaseOrders' => $openPos,
             'warehouses' => Warehouse::where('is_active', true)->get(),
         ]);
     }
+
+
 
     public function show(GrnRecord $grn): Response
     {
@@ -40,6 +59,8 @@ class GrnController extends Controller
 
         return Inertia::render('Grns/Show', ['grn' => $grn]);
     }
+
+
 
     public function store(StoreGrnRequest $request): RedirectResponse
     {
@@ -63,9 +84,24 @@ class GrnController extends Controller
                     $prLineItem = $po->purchaseRequest->lineItems
                         ->firstWhere('catalog_item_id', $lineItem['catalog_item_id']);
 
-                    $quantityOrdered = $prLineItem?->quantity ?? 0;
+                    $totalOrdered = $prLineItem?->quantity ?? 0;
+
+                    // how much has already been received in previous GRNs
+                    $alreadyReceived = GrnLineItem::whereHas('grnRecord', function ($q) use ($po) {
+                        $q->where('po_id', $po->id);
+                    })
+                        ->where('catalog_item_id', $lineItem['catalog_item_id'])
+                        ->sum('quantity_received');
+
+                    // remaining quantity still owed
+                    $quantityOrdered = $totalOrdered - $alreadyReceived;
                     $quantityReceived = $lineItem['quantity_received'];
                     $discrepancyNote = null;
+
+                    // prevent over-receiving
+                    if ($quantityReceived > $quantityOrdered) {
+                        $quantityReceived = $quantityOrdered;
+                    }
 
                     if ($quantityReceived < $quantityOrdered) {
                         $hasDiscrepancy = true;
