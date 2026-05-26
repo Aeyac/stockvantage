@@ -27,6 +27,12 @@ class GrnController extends Controller
 
     public function create(): Response
     {
+        abort_if(
+            !auth()->user()->isAdmin() && !auth()->user()->isWarehouseStaff(),
+            403,
+            'Unauthorized action.'
+        );
+
         $openPos = PurchaseOrder::with('purchaseRequest.lineItems.catalogItem')
             ->whereIn('status', ['open', 'partially_received'])
             ->get()
@@ -64,6 +70,12 @@ class GrnController extends Controller
 
     public function store(StoreGrnRequest $request): RedirectResponse
     {
+        abort_if(
+            !auth()->user()->isAdmin() && !auth()->user()->isWarehouseStaff(),
+            403,
+            'Unauthorized action.'
+        );
+
         try {
             DB::transaction(function () use ($request) {
                 $po = PurchaseOrder::with('purchaseRequest.lineItems')

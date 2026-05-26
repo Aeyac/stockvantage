@@ -22,7 +22,7 @@ class PurchaseRequestController extends Controller
             ->latest();
 
         // employees only see their own PRs
-        if (auth()->user()->isEmployee()) {
+        if (auth()->user()->isEmployee() || auth()->user()->isWarehouseStaff()) {
             $query->where('requested_by', auth()->id());
         }
 
@@ -115,6 +115,12 @@ class PurchaseRequestController extends Controller
     // correct — route model binding gives you the specific PR
     public function approve(PurchaseRequest $purchaseRequest): RedirectResponse
     {
+        abort_if(
+            !auth()->user()->isAdmin() && !auth()->user()->isManager(),
+            403,
+            'Unauthorized action.'
+        );
+
         abort_if(!$purchaseRequest->isAwaitingApproval(), 403, 'This request cannot be approved.');
 
         $purchaseRequest->update([
@@ -132,6 +138,12 @@ class PurchaseRequestController extends Controller
 
     public function reject(PurchaseRequest $purchaseRequest): RedirectResponse
     {
+        abort_if(
+            !auth()->user()->isAdmin() && !auth()->user()->isManager(),
+            403,
+            'Unauthorized action.'
+        );
+
         abort_if(!$purchaseRequest->isAwaitingApproval(), 403, 'This request cannot be approved.');
 
         $purchaseRequest->update([

@@ -12,7 +12,7 @@ use Inertia\Response;
 class WarehouseController extends Controller
 {
     public function index(): Response
-    {
+    {        
         $warehouses = Warehouse::paginate(15);
 
         return Inertia::render('Warehouses/Index', [
@@ -22,11 +22,23 @@ class WarehouseController extends Controller
 
     public function create(): Response
     {
+        abort_if(
+            !auth()->user()->isAdmin() && !auth()->user()->isWarehouseStaff(),
+            403,
+            'Unauthorized action.'
+        );
+
         return Inertia::render('Warehouses/Create');
     }
 
     public function store(StoreWarehouseRequest $request): RedirectResponse
     {
+        abort_if(
+            !auth()->user()->isAdmin() && !auth()->user()->isWarehouseStaff(),
+            403,
+            'Unauthorized action.'
+        );
+
         Warehouse::create($request->validated());
 
         return redirect()

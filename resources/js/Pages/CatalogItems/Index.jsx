@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
+import { useAuth } from '@/hooks/UseAuth'
 
 const C = {
     bg: '#0D0E11',
@@ -18,7 +19,7 @@ const C = {
 }
 
 export default function Index({ catalogItems, flash }) {
-
+    const { isAdmin } = useAuth();
 
     function handleDelete(id) {
         if (confirm('Are you sure you want to delete this catalog item?')) {
@@ -191,13 +192,15 @@ export default function Index({ catalogItems, flash }) {
                     {catalogItems.total} item{catalogItems.total !== 1 ? 's' : ''} in catalog
                 </p>
 
-                <Link href="/catalog-items/create" className="ci-btn-primary">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    Add Item
-                </Link>
+                {isAdmin &&
+                    <Link href="/catalog-items/create" className="ci-btn-primary">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        Add Item
+                    </Link>
+                }
             </div>
 
             <FlashMessage flash={flash} />
@@ -234,7 +237,7 @@ export default function Index({ catalogItems, flash }) {
                                 <th>Unit Cost</th>
                                 <th>Safety Stock</th>
                                 <th>Status</th>
-                                <th>Actions</th>
+                                {isAdmin && <th>Actions</th>}
                             </tr>
                         </thead>
 
@@ -304,24 +307,25 @@ export default function Index({ catalogItems, flash }) {
                                             )
                                         }
                                     </td>
+                                    {isAdmin &&
+                                        <td>
+                                            <div style={{ display: 'flex', gap: 4 }}>
+                                                <Link
+                                                    href={`/catalog-items/${item.id}/edit`}
+                                                    className="ci-action"
+                                                >
+                                                    Edit
+                                                </Link>
 
-                                    <td>
-                                        <div style={{ display: 'flex', gap: 4 }}>
-                                            <Link
-                                                href={`/catalog-items/${item.id}/edit`}
-                                                className="ci-action"
-                                            >
-                                                Edit
-                                            </Link>
-
-                                            <button
-                                                onClick={() => handleDelete(item.id)}
-                                                className="ci-action del"
-                                            >
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </td>
+                                                <button
+                                                    onClick={() => handleDelete(item.id)}
+                                                    className="ci-action del"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    }
                                 </tr>
                             ))}
                         </tbody>

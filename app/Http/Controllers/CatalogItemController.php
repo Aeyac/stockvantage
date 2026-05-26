@@ -37,6 +37,9 @@ class CatalogItemController extends Controller
 
     public function store(StoreCatalogItemRequest $request): RedirectResponse
     {
+        
+        abort_if(!auth()->user()->isAdmin(), 403, 'Unauthorized action.');
+
         CatalogItem::create($request->validated());
 
         return redirect()

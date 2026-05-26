@@ -22,57 +22,61 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // -------------------------------------------------------
-    // All roles — every authenticated user
+    // All roles — catalog browse + purchase requests
     // -------------------------------------------------------
     Route::middleware(['role:tenant_admin,department_manager,warehouse_staff,employee'])
         ->group(function () {
+            // read-only catalog for non-admins
+            Route::get('/catalog-items', [CatalogItemController::class, 'index'])
+                ->name('catalog-items.index');
+
             Route::resource('/purchase-requests', PurchaseRequestController::class)
                 ->only(['index', 'create', 'store', 'show']);
         });
 
     // -------------------------------------------------------
-    // Manager + Admin — approvals
+    // Manager + Admin — approvals and purchase orders
     // -------------------------------------------------------
     Route::middleware(['role:tenant_admin,department_manager'])
         ->group(function () {
             Route::patch(
                 '/purchase-requests/{purchaseRequest}/approve',
                 [PurchaseRequestController::class, 'approve']
-            )
-                ->name('purchase-requests.approve');
+            )->name('purchase-requests.approve');
 
             Route::patch(
                 '/purchase-requests/{purchaseRequest}/reject',
                 [PurchaseRequestController::class, 'reject']
-            )
-                ->name('purchase-requests.reject');
+            )->name('purchase-requests.reject');
 
             Route::resource('/purchase-orders', PurchaseOrderController::class)
                 ->only(['index', 'show']);
         });
 
-
     // -------------------------------------------------------
-    // Warehouse Staff + Admin — approvals
+    // Warehouse Staff + Admin — inventory and GRN
     // -------------------------------------------------------
     Route::middleware(['role:tenant_admin,warehouse_staff'])->group(function () {
         Route::resource('/warehouses', WarehouseController::class);
+
         Route::get('/inventory', [InventoryController::class, 'index'])
             ->name('inventory.index');
 
-
-        Route::resource('/grn', GrnController::class);
+        Route::resource('/grn', GrnController::class)
+            ->only(['index', 'create', 'store', 'show']);
     });
 
-
-
     // -------------------------------------------------------
-    // Admin only
+    // Admin only — full system control
     // -------------------------------------------------------
     Route::middleware(['role:tenant_admin'])->group(function () {
-        Route::resource('/users', UserController::class);
+        Route::resource('/users', UserController::class)->except(['show']);
         Route::resource('/suppliers', SupplierController::class);
-        Route::resource('/catalog-items', CatalogItemController::class);
+
+        // admin gets full catalog CRUD — index is already registered above
+        // so we skip it here to avoid duplicate route conflict
+        Route::resource('/catalog-items', CatalogItemController::class)
+            ->except(['index']);
     });
 
 });
