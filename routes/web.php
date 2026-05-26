@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CatalogItemController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GrnController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PurchaseOrderController;
@@ -10,12 +11,15 @@ use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ProfileController;
+use Inertia\Inertia;
+
+Route::get('/', function () {
+    return Inertia::render('LandingPage');
+});
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return inertia('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

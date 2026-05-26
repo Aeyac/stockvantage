@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StockVantage — Enterprise Procurement Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0A0C0B;
+  --ink-2: #151918;
+  --ink-3: #1D2421;
+  --ink-4: #252E2A;
+  --wire: #2C3833;
+  --wire-2: #364340;
+  --mute: #5A6E67;
+  --mute-2: #7A9189;
+  --ghost: #B8CEC8;
+  --snow: #EEF3F1;
+  --white: #F7FAF9;
+  --signal: #00E5A0;
+  --signal-dim: #00C488;
+  --signal-dark: #007A55;
+  --warn: #F59B00;
+  --warn-dim: #FAEEDA;
+  --danger: #E84040;
+  --danger-dim: #FEE;
+  --safe: #22C55E;
+  --safe-dim: #DCFCE7;
+  --blue: #3B82F6;
+  --blue-dim: #EFF6FF;
+
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 100px;
+
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'Instrument Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--ink);
+  color: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--ink-2); }
+::-webkit-scrollbar-thumb { background: var(--wire-2); border-radius: 4px; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px;
+  height: 60px;
+  background: rgba(10,12,11,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s;
+}
+nav.scrolled { border-bottom-color: var(--wire); }
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-head); font-weight: 700; font-size: 17px;
+  color: var(--white); text-decoration: none; letter-spacing: -0.02em;
+}
+.logo-mark {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--signal);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.logo-mark svg { width: 14px; height: 14px; }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a {
+  font-size: 13px; font-weight: 500; color: var(--mute-2);
+  text-decoration: none; letter-spacing: 0.01em;
+  transition: color 0.2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--white); }
+.nav-links a.active { color: var(--signal); }
+.nav-cta {
+  padding: 7px 18px; border-radius: var(--radius-pill);
+  border: 1px solid var(--signal); color: var(--signal);
+  font-size: 13px; font-weight: 500; font-family: var(--font-body);
+  background: transparent; cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-cta:hover { background: var(--signal); color: var(--ink); }
+
+/* ── SECTION BASE ── */
+section { padding: 100px 0; }
+.container { max-width: 1160px; margin: 0 auto; padding: 0 48px; }
+.section-label {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 400;
+  color: var(--signal); letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.section-heading {
+  font-family: var(--font-head); font-size: 42px; font-weight: 700;
+  line-height: 1.12; letter-spacing: -0.03em; color: var(--white);
+  margin-bottom: 16px;
+}
+.section-heading.dark { color: var(--ink); }
+.section-sub {
+  font-size: 16px; line-height: 1.65; color: var(--mute-2); max-width: 560px;
+}
+.section-sub.dark { color: var(--mute); }
+
+/* ── REVEAL ANIMATION ── */
+.reveal {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ══════════════════════════════════════════
+   S1 — HERO
+══════════════════════════════════════════ */
+#hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding-top: 60px;
+  background: var(--ink);
+  position: relative; overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--wire) 1px, transparent 1px),
+    linear-gradient(90deg, var(--wire) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.18;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 0%, transparent 100%);
+}
+.hero-inner { position: relative; z-index: 2; max-width: 820px; }
+.hero-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 14px; border-radius: var(--radius-pill);
+  border: 1px solid var(--wire-2);
+  font-family: var(--font-mono); font-size: 11px; color: var(--mute-2);
+  margin-bottom: 32px; letter-spacing: 0.04em;
+}
+.hero-pill .dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--signal);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,229,160,0.4); }
+  50% { opacity: 0.8; box-shadow: 0 0 0 5px rgba(0,229,160,0); }
+}
+.hero-h1 {
+  font-family: var(--font-head); font-size: clamp(44px, 6vw, 72px);
+  font-weight: 800; line-height: 1.04; letter-spacing: -0.04em;
+  color: var(--white); margin-bottom: 24px;
+}
+.hero-h1 em { color: var(--signal); font-style: normal; }
+.hero-p {
+  font-size: 18px; line-height: 1.65; color: var(--mute-2);
+  max-width: 600px; margin-bottom: 40px;
+}
+.hero-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 28px; border-radius: var(--radius-pill);
+  background: var(--signal); color: var(--ink);
+  font-size: 14px; font-weight: 600; font-family: var(--font-body);
+  border: none; cursor: pointer; text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-primary:hover { background: var(--signal-dim); transform: translateY(-1px); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 28px; border-radius: var(--radius-pill);
+  background: transparent; color: var(--ghost);
+  font-size: 14px; font-weight: 500; font-family: var(--font-body);
+  border: 1px solid var(--wire-2); cursor: pointer; text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-ghost:hover { border-color: var(--ghost); color: var(--white); }
+.hero-stats {
+  display: flex; align-items: center; gap: 0;
+  margin-top: 56px; border-top: 1px solid var(--wire);
+  padding-top: 32px;
+}
+.hero-stat {
+  flex: 1; padding-right: 32px;
+  border-right: 1px solid var(--wire);
+}
+.hero-stat:last-child { border-right: none; padding-right: 0; padding-left: 32px; }
+.hero-stat:nth-child(2) { padding: 0 32px; }
+.hero-stat-val {
+  font-family: var(--font-mono); font-size: 22px; font-weight: 500;
+  color: var(--signal); display: block; margin-bottom: 4px;
+}
+.hero-stat-lbl {
+  font-size: 12px; color: var(--mute); letter-spacing: 0.02em;
+}
+
+/* ══════════════════════════════════════════
+   S2 — DASHBOARD PREVIEW
+══════════════════════════════════════════ */
+#dashboard { background: var(--ink-2); padding: 100px 0; }
+.dashboard-header { text-align: center; margin-bottom: 56px; }
+.dashboard-header .section-sub { margin: 0 auto; text-align: center; }
+
+.browser-frame {
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--wire-2);
+  box-shadow: 0 48px 120px rgba(0,0,0,0.5);
+}
+.browser-chrome {
+  background: var(--ink-3); padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--wire);
+}
+.chrome-dots { display: flex; gap: 6px; }
+.chrome-dot {
+  width: 11px; height: 11px; border-radius: 50%;
+}
+.chrome-dot.r { background: #FF5F57; }
+.chrome-dot.y { background: #FEBC2E; }
+.chrome-dot.g { background: #28C840; }
+.chrome-url {
+  flex: 1; background: var(--ink-4); border-radius: var(--radius-sm);
+  padding: 5px 12px; font-family: var(--font-mono); font-size: 12px;
+  color: var(--mute-2); display: flex; align-items: center; gap: 8px;
+}
+.chrome-url .live-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--signal);
+  animation: pulse 2s infinite; flex-shrink: 0;
+}
+
+/* Dashboard UI (light) */
+.dash-ui {
+  background: #F2F5F4; display: grid;
+  grid-template-rows: 52px 1fr;
+  min-height: 540px;
+}
+.dash-sidebar {
+  background: #FFFFFF; width: 200px; flex-shrink: 0;
+  border-right: 1px solid #E2E8E6;
+  padding: 16px 0;
+}
+.dash-sidebar-logo {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 16px 16px; margin-bottom: 8px;
+  border-bottom: 1px solid #E2E8E6; font-family: var(--font-head);
+  font-weight: 700; font-size: 14px; color: #0A0C0B;
+}
+.dash-sidebar-logo .sm { width: 20px; height: 20px; border-radius: 4px; background: #00C488; display: flex; align-items: center; justify-content: center; }
+.dash-nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 16px; font-size: 13px; color: #5A6E67;
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+  border-radius: 0;
+}
+.dash-nav-item:hover { background: #F2F5F4; color: #0A0C0B; }
+.dash-nav-item.active { background: #E8F7F2; color: #007A55; font-weight: 500; }
+.dash-nav-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+.dash-topbar {
+  background: #FFFFFF; border-bottom: 1px solid #E2E8E6;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; font-size: 13px;
+}
+.dash-topbar-left { display: flex; align-items: center; gap: 8px; color: #5A6E67; }
+.dash-topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #00C488; color: #0A0C0B;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; font-family: var(--font-mono);
+}
+.dash-body { display: flex; flex: 1; overflow: hidden; }
+.dash-main { flex: 1; padding: 20px; overflow: auto; }
+.dash-section-title { font-size: 11px; font-weight: 600; color: #5A6E67; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; font-family: var(--font-mono); }
+
+/* Metric tiles */
+.metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+.metric-tile {
+  background: #FFFFFF; border: 1px solid #E2E8E6; border-radius: 10px;
+  padding: 14px; cursor: default;
+  transition: border-color 0.2s;
+}
+.metric-tile:hover { border-color: #00C488; }
+.metric-label { font-size: 11px; color: #7A9189; margin-bottom: 6px; font-family: var(--font-mono); }
+.metric-value { font-size: 20px; font-weight: 700; color: #0A0C0B; font-family: var(--font-head); margin-bottom: 3px; }
+.metric-sub { font-size: 11px; color: #7A9189; }
+.metric-sub.up { color: #22C55E; }
+.metric-sub.warn { color: #F59B00; }
+.metric-sub.danger { color: #E84040; }
+
+/* Chart */
+.chart-wrap { background: #FFFFFF; border: 1px solid #E2E8E6; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+.chart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.chart-title { font-size: 13px; font-weight: 600; color: #0A0C0B; }
+.chart-period { font-size: 11px; color: #7A9189; font-family: var(--font-mono); }
+#spendChart { display: block; width: 100%; }
+.chart-tooltip {
+  position: absolute; background: #0A0C0B; color: #F7FAF9;
+  padding: 6px 10px; border-radius: 6px; font-size: 11px;
+  font-family: var(--font-mono); pointer-events: none;
+  opacity: 0; transition: opacity 0.15s; white-space: nowrap; z-index: 10;
+}
+
+/* Bottom panels */
+.dash-bottom { display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px; }
+.panel { background: #FFFFFF; border: 1px solid #E2E8E6; border-radius: 10px; padding: 14px; }
+.panel-title { font-size: 12px; font-weight: 600; color: #0A0C0B; margin-bottom: 12px; font-family: var(--font-mono); letter-spacing: 0.04em; }
+.po-table { width: 100%; border-collapse: collapse; }
+.po-table th { font-size: 10px; font-weight: 500; color: #7A9189; text-align: left; padding: 0 0 8px; border-bottom: 1px solid #E2E8E6; text-transform: uppercase; letter-spacing: 0.06em; }
+.po-table td { font-size: 11px; color: #2C3833; padding: 7px 0; border-bottom: 1px solid #F2F5F4; }
+.po-table tr:last-child td { border-bottom: none; }
+.po-num { font-family: var(--font-mono); color: #007A55; font-weight: 500; }
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 100px;
+  font-size: 10px; font-weight: 500; font-family: var(--font-mono);
+  white-space: nowrap;
+}
+.badge-green { background: #DCFCE7; color: #15803D; }
+.badge-amber { background: #FEF3C7; color: #92400E; }
+.badge-red   { background: #FEE2E2; color: #991B1B; }
+.badge-blue  { background: #DBEAFE; color: #1E40AF; }
+.badge-gray  { background: #F1F5F9; color: #475569; }
+
+/* Alerts panel */
+.alert-item { display: flex; align-items: center; gap: 9px; padding: 6px 0; border-bottom: 1px solid #F2F5F4; }
+.alert-item:last-child { border-bottom: none; }
+.alert-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.alert-dot.critical { background: #E84040; }
+.alert-dot.warning  { background: #F59B00; }
+.alert-text { font-size: 11px; color: #2C3833; flex: 1; line-height: 1.4; }
+.alert-text strong { font-weight: 600; display: block; }
+.alert-units { font-family: var(--font-mono); font-size: 10px; color: #7A9189; flex-shrink: 0; }
+
+/* ══════════════════════════════════════════
+   S3 — PIPELINE FLOW
+══════════════════════════════════════════ */
+#pipeline { background: var(--snow); padding: 100px 0; }
+.pipeline-header { margin-bottom: 64px; }
+.flow-wrap { position: relative; }
+
+/* Steps row */
+.flow-steps {
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center; gap: 0; margin-bottom: 0;
+}
+.flow-step {
+  background: var(--white); border: 1px solid #D4DCD9;
+  border-radius: var(--radius-lg); padding: 24px 20px;
+  text-align: center; position: relative;
+}
+.flow-step.branch-node {
+  background: var(--ink); border-color: var(--ink-3); color: var(--white);
+  padding: 20px;
+}
+.flow-arrow {
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; flex-shrink: 0;
+}
+.flow-arrow svg { color: #B8CEC8; }
+.step-num {
+  font-family: var(--font-mono); font-size: 10px; color: var(--mute-2);
+  text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;
+}
+.step-icon { font-size: 24px; margin-bottom: 8px; }
+.step-title {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  color: var(--ink); margin-bottom: 6px; line-height: 1.2;
+}
+.flow-step.branch-node .step-title { color: var(--white); }
+.step-desc { font-size: 12px; color: var(--mute); line-height: 1.5; }
+.flow-step.branch-node .step-desc { color: var(--mute-2); }
+
+/* Branch split */
+.flow-branch-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-top: 16px;
+}
+.branch-path {
+  border-radius: var(--radius-lg); padding: 16px 20px; text-align: center;
+  border: 1.5px dashed #D4DCD9;
+}
+.branch-path.auto { border-color: #86EFAC; background: #F0FDF4; }
+.branch-path.await { border-color: #FCD34D; background: #FFFBEB; }
+.branch-label {
+  font-family: var(--font-mono); font-size: 19px; font-weight: 500; margin-bottom: 4px;
+}
+.branch-path.auto .branch-label { color: #15803D; }
+.branch-path.await .branch-label { color: #92400E; }
+.branch-status { font-size: 12px; color: var(--mute); }
+.branch-connector {
+  width: 1px; height: 24px; background: #D4DCD9; margin: 0 auto;
+}
+
+/* PO Preview card */
+.po-preview {
+  background: var(--white); border: 1px solid #D4DCD9;
+  border-radius: var(--radius-lg); padding: 28px 32px;
+  margin-top: 48px; max-width: 680px; margin-left: auto; margin-right: auto;
+}
+.po-preview-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 24px; padding-bottom: 16px;
+  border-bottom: 2px solid var(--ink);
+}
+.po-co-name {
+  font-family: var(--font-head); font-size: 18px; font-weight: 800;
+  color: var(--ink); letter-spacing: -0.02em;
+}
+.po-co-sub { font-size: 12px; color: var(--mute); margin-top: 2px; font-family: var(--font-mono); }
+.po-meta { text-align: right; }
+.po-meta-title {
+  font-family: var(--font-mono); font-size: 10px; color: var(--mute);
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.po-meta-num {
+  font-family: var(--font-head); font-size: 22px; font-weight: 800;
+  color: var(--signal-dark); letter-spacing: -0.02em;
+}
+.po-details-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+.po-detail-item { }
+.po-detail-label { font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--font-mono); margin-bottom: 3px; }
+.po-detail-val { font-size: 13px; color: var(--ink); font-weight: 500; }
+.po-line-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.po-line-table th { font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--font-mono); text-align: left; padding: 0 0 8px; border-bottom: 1px solid #E2E8E6; }
+.po-line-table th:not(:first-child) { text-align: right; }
+.po-line-table td { font-size: 13px; color: var(--ink-3); padding: 9px 0; border-bottom: 1px solid #F2F5F4; }
+.po-line-table td:not(:first-child) { text-align: right; font-family: var(--font-mono); }
+.po-line-table tr:last-child td { border-bottom: none; }
+.po-total-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 14px; border-top: 1px solid var(--ink);
+}
+.po-total-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.po-total-val { font-family: var(--font-head); font-size: 22px; font-weight: 800; color: var(--ink); }
+.po-auto-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: var(--radius-pill);
+  background: #DCFCE7; color: #15803D; font-size: 11px; font-weight: 600; font-family: var(--font-mono);
+}
+
+/* ══════════════════════════════════════════
+   S4 — THREE MODULES
+══════════════════════════════════════════ */
+#modules { background: var(--white); padding: 100px 0; }
+.modules-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 56px; }
+.module-card {
+  border: 1px solid #D4DCD9; border-radius: var(--radius-lg); padding: 32px;
+  position: relative; overflow: hidden; transition: border-color 0.25s, transform 0.2s;
+  background: var(--white);
+}
+.module-card:hover { border-color: #00C488; transform: translateY(-3px); }
+.module-card.featured { border: 2px solid var(--signal-dark); }
+.module-featured-tag {
+  position: absolute; top: 0; right: 24px;
+  background: var(--signal); color: var(--ink);
+  font-size: 10px; font-weight: 600; font-family: var(--font-mono);
+  padding: 4px 10px; border-radius: 0 0 8px 8px; letter-spacing: 0.06em;
+}
+.module-icon {
+  width: 44px; height: 44px; border-radius: var(--radius);
+  background: var(--snow); display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.module-card.featured .module-icon { background: #E8F7F2; }
+.module-icon svg { width: 22px; height: 22px; }
+.module-title { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 12px; letter-spacing: -0.02em; line-height: 1.2; }
+.module-desc { font-size: 14px; color: var(--mute); line-height: 1.65; margin-bottom: 20px; }
+.module-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.module-tag {
+  font-family: var(--font-mono); font-size: 10px; color: var(--mute-2);
+  padding: 3px 9px; border-radius: var(--radius-pill);
+  border: 1px solid #D4DCD9; background: var(--snow);
+}
+.module-card.featured .module-tag { border-color: #86EFAC; background: #F0FDF4; color: #15803D; }
+
+/* ══════════════════════════════════════════
+   S5 — RBAC
+══════════════════════════════════════════ */
+#rbac { background: var(--ink-2); padding: 100px 0; }
+.rbac-header { margin-bottom: 48px; }
+
+.role-switcher { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
+.role-tab {
+  padding: 8px 18px; border-radius: var(--radius-pill);
+  border: 1px solid var(--wire-2); color: var(--mute-2);
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  background: transparent; font-family: var(--font-body);
+  transition: all 0.2s;
+}
+.role-tab:hover { border-color: var(--mute-2); color: var(--white); }
+.role-tab.active { border-color: var(--signal); color: var(--signal); background: rgba(0,229,160,0.08); }
+
+.rbac-layout { display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: start; }
+
+/* Role nav mockup */
+.role-nav-mock {
+  background: var(--ink-3); border: 1px solid var(--wire);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.role-nav-header {
+  padding: 14px 16px; border-bottom: 1px solid var(--wire);
+  font-family: var(--font-mono); font-size: 11px; color: var(--mute-2);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.role-nav-user {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-bottom: 1px solid var(--wire);
+}
+.role-nav-avatar {
+  width: 30px; height: 30px; border-radius: 50%; background: var(--signal-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; font-family: var(--font-mono); color: var(--signal);
+}
+.role-nav-name { font-size: 12px; color: var(--white); font-weight: 500; }
+.role-nav-role { font-size: 10px; color: var(--mute-2); font-family: var(--font-mono); }
+.role-nav-items { padding: 8px 0; }
+.role-nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 16px; font-size: 12px; color: var(--mute-2);
+  transition: background 0.15s, color 0.15s;
+}
+.role-nav-item.highlight { color: var(--signal); background: rgba(0,229,160,0.06); }
+.role-nav-item svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* RBAC table */
+.rbac-table-wrap { overflow-x: auto; }
+.rbac-table {
+  width: 100%; border-collapse: collapse;
+  background: var(--ink-3); border-radius: var(--radius-lg);
+  overflow: hidden; border: 1px solid var(--wire);
+}
+.rbac-table th {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+  color: var(--mute-2); text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 14px 20px; text-align: left; background: var(--ink-4);
+  border-bottom: 1px solid var(--wire);
+}
+.rbac-table td {
+  font-size: 13px; color: var(--ghost); padding: 14px 20px;
+  border-bottom: 1px solid var(--wire);
+  vertical-align: top; line-height: 1.5;
+}
+.rbac-table tr:last-child td { border-bottom: none; }
+.rbac-table tr.active-row td { background: rgba(0,229,160,0.04); }
+.rbac-table tr.active-row td:first-child { border-left: 2px solid var(--signal); }
+.role-name { font-weight: 600; color: var(--white); font-family: var(--font-head); font-size: 14px; }
+.views-list { font-size: 11px; color: var(--mute-2); font-family: var(--font-mono); line-height: 1.6; }
+
+/* ══════════════════════════════════════════
+   S6 — TECH PILLARS
+══════════════════════════════════════════ */
+#pillars { background: var(--snow); padding: 100px 0; }
+.pillars-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 56px; }
+.pillar-card {
+  background: var(--white); border: 1px solid #D4DCD9;
+  border-radius: var(--radius-lg); padding: 32px;
+  transition: border-color 0.2s;
+}
+.pillar-card:hover { border-color: var(--signal-dark); }
+.pillar-number {
+  font-family: var(--font-mono); font-size: 11px; color: var(--mute-2);
+  margin-bottom: 16px; letter-spacing: 0.08em;
+}
+.pillar-title { font-family: var(--font-head); font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 12px; letter-spacing: -0.02em; }
+.pillar-desc { font-size: 14px; color: var(--mute); line-height: 1.65; margin-bottom: 20px; }
+.pillar-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.pillar-tag {
+  font-family: var(--font-mono); font-size: 10px; color: var(--signal-dark);
+  padding: 3px 9px; border-radius: var(--radius-pill);
+  border: 1px solid #86EFAC; background: #F0FDF4;
+}
+
+/* ══════════════════════════════════════════
+   S7 — CTA
+══════════════════════════════════════════ */
+#cta { background: var(--ink); padding: 120px 0; text-align: center; border-top: 1px solid var(--wire); }
+.cta-h2 { font-family: var(--font-head); font-size: clamp(36px, 5vw, 60px); font-weight: 800; letter-spacing: -0.04em; color: var(--white); margin-bottom: 16px; line-height: 1.05; }
+.cta-h2 em { color: var(--signal); font-style: normal; }
+.cta-p { font-size: 17px; color: var(--mute-2); margin-bottom: 40px; }
+.cta-actions { display: flex; align-items: center; justify-content: center; gap: 16px; }
+
+/* FOOTER */
+footer {
+  background: var(--ink); border-top: 1px solid var(--wire);
+  padding: 24px 48px; display: flex; align-items: center; justify-content: space-between;
+}
+.footer-copy { font-family: var(--font-mono); font-size: 11px; color: var(--mute); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 12px; color: var(--mute); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--white); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  .container { padding: 0 24px; }
+  .hero-h1 { font-size: 38px; }
+  .hero-stats { flex-direction: column; gap: 16px; }
+  .hero-stat, .hero-stat:last-child, .hero-stat:nth-child(2) { padding: 0; border: none; }
+  .metric-grid { grid-template-columns: repeat(2, 1fr); }
+  .dash-bottom { grid-template-columns: 1fr; }
+  .flow-steps { grid-template-columns: 1fr; }
+  .flow-arrow { transform: rotate(90deg); }
+  .modules-grid, .pillars-grid { grid-template-columns: 1fr; }
+  .rbac-layout { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 12px; text-align: center; }
+  .dash-sidebar { display: none; }
+  .dash-body { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .hero-dot, .live-dot { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="nav">
+  <a href="#hero" class="nav-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 10L7 4L12 10" stroke="#0A0C0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="7" cy="4" r="1.5" fill="#0A0C0B"/>
+      </svg>
+    </div>
+    StockVantage
+  </a>
+  <div class="nav-links">
+    <a href="#dashboard" class="nav-link">Dashboard</a>
+    <a href="#pipeline" class="nav-link">Procurement</a>
+    <a href="#modules" class="nav-link">Inventory</a>
+    <a href="#rbac" class="nav-link">Access Control</a>
+    <a href="#pillars" class="nav-link">Architecture</a>
+  </div>
+  <button class="nav-cta">Request Demo</button>
+</nav>
+
+<!-- ══ S1: HERO ══ -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-pill reveal">
+        <span class="dot"></span>
+        Multi-Tenant SaaS &nbsp;·&nbsp; Laravel 11 + React 18 + Inertia.js
+      </div>
+      <h1 class="hero-h1 reveal" style="transition-delay:0.08s">
+        Replace Spreadsheets<br>and Email Approvals<br>with <em>One Unified</em><br>Procurement Platform
+      </h1>
+      <p class="hero-p reveal" style="transition-delay:0.16s">
+        StockVantage gives distributed enterprise teams a shared procurement pipeline, automated approval routing, and real-time inventory visibility — all in one digitally isolated tenant environment.
+      </p>
+      <div class="hero-actions reveal" style="transition-delay:0.22s">
+        <a href="#dashboard" class="btn-primary">
+          See the Dashboard
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#pillars" class="btn-ghost">View Architecture</a>
+      </div>
+      <div class="hero-stats reveal" style="transition-delay:0.3s">
+        <div class="hero-stat">
+          <span class="hero-stat-val">&lt; $500</span>
+          <span class="hero-stat-lbl">Auto-approved threshold</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-val">PO-2026-0001</span>
+          <span class="hero-stat-lbl">Immutable sequential format</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-val">decimal(15,2)</span>
+          <span class="hero-stat-lbl">Banking-grade precision</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S2: DASHBOARD ══ -->
+<section id="dashboard">
+  <div class="container">
+    <div class="dashboard-header reveal">
+      <div class="section-label">Executive Dashboard</div>
+      <h2 class="section-heading">The command center your<br>finance team actually needs</h2>
+      <p class="section-sub">Every metric your operations team needs, surfaced the moment they authenticate.</p>
+    </div>
+
+    <div class="browser-frame reveal" style="transition-delay:0.12s">
+      <div class="browser-chrome">
+        <div class="chrome-dots">
+          <div class="chrome-dot r"></div>
+          <div class="chrome-dot y"></div>
+          <div class="chrome-dot g"></div>
+        </div>
+        <div class="chrome-url">
+          <span class="live-dot"></span>
+          acme-corp.stockvantage.app/dashboard
+        </div>
+      </div>
+
+      <!-- Dashboard UI -->
+      <div class="dash-ui">
+        <div class="dash-topbar">
+          <div class="dash-topbar-left">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" stroke="#5A6E67" stroke-width="1.2"/><rect x="8" y="1" width="5" height="5" rx="1" stroke="#5A6E67" stroke-width="1.2"/><rect x="1" y="8" width="5" height="5" rx="1" stroke="#5A6E67" stroke-width="1.2"/><rect x="8" y="8" width="5" height="5" rx="1" stroke="#5A6E67" stroke-width="1.2"/></svg>
+            <span style="color:#0A0C0B;font-weight:600;font-size:13px">Overview</span>
+            <span style="color:#D4DCD9">/</span>
+            <span>June 2026</span>
+          </div>
+          <div class="dash-topbar-right">
+            <span style="font-size:12px;color:#7A9189;font-family:var(--font-mono)">acme-corp</span>
+            <div class="topbar-avatar">JD</div>
+          </div>
+        </div>
+
+        <div class="dash-body">
+          <aside class="dash-sidebar">
+            <div class="dash-sidebar-logo">
+              <div class="sm"></div>
+              StockVantage
+            </div>
+            <div class="dash-nav-item active">
+              <svg viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+              Dashboard
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 5v2.5l1.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Suppliers
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 5v2.5l1.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Catalog
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><path d="M2 3h11M2 7h11M2 11h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Purchase Requests
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><rect x="2" y="2" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 7h5M7 5v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Purchase Orders
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><path d="M3 12V6l4-4 4 4v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="5.5" y="8" width="4" height="4" rx="0.5" stroke="currentColor" stroke-width="1.2"/></svg>
+              Inventory
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><path d="M3 12V6l4-4 4 4v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="5.5" y="8" width="4" height="4" rx="0.5" stroke="currentColor" stroke-width="1.2"/></svg>
+              Warehouses
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4v3.5l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              GRN
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><path d="M2 11L6 7l3 3 4-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Users
+            </div>
+          </aside>
+
+          <main class="dash-main">
+            <div class="dash-section-title">Key Metrics — June 2026</div>
+            <div class="metric-grid">
+              <div class="metric-tile">
+                <div class="metric-label">Month-to-Date Spend</div>
+                <div class="metric-value">$84,320.50</div>
+                <div class="metric-sub up">↑ 12% vs last month</div>
+              </div>
+              <div class="metric-tile">
+                <div class="metric-label">Open Purchase Orders</div>
+                <div class="metric-value">14</div>
+                <div class="metric-sub warn">3 awaiting approval</div>
+              </div>
+              <div class="metric-tile">
+                <div class="metric-label">Low Stock Alerts</div>
+                <div class="metric-value">7</div>
+                <div class="metric-sub danger">2 critical</div>
+              </div>
+              <div class="metric-tile">
+                <div class="metric-label">Pending Action Queue</div>
+                <div class="metric-value">5</div>
+                <div class="metric-sub warn">items need your review</div>
+              </div>
+            </div>
+
+            <!-- Spend chart -->
+            <div class="chart-wrap" style="position:relative">
+              <div class="chart-head">
+                <span class="chart-title">Spend Overview</span>
+                <span class="chart-period">Jan – Jun 2026</span>
+              </div>
+              <div id="chartTooltip" class="chart-tooltip"></div>
+              <svg id="spendChart" height="140" viewBox="0 0 680 140" preserveAspectRatio="none"></svg>
+            </div>
+
+            <!-- Bottom panels -->
+            <div class="dash-bottom">
+              <div class="panel">
+                <div class="panel-title">Recent Purchase Orders</div>
+                <table class="po-table">
+                  <thead>
+                    <tr>
+                      <th>PO Number</th>
+                      <th>Supplier</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td class="po-num">PO-2026-0018</td><td>TechSupply Co.</td><td style="font-family:var(--font-mono)">$1,240.00</td><td><span class="badge badge-amber">Awaiting Approval</span></td></tr>
+                    <tr><td class="po-num">PO-2026-0017</td><td>OfficeGoods Ltd.</td><td style="font-family:var(--font-mono)">$320.50</td><td><span class="badge badge-green">Auto-Approved</span></td></tr>
+                    <tr><td class="po-num">PO-2026-0016</td><td>NetEquip Global</td><td style="font-family:var(--font-mono)">$8,750.00</td><td><span class="badge badge-amber">Awaiting Approval</span></td></tr>
+                    <tr><td class="po-num">PO-2026-0015</td><td>PrintMedia Inc.</td><td style="font-family:var(--font-mono)">$190.00</td><td><span class="badge badge-green">Auto-Approved</span></td></tr>
+                    <tr><td class="po-num">PO-2026-0014</td><td>WarehouseDirect</td><td style="font-family:var(--font-mono)">$430.00</td><td><span class="badge badge-green">Auto-Approved</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="panel">
+                <div class="panel-title">Inventory Alerts</div>
+                <div class="alert-item"><div class="alert-dot critical"></div><div class="alert-text"><strong>Laser Toner Cartridge</strong>2 units remaining</div><div class="alert-units">min: 10</div></div>
+                <div class="alert-item"><div class="alert-dot critical"></div><div class="alert-text"><strong>A4 Paper Ream</strong>5 units remaining</div><div class="alert-units">min: 50</div></div>
+                <div class="alert-item"><div class="alert-dot warning"></div><div class="alert-text"><strong>USB-C Hubs</strong>8 units remaining</div><div class="alert-units">min: 15</div></div>
+                <div class="alert-item"><div class="alert-dot warning"></div><div class="alert-text"><strong>Desk Chairs</strong>3 units remaining</div><div class="alert-units">min: 5</div></div>
+                <div class="alert-item"><div class="alert-dot warning"></div><div class="alert-text"><strong>Monitor Stands</strong>4 units remaining</div><div class="alert-units">min: 8</div></div>
+                <div class="alert-item"><div class="alert-dot warning"></div><div class="alert-text"><strong>HDMI Cables</strong>6 units remaining</div><div class="alert-units">min: 20</div></div>
+                <div class="alert-item"><div class="alert-dot warning"></div><div class="alert-text"><strong>AA Batteries (pack)</strong>10 remaining</div><div class="alert-units">min: 25</div></div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S3: PIPELINE ══ -->
+<section id="pipeline">
+  <div class="container">
+    <div class="pipeline-header reveal">
+      <div class="section-label">Procurement Pipeline</div>
+      <h2 class="section-heading dark">From request to purchase<br>order in four steps</h2>
+      <p class="section-sub dark">Automated value routing eliminates approval bottlenecks for low-value purchases — permanently.</p>
+    </div>
+
+    <div class="flow-wrap reveal" style="transition-delay:0.1s">
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-num">Step 01</div>
+          <div class="step-icon">📋</div>
+          <div class="step-title">Purchase Request</div>
+          <div class="step-desc">Employee selects SKU items, quantities, and provides justification via the request form.</div>
+        </div>
+        <div class="flow-arrow">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="flow-step branch-node">
+          <div class="step-num" style="color:var(--mute-2)">Step 02</div>
+          <div class="step-icon">⚡</div>
+          <div class="step-title">Automated Value Check</div>
+          <div class="step-desc">System evaluates total estimated transaction value instantly on commit.</div>
+          <div class="flow-branch-row">
+            <div class="branch-path auto">
+              <div class="branch-label">&lt; $500</div>
+              <div class="branch-status">Auto-Approved</div>
+            </div>
+            <div class="branch-path await">
+              <div class="branch-label">≥ $500</div>
+              <div class="branch-status">Awaiting Approval</div>
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">Step 04</div>
+          <div class="step-icon">🔒</div>
+          <div class="step-title">Purchase Order Generated</div>
+          <div class="step-desc">Immutable PO number assigned. PDF assembled with line items. Record locked.</div>
+          <div style="margin-top:12px">
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--signal-dark);background:#F0FDF4;border:1px solid #86EFAC;padding:3px 10px;border-radius:100px">PO-2026-XXXX</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PO Document Preview -->
+    <div class="po-preview reveal" style="transition-delay:0.2s">
+      <div class="po-preview-header">
+        <div>
+          <div class="po-co-name">Acme Corporation</div>
+          <div class="po-co-sub">acme-corp.stockvantage.app &nbsp;·&nbsp; Tenant ID: 0x3A9F</div>
+        </div>
+        <div class="po-meta">
+          <div class="po-meta-title">Purchase Order</div>
+          <div class="po-meta-num">PO-2026-0018</div>
+        </div>
+      </div>
+      <div class="po-details-row">
+        <div class="po-detail-item">
+          <div class="po-detail-label">Date Issued</div>
+          <div class="po-detail-val">June 12, 2026</div>
+        </div>
+        <div class="po-detail-item">
+          <div class="po-detail-label">Status</div>
+          <div class="po-detail-val"><span class="badge badge-green">Auto-Approved</span></div>
+        </div>
+        <div class="po-detail-item">
+          <div class="po-detail-label">Supplier</div>
+          <div class="po-detail-val">TechSupply Co.</div>
+        </div>
+      </div>
+      <table class="po-line-table">
+        <thead>
+          <tr>
+            <th>Item Description</th>
+            <th>QTY</th>
+            <th>Unit Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Laptop Stand (Aluminium, Adjustable)</td><td>2</td><td>$85.00</td><td>$170.00</td></tr>
+          <tr><td>USB-C Hub (7-port, 4K passthrough)</td><td>4</td><td>$45.00</td><td>$180.00</td></tr>
+          <tr><td>Monitor Cable (HDMI 2.1, 2m)</td><td>3</td><td>$28.00</td><td>$84.00</td></tr>
+        </tbody>
+      </table>
+      <div class="po-total-row">
+        <div>
+          <div class="po-auto-tag">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Auto-Approved — below $500 threshold
+          </div>
+        </div>
+        <div class="po-total-val">$434.00</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S4: MODULES ══ -->
+<section id="modules">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Functional Modules</div>
+      <h2 class="section-heading dark">Three modules.<br>One unified operation.</h2>
+    </div>
+    <div class="modules-grid">
+      <div class="module-card reveal" style="transition-delay:0.05s">
+        <div class="module-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="3" width="18" height="16" rx="2" stroke="#5A6E67" stroke-width="1.5"/><path d="M7 8h8M7 11h8M7 14h5" stroke="#5A6E67" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="module-title">Supplier Registry &amp; Asset Catalog</div>
+        <div class="module-desc">A structured directory of every vendor your company works with — trading terms, contacts, and entity numbers — linked to a master SKU catalog with FIFO/LIFO valuation and safety stock thresholds.</div>
+        <div class="module-tags">
+          <span class="module-tag">FIFO / LIFO</span>
+          <span class="module-tag">Net 30 / 60</span>
+          <span class="module-tag">Safety Stock</span>
+          <span class="module-tag">SKU Tracking</span>
+        </div>
+      </div>
+      <div class="module-card featured reveal" style="transition-delay:0.12s">
+        <div class="module-featured-tag">Core Module</div>
+        <div class="module-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11h14M15 7l4 4-4 4" stroke="#007A55" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="11" r="2" stroke="#007A55" stroke-width="1.5"/></svg>
+        </div>
+        <div class="module-title">Digital Procurement Pipeline</div>
+        <div class="module-desc">Purchase requests route automatically based on value. Sub-$500 orders clear instantly. Larger transactions surface to assigned managers with immutable PO records and PDF assembly on approval.</div>
+        <div class="module-tags">
+          <span class="module-tag">Auto-Approval</span>
+          <span class="module-tag">Manager Queue</span>
+          <span class="module-tag">PO-2026-XXXX</span>
+          <span class="module-tag">PDF Export</span>
+        </div>
+      </div>
+      <div class="module-card reveal" style="transition-delay:0.2s">
+        <div class="module-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="8" width="16" height="11" rx="1.5" stroke="#5A6E67" stroke-width="1.5"/><path d="M7 8V6a4 4 0 018 0v2" stroke="#5A6E67" stroke-width="1.5" stroke-linecap="round"/><path d="M8 13h2m2 0h2" stroke="#5A6E67" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="module-title">Reactive Inventory &amp; Stock Control</div>
+        <div class="module-desc">Every stock movement is logged with an operational marker — Received Shipment, Internal Consumption, or Manual Adjustment. GRN intake matching flags discrepancies automatically as Partially Received.</div>
+        <div class="module-tags">
+          <span class="module-tag">GRN Matching</span>
+          <span class="module-tag">Discrepancy Flags</span>
+          <span class="module-tag">Live Ledger</span>
+          <span class="module-tag">Barcode Ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S5: RBAC ══ -->
+<section id="rbac">
+  <div class="container">
+    <div class="rbac-header reveal">
+      <div class="section-label">Access Control</div>
+      <h2 class="section-heading">Granular access. Zero overlap.</h2>
+      <p class="section-sub">Every route and UI element is gated by role. Each tenant user sees exactly what their permission level allows — nothing more.</p>
+    </div>
+
+    <div class="role-switcher reveal" style="transition-delay:0.1s">
+      <button class="role-tab active" onclick="switchRole('admin')">Tenant Admin</button>
+      <button class="role-tab" onclick="switchRole('manager')">Dept. Manager</button>
+      <button class="role-tab" onclick="switchRole('warehouse')">Warehouse Staff</button>
+      <button class="role-tab" onclick="switchRole('employee')">Standard Employee</button>
+    </div>
+
+    <div class="rbac-layout reveal" style="transition-delay:0.18s">
+      <!-- Sidebar mockup -->
+      <div class="role-nav-mock">
+        <div class="role-nav-header">Navigation — Active Role</div>
+        <div class="role-nav-user">
+          <div class="role-nav-avatar" id="roleAvatar">TA</div>
+          <div>
+            <div class="role-nav-name" id="roleName">James Dela Cruz</div>
+            <div class="role-nav-role" id="roleLabel">Tenant Admin</div>
+          </div>
+        </div>
+        <div class="role-nav-items" id="roleNavItems"></div>
+      </div>
+
+      <!-- RBAC Table -->
+      <div class="rbac-table-wrap">
+        <table class="rbac-table">
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Financial Access</th>
+              <th>Logistics Control</th>
+              <th>Ledger Privilege</th>
+              <th>Views Enabled</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="row-admin">
+              <td><div class="role-name">Tenant Admin</div></td>
+              <td>Global Audit &amp; Spend Ops</td>
+              <td>Network-wide Routing</td>
+              <td><span class="badge badge-red">ROOT.EXEC</span></td>
+              <td><div class="views-list">Global Config<br>User Settings<br>Full Audit Trails</div></td>
+            </tr>
+            <tr id="row-manager">
+              <td><div class="role-name">Dept. Manager</div></td>
+              <td>Financial Logs &amp; Approval</td>
+              <td>Dept-bound Logistics</td>
+              <td><span class="badge badge-blue">READ.WRITE</span></td>
+              <td><div class="views-list">Approvals Management<br>Analytics Dashboard</div></td>
+            </tr>
+            <tr id="row-warehouse">
+              <td><div class="role-name">Warehouse Staff</div></td>
+              <td style="color:var(--mute)">Restricted</td>
+              <td>GRN Receipt &amp; Dispatch</td>
+              <td><span class="badge badge-amber">RECON.ONLY</span></td>
+              <td><div class="views-list">Inventory Grids<br>GRN Interfaces</div></td>
+            </tr>
+            <tr id="row-employee">
+              <td><div class="role-name">Standard Employee</div></td>
+              <td>Personal Requisitions</td>
+              <td>Inquiry Only</td>
+              <td><span class="badge badge-gray">READ.ONLY</span></td>
+              <td><div class="views-list">Procurement Request Forms<br>Personal Logs</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S6: PILLARS ══ -->
+<section id="pillars">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Technical Architecture</div>
+      <h2 class="section-heading dark">Built on principles enterprise<br>customers require</h2>
+    </div>
+    <div class="pillars-grid">
+      <div class="pillar-card reveal" style="transition-delay:0.05s">
+        <div class="pillar-number">01 / ISOLATION</div>
+        <div class="pillar-title">Multi-Tenant Data Isolation</div>
+        <div class="pillar-desc">Shared database, logical isolation. Every query auto-binds to the authenticated <code style="font-family:var(--font-mono);font-size:12px;background:#F2F5F4;padding:1px 5px;border-radius:3px">tenant_id</code> via global Eloquent traits. Tenant A is fully blind to Tenant B under all system edge cases.</div>
+        <div class="pillar-tags">
+          <span class="pillar-tag">tenant_id scoping</span>
+          <span class="pillar-tag">Global Model Traits</span>
+          <span class="pillar-tag">Subdomain Routing</span>
+        </div>
+      </div>
+      <div class="pillar-card reveal" style="transition-delay:0.12s">
+        <div class="pillar-number">02 / ASYNC</div>
+        <div class="pillar-title">Asynchronous Task Allocation</div>
+        <div class="pillar-desc">Heavy operations — PDF assembly, large log exports, ledger compilations — are dispatched to background workers via Laravel Queues. The UI never blocks waiting for a long job. No spinners. Just results.</div>
+        <div class="pillar-tags">
+          <span class="pillar-tag">Laravel Queues</span>
+          <span class="pillar-tag">Non-blocking UI</span>
+          <span class="pillar-tag">Background Workers</span>
+        </div>
+      </div>
+      <div class="pillar-card reveal" style="transition-delay:0.19s">
+        <div class="pillar-number">03 / PRECISION</div>
+        <div class="pillar-title">Banking-Grade Financial Data</div>
+        <div class="pillar-desc">All monetary values stored as <code style="font-family:var(--font-mono);font-size:12px;background:#F2F5F4;padding:1px 5px;border-radius:3px">decimal(15,2)</code> — never floating-point. Zero rounding errors across billions of PO line items. Every cent accounted for, every time.</div>
+        <div class="pillar-tags">
+          <span class="pillar-tag">decimal(15,2)</span>
+          <span class="pillar-tag">MySQL / PostgreSQL</span>
+          <span class="pillar-tag">Zero float drift</span>
+        </div>
+      </div>
+      <div class="pillar-card reveal" style="transition-delay:0.26s">
+        <div class="pillar-number">04 / STACK</div>
+        <div class="pillar-title">Zero-Redundancy SPA Architecture</div>
+        <div class="pillar-desc">Laravel 11 bridges directly to React 18 via Inertia.js — skipping redundant REST/API marshalling code entirely. Server-rendered data, client-side reactivity, no full-page reloads. No duplicate state layer.</div>
+        <div class="pillar-tags">
+          <span class="pillar-tag">Laravel 11</span>
+          <span class="pillar-tag">React 18</span>
+          <span class="pillar-tag">Inertia.js</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S7: CTA ══ -->
+<section id="cta">
+  <div class="container reveal">
+    <h2 class="cta-h2">Ready to replace your<br>procurement <em>spreadsheets?</em></h2>
+    <p class="cta-p">One platform. Every branch. Full visibility.</p>
+    <div class="cta-actions">
+      <button class="btn-primary" style="font-size:15px;padding:15px 32px">
+        Request a Demo
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="btn-ghost" style="font-size:15px;padding:15px 32px">View Architecture Spec</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-copy">© 2026 StockVantage. Multi-Tenant Edition. All rights reserved.</span>
+  <div class="footer-links">
+    <a href="#">Terms</a>
+    <a href="#">Privacy</a>
+    <a href="#">System Status</a>
+    <a href="#">Documentation</a>
+  </div>
+</footer>
+
+<script>
+/* ── SCROLL REVEAL ── */
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+}, { threshold: 0.12 });
+revealEls.forEach(el => revealObs.observe(el));
+
+/* ── NAV SCROLL ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+  const sections = document.querySelectorAll('section[id]');
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+  document.querySelectorAll('.nav-link').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+/* ── BAR CHART ── */
+const chartData = [
+  { month: 'Jan', val: 52000 },
+  { month: 'Feb', val: 61000 },
+  { month: 'Mar', val: 48000 },
+  { month: 'Apr', val: 79000 },
+  { month: 'May', val: 91000 },
+  { month: 'Jun', val: 84320.50 },
+];
+const maxVal = Math.max(...chartData.map(d => d.val));
+const W = 680, H = 140, padL = 8, padR = 8, padT = 10, padB = 28;
+const chartW = W - padL - padR, chartH = H - padT - padB;
+const barW = Math.floor((chartW / chartData.length) * 0.55);
+const gap  = (chartW - barW * chartData.length) / (chartData.length + 1);
+
+const svg = document.getElementById('spendChart');
+const tooltip = document.getElementById('chartTooltip');
+
+let svgContent = '';
+svgContent += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="#E2E8E6" stroke-width="0.5"/>`;
+[0, 0.25, 0.5, 0.75, 1].forEach(pct => {
+  const y = padT + chartH * (1 - pct);
+  svgContent += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#E2E8E6" stroke-width="0.5" stroke-dasharray="3 4"/>`;
+  if (pct > 0) svgContent += `<text x="${padL + 2}" y="${y - 3}" font-size="9" fill="#7A9189" font-family="DM Mono,monospace">$${Math.round(maxVal * pct / 1000)}k</text>`;
+});
+
+chartData.forEach((d, i) => {
+  const x = padL + gap + i * (barW + gap);
+  const barH = (d.val / maxVal) * chartH;
+  const y = padT + chartH - barH;
+  const cx = x + barW / 2;
+  svgContent += `<rect class="chart-bar" x="${x}" y="${H - padB}" width="${barW}" height="0" rx="3" fill="#00C488" data-val="${d.val}" data-month="${d.month}" data-x="${cx}" data-y="${y}" style="transition: none"/>`;
+  svgContent += `<text x="${cx}" y="${H - 8}" text-anchor="middle" font-size="10" fill="#7A9189" font-family="DM Mono,monospace">${d.month}</text>`;
+});
+svg.innerHTML = svgContent;
+
+/* Animate bars when dashboard section enters viewport */
+let chartAnimated = false;
+const dashSection = document.getElementById('dashboard');
+const chartObs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !chartAnimated) {
+    chartAnimated = true;
+    document.querySelectorAll('.chart-bar').forEach((bar, i) => {
+      const fullH = (parseFloat(bar.dataset.val) / maxVal) * chartH;
+      const fullY = padT + chartH - fullH;
+      setTimeout(() => {
+        bar.style.transition = 'y 0.6s ease, height 0.6s ease';
+        bar.setAttribute('y', fullY);
+        bar.setAttribute('height', fullH);
+      }, i * 70);
+    });
+  }
+}, { threshold: 0.2 });
+chartObs.observe(dashSection);
+
+/* Bar hover tooltip */
+document.querySelectorAll('.chart-bar').forEach(bar => {
+  bar.addEventListener('mouseenter', (e) => {
+    const val = parseFloat(bar.dataset.val);
+    const formatted = '$' + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    tooltip.textContent = bar.dataset.month + ' 2026: ' + formatted;
+    const svgRect = svg.getBoundingClientRect();
+    const barRect = bar.getBoundingClientRect();
+    tooltip.style.left = (barRect.left - svgRect.left + barRect.width / 2 - 60) + 'px';
+    tooltip.style.top = (barRect.top - svgRect.top - 32) + 'px';
+    tooltip.style.opacity = '1';
+    bar.style.fill = '#007A55';
+  });
+  bar.addEventListener('mouseleave', () => {
+    tooltip.style.opacity = '0';
+    bar.style.fill = '#00C488';
+  });
+});
+
+/* ── RBAC ROLE SWITCHER ── */
+const roleData = {
+  admin: {
+    avatar: 'TA', name: 'James Dela Cruz', label: 'Tenant Admin',
+    nav: [
+      { icon: 'dashboard', label: 'Dashboard' },
+      { icon: 'users', label: 'User Management' },
+      { icon: 'settings', label: 'Global Configuration' },
+      { icon: 'chart', label: 'Full Audit Trails' },
+      { icon: 'suppliers', label: 'Vendor Master List' },
+      { icon: 'po', label: 'All Purchase Orders' },
+      { icon: 'inventory', label: 'Inventory Overview' },
+      { icon: 'analytics', label: 'Spend Analytics' },
+    ]
+  },
+  manager: {
+    avatar: 'DM', name: 'Maria Santos', label: 'Dept. Manager',
+    nav: [
+      { icon: 'dashboard', label: 'Dashboard' },
+      { icon: 'approvals', label: 'Approvals Queue' },
+      { icon: 'chart', label: 'Financial Logs' },
+      { icon: 'po', label: 'Dept. Purchase Orders' },
+      { icon: 'analytics', label: 'Analytics Dashboard' },
+    ]
+  },
+  warehouse: {
+    avatar: 'WS', name: 'Roberto Cruz', label: 'Warehouse Staff',
+    nav: [
+      { icon: 'dashboard', label: 'Dashboard' },
+      { icon: 'inventory', label: 'Inventory Grids' },
+      { icon: 'grn', label: 'GRN Interfaces' },
+      { icon: 'dispatch', label: 'GRN Receipt & Dispatch' },
+    ]
+  },
+  employee: {
+    avatar: 'SE', name: 'Ana Reyes', label: 'Standard Employee',
+    nav: [
+      { icon: 'dashboard', label: 'Dashboard' },
+      { icon: 'request', label: 'New Request Form' },
+      { icon: 'logs', label: 'My Submissions' },
+    ]
+  }
+};
+
+const iconPaths = {
+  dashboard: '<rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/>',
+  users: '<circle cx="7.5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 13c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+  settings: '<circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.2"/><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 2"/>',
+  chart: '<path d="M2 11L6 7l3 3 4-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>',
+  suppliers: '<rect x="2" y="3" width="11" height="10" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M5 3V2m5 1V2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+  po: '<rect x="2" y="2" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 7h5M7 5v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+  inventory: '<rect x="3" y="8" width="9" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M5 8V5a2.5 2.5 0 015 0v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+  analytics: '<path d="M2 11L6 7l3 3 4-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="2" cy="11" r="1" fill="currentColor"/>',
+  approvals: '<circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 7.5l2 2 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>',
+  grn: '<path d="M3 12V6l4.5-4 4.5 4v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="5.5" y="8" width="4" height="4" stroke="currentColor" stroke-width="1.2"/>',
+  dispatch: '<path d="M2 7h8m0 0L7 4m3 3-3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4h1.5a1 1 0 011 1v4a1 1 0 01-1 1H10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+  request: '<path d="M2 3h11M2 7h11M2 11h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+  logs: '<rect x="2" y="2" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 6h5M5 8.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+};
+
+function switchRole(role) {
+  document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.role-tab').forEach(t => { if (t.getAttribute('onclick').includes(role)) t.classList.add('active'); });
+  ['admin','manager','warehouse','employee'].forEach(r => {
+    document.getElementById('row-' + r).classList.toggle('active-row', r === role);
+  });
+  const d = roleData[role];
+  document.getElementById('roleAvatar').textContent = d.avatar;
+  document.getElementById('roleName').textContent = d.name;
+  document.getElementById('roleLabel').textContent = d.label;
+  const navEl = document.getElementById('roleNavItems');
+  navEl.innerHTML = d.nav.map(item =>
+    `<div class="role-nav-item ${item === d.nav[0] ? 'highlight' : ''}">
+      <svg width="13" height="13" viewBox="0 0 15 15" fill="none">${iconPaths[item.icon] || iconPaths.logs}</svg>
+      ${item.label}
+    </div>`
+  ).join('');
+}
+switchRole('admin');
+</script>
+</body>
+</html>

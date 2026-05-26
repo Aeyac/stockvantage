@@ -105,6 +105,25 @@ const NAV_ITEMS = [
         ),
         roles: ['tenant_admin'],
     },
+    {
+        label: 'Settings',
+        href: '/settings',
+        icon: (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 005 15.4a1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 005 8.6a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009.4 5c.36-.15.6-.5.6-.91V4a2 2 0 114 0v.09c0 .41.24.76.6.91a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019 8.6c.15.36.5.6.91.6H20a2 2 0 110 4h-.09c-.41 0-.76.24-.91.6z" />
+            </svg>
+        ),
+        roles: ['tenant_admin'],
+    },
+
+
+
+
+    //     <a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg active:scale-95 transition-transform" href="#">
+    // <span class="material-symbols-outlined" data-icon="settings">settings</span>
+    // <span class="font-body-md">Settings</span>
+    // </a>
 ]
 
 export default function AuthenticatedLayout({ children, header }) {
