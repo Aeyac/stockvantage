@@ -1,0 +1,93 @@
+<style>
+
+    /* Dashboard UI (light) */
+.dash-ui {
+  background: #F2F5F4; display: grid;
+  grid-template-rows: 52px 1fr;
+  min-height: 540px;
+}
+.dash-sidebar {
+  background: #FFFFFF; width: 200px; flex-shrink: 0;
+  border-right: 1px solid #E2E8E6;
+  padding: 16px 0;
+}
+.dash-sidebar-logo {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 16px 16px; margin-bottom: 8px;
+  border-bottom: 1px solid #E2E8E6; font-family: var(--font-head);
+  font-weight: 700; font-size: 14px; color: #0A0C0B;
+}
+.dash-sidebar-logo .sm { width: 20px; height: 20px; border-radius: 4px; background: #00C488; display: flex; align-items: center; justify-content: center; }
+.dash-nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 16px; font-size: 13px; color: #5A6E67;
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+  border-radius: 0;
+}
+.dash-nav-item:hover { background: #F2F5F4; color: #0A0C0B; }
+.dash-nav-item.active { background: #E8F7F2; color: #007A55; font-weight: 500; }
+.dash-nav-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+.dash-topbar {
+  background: #FFFFFF; border-bottom: 1px solid #E2E8E6;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; font-size: 13px;
+}
+.dash-topbar-left { display: flex; align-items: center; gap: 8px; color: #5A6E67; }
+.dash-topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #00C488; color: #0A0C0B;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; font-family: var(--font-mono);
+}
+.dash-body { display: flex; flex: 1; overflow: hidden; }
+.dash-main { flex: 1; padding: 20px; overflow: auto; }
+.dash-section-title { font-size: 11px; font-weight: 600; color: #5A6E67; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; font-family: var(--font-mono); }
+
+</style>
+
+
+
+<aside class="dash-sidebar">
+            <div class="dash-sidebar-logo">
+              <div class="sm"></div>
+              StockVantage
+            </div>
+            <div class="dash-nav-item active">
+              <svg viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+              Dashboard
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 5v2.5l1.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Suppliers
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 5v2.5l1.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Catalog
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><path d="M2 3h11M2 7h11M2 11h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Purchase Requests
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><rect x="2" y="2" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 7h5M7 5v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Purchase Orders
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><path d="M3 12V6l4-4 4 4v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="5.5" y="8" width="4" height="4" rx="0.5" stroke="currentColor" stroke-width="1.2"/></svg>
+              Inventory
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><path d="M3 12V6l4-4 4 4v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="5.5" y="8" width="4" height="4" rx="0.5" stroke="currentColor" stroke-width="1.2"/></svg>
+              Warehouses
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4v3.5l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              GRN
+            </div>
+            <div class="dash-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><path d="M2 11L6 7l3 3 4-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Users
+            </div>
+          </aside>

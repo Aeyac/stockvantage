@@ -14,12 +14,12 @@ createInertiaApp({
             `./Pages/${name}.jsx`,
             import.meta.glob('./Pages/**/*.jsx'),
         ),
-    setup({ el, App, props }) {
+    setup({ el, App, props }) { 
         const root = createRoot(el);
 
         root.render(<App {...props} />);
     },
     progress: {
-        color: '#4f8ef7',
+        color: '#00C488',
     },
 });

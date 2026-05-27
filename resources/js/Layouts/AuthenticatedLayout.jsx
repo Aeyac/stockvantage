@@ -116,14 +116,6 @@ const NAV_ITEMS = [
         ),
         roles: ['tenant_admin'],
     },
-
-
-
-
-    //     <a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg active:scale-95 transition-transform" href="#">
-    // <span class="material-symbols-outlined" data-icon="settings">settings</span>
-    // <span class="font-body-md">Settings</span>
-    // </a>
 ]
 
 export default function AuthenticatedLayout({ children, header }) {
@@ -139,7 +131,6 @@ export default function AuthenticatedLayout({ children, header }) {
         localStorage.setItem('sidebar-collapsed', JSON.stringify(collapsed))
     }, [collapsed])
 
-
     const currentPath = window.location.pathname
 
     const visibleNavItems = NAV_ITEMS.filter(item =>
@@ -147,307 +138,241 @@ export default function AuthenticatedLayout({ children, header }) {
     )
 
     return (
-        <div style={{
-            display: 'flex',
-            minHeight: '100vh',
-            background: '#0a0a0b',
-            fontFamily: "'DM Sans', sans-serif",
-            color: '#e2e0d6',
-        }}>
-            {/* Google Font */}
+        <div className="dash-ui">
+            {/* Dashboard Reference Styles */}
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700&display=swap');
+                @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+                :root {
+                    --font-head: 'DM Sans', sans-serif;
+                    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+                }
 
                 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-                ::-webkit-scrollbar { width: 4px; }
-                ::-webkit-scrollbar-track { background: transparent; }
-                ::-webkit-scrollbar-thumb { background: #2a2a2e; border-radius: 2px; }
-
-                .nav-item {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    padding: 10px 14px;
-                    border-radius: 8px;
-                    color: #6b6b7a;
-                    text-decoration: none;
-                    font-size: 13.5px;
-                    font-weight: 450;
-                    transition: all 0.15s ease;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    letter-spacing: 0.01em;
+                .dash-ui {
+                    background: #F2F5F4;
+                    display: grid;
+                    grid-template-rows: 52px 1fr;
+                    min-height: 100vh;
+                    font-family: 'DM Sans', sans-serif;
+                    color: #0A0C0B;
                 }
-                .nav-item:hover {
-                    background: #16161a;
-                    color: #e2e0d6;
+                .dash-topbar {
+                    background: #FFFFFF; 
+                    border-bottom: 1px solid #E2E8E6;
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: space-between;
+                    padding: 0 24px; 
+                    font-size: 13px;
                 }
-                .nav-item.active {
-                    background: #16161a;
-                    color: #e2e0d6;
-                    border: 1px solid #232328;
+                .dash-topbar-left { 
+                    display: flex; 
+                    align-items: center; 
+                    gap: 12px; 
+                    color: #5A6E67; 
                 }
-                .nav-item.active .nav-dot {
-                    background: #4f8ef7;
+                .dash-topbar-right { 
+                    display: flex; 
+                    align-items: center; 
+                    gap: 12px; 
                 }
-                .nav-dot {
-                    width: 5px;
-                    height: 5px;
-                    border-radius: 50%;
-                    background: transparent;
+                .dash-body { 
+                    display: flex; 
+                    flex: 1; 
+                    overflow: hidden; 
+                }
+                .dash-sidebar {
+                    background: #FFFFFF; 
+                    width: ${collapsed ? '60px' : '200px'}; 
                     flex-shrink: 0;
-                    margin-left: auto;
+                    border-right: 1px solid #E2E8E6;
+                    padding: 16px 0;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    transition: width 0.15s ease;
                 }
-                .icon-btn {
+                .dash-sidebar-logo {
+                    display: flex; 
+                    align-items: center; 
+                    gap: 8px;
+                    padding: 0 16px 16px; 
+                    margin-bottom: 8px;
+                    border-bottom: 1px solid #E2E8E6; 
+                    font-family: var(--font-head);
+                    font-weight: 700; 
+                    font-size: 14px; 
+                    color: #0A0C0B;
+                    overflow: hidden;
+                    white-space: nowrap;
+                }
+                .dash-sidebar-logo .sm { 
+                    width: 20px; 
+                    height: 20px; 
+                    border-radius: 4px; 
+                    background: #00C488; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center;
+                    flex-shrink: 0;
+                }
+                .dash-nav-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 2px;
+                    flex: 1;
+                }
+                .dash-nav-item {
+                    display: flex; 
+                    align-items: center; 
+                    gap: 9px;
+                    padding: 8px 16px; 
+                    font-size: 13px; 
+                    color: #5A6E67;
+                    cursor: pointer; 
+                    transition: background 0.15s, color 0.15s;
+                    border-radius: 0;
+                    text-decoration: none;
+                    overflow: hidden;
+                    white-space: nowrap;
+                }
+                .dash-nav-item:hover { 
+                    background: #F2F5F4; 
+                    color: #0A0C0B; 
+                }
+                .dash-nav-item.active { 
+                    background: #E8F7F2; 
+                    color: #007A55; 
+                    font-weight: 500; 
+                }
+                .dash-nav-item svg { 
+                    width: 15px; 
+                    height: 15px; 
+                    flex-shrink: 0; 
+                }
+                .topbar-avatar {
+                    width: 28px; 
+                    height: 28px; 
+                    border-radius: 50%;
+                    background: #00C488; 
+                    color: #0A0C0B;
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center;
+                    font-size: 11px; 
+                    font-weight: 600; 
+                    font-family: var(--font-mono);
+                }
+                .dash-main { 
+                    flex: 1; 
+                    padding: 20px; 
+                    overflow: auto; 
+                }
+                .toggle-btn {
                     background: none;
                     border: none;
                     cursor: pointer;
-                    color: #6b6b7a;
+                    color: #5A6E67;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 6px;
-                    border-radius: 6px;
-                    transition: all 0.15s;
+                    padding: 4px;
                 }
-                .icon-btn:hover {
-                    background: #16161a;
-                    color: #e2e0d6;
+                .toggle-btn:hover {
+                    color: #0A0C0B;
                 }
-                .main-content {
-                    flex: 1;
-                    overflow-y: auto;
-                    min-height: 100vh;
-                }
-                .topbar {
-                    position: sticky;
-                    top: 0;
-                    z-index: 10;
-                    background: rgba(10,10,11,0.85);
-                    backdrop-filter: blur(12px);
-                    border-bottom: 1px solid #16161a;
-                    padding: 0 28px;
-                    height: 58px;
+                .logout-btn {
                     display: flex;
                     align-items: center;
-                    justify-content: space-between;
+                    gap: 9px;
+                    padding: 8px 16px;
+                    font-size: 13px;
+                    color: #A34747;
+                    background: none;
+                    border: none;
+                    width: 100%;
+                    text-align: left;
+                    cursor: pointer;
+                    border-top: 1px solid #E2E8E6;
+                    margin-top: auto;
+                    padding-top: 12px;
                 }
-                .page-content {
-                    padding: 32px 28px;
-                }
-                .badge {
-                    font-size: 10px;
-                    font-weight: 600;
-                    padding: 2px 7px;
-                    border-radius: 20px;
-                    background: #1a1a20;
-                    color: #6b6b7a;
-                    border: 1px solid #232328;
-                    text-transform: uppercase;
-                    letter-spacing: 0.05em;
+                .logout-btn:hover {
+                    background: #FCE8E8;
+                    color: #7A1F1F;
                 }
             `}</style>
 
-            {/* Sidebar */}
-            <aside style={{
-                width: collapsed ? '64px' : '220px',
-                background: '#0d0d10',
-                borderRight: '1px solid #16161a',
-                display: 'flex',
-                flexDirection: 'column',
-                transition: 'width 0.2s ease',
-                flexShrink: 0,
-                position: 'sticky',
-                top: 0,
-                height: '100vh',
-                overflow: 'hidden',
-            }}>
-                {/* Logo */}
-                <div style={{
-                    padding: '20px 16px 16px',
-                    borderBottom: '1px solid #16161a',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: collapsed ? 'center' : 'space-between',
-                    gap: 10,
-                }}>
-                    {!collapsed && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <div style={{
-                                width: 28,
-                                height: 28,
-                                background: 'linear-gradient(135deg, #4f8ef7, #2563eb)',
-                                borderRadius: 7,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0,
-                            }}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                                    <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
-                                </svg>
-                            </div>
-                            <span style={{
-                                fontFamily: "'Syne', sans-serif",
-                                fontWeight: 700,
-                                fontSize: 15,
-                                color: '#e2e0d6',
-                                letterSpacing: '-0.02em',
-                            }}>
-                                StockVantage
-                            </span>
-                        </div>
-                    )}
-                    {collapsed && (
-                        <div style={{
-                            width: 28,
-                            height: 28,
-                            background: 'linear-gradient(135deg, #4f8ef7, #2563eb)',
-                            borderRadius: 7,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
-                            </svg>
-                        </div>
-                    )}
-                    {!collapsed && (
-                        <button className="icon-btn" onClick={() => setCollapsed(true)}>
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M15 18l-6-6 6-6" />
-                            </svg>
-                        </button>
-                    )}
+            {/* Topbar Row */}
+            <header className="dash-topbar">
+                <div className="dash-topbar-left">
+                    <button className="toggle-btn" onClick={() => setCollapsed(!collapsed)} title="Toggle Sidebar">
+                        <svg width="16" height="16" viewBox="0 0 15 15" fill="none" stroke="currentColor">
+                            <path d="M1.5 3.5h12m-12 4h12m-12 4h12" strokeWidth="1.2" strokeLinecap="round" />
+                        </svg>
+                    </button>
+                    {header && <span>{header}</span>}
                 </div>
 
-                {/* Nav */}
-                <nav style={{ flex: 1, padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}>
-                    {visibleNavItems.map(item => {
-                        const isActive = currentPath === item.href || currentPath.startsWith(item.href + '/')
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                // prefetch
-                                className={`nav-item ${isActive ? 'active' : ''}`}
-                                title={collapsed ? item.label : undefined}
-                            >
-                                <span style={{ flexShrink: 0, opacity: isActive ? 1 : 0.6 }}>{item.icon}</span>
-                                {!collapsed && (
-                                    <>
-                                        <span>{item.label}</span>
-                                        <span className="nav-dot" />
-                                    </>
-                                )}
-                            </Link>
-                        )
-                    })}
-                </nav>
-
-                {/* Collapse toggle when collapsed */}
-                {collapsed && (
-                    <div style={{ padding: '12px 10px', borderTop: '1px solid #16161a' }}>
-                        <button className="icon-btn" style={{ width: '100%' }} onClick={() => setCollapsed(false)}>
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M9 18l6-6-6-6" />
-                            </svg>
-                        </button>
-                    </div>
-                )}
-
-                {/* User info */}
-                {!collapsed && (
-                    <div style={{
-                        padding: '14px 14px',
-                        borderTop: '1px solid #16161a',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 10,
-                    }}>
-                        <div style={{
-                            width: 30,
-                            height: 30,
-                            borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #2a2a3e, #1a1a2e)',
-                            border: '1px solid #232328',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 12,
-                            fontWeight: 600,
-                            color: '#4f8ef7',
-                            flexShrink: 0,
-                        }}>
-                            {user.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div style={{ overflow: 'hidden', flex: 1 }}>
-                            <div style={{ fontSize: 12.5, fontWeight: 500, color: '#c8c6bc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {user.name}
-                            </div>
-                            <div style={{ fontSize: 11, color: '#4b4b56', marginTop: 1 }}>
-                                {user.role.replace('_', ' ')}
-                            </div>
-                        </div>
-                        <Link
-                            href="/logout"
-                            method="post"
-                            as="button"
-                            className="sv-icon-btn"
-                            title="Logout"
-                            onSuccess={() => window.location.replace('/login')}
-                        >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
-                            </svg>
-                        </Link>
-                    </div>
-                )}
-            </aside>
-
-            {/* Main */}
-            <div className="main-content">
-                {/* Topbar */}
-                <div className="topbar">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                        {header && (
-                            <h1 style={{
-                                fontFamily: "'Syne', sans-serif",
-                                fontSize: 16,
-                                fontWeight: 600,
-                                color: '#e2e0d6',
-                                letterSpacing: '-0.01em',
-                            }}>
-                                {header}
-                            </h1>
-                        )}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span className="badge">{user.role.replace(/_/g, ' ')}</span>
-                        <div style={{
-                            width: 30,
-                            height: 30,
-                            borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #2a2a3e, #1a1a2e)',
-                            border: '1px solid #232328',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 12,
-                            fontWeight: 600,
-                            color: '#4f8ef7',
-                        }}>
-                            {user.name.charAt(0).toUpperCase()}
-                        </div>
+                <div className="dash-topbar-right">
+                    <span style={{ color: '#5A6E67', textTransform: 'lowercase', fontFamily: 'var(--font-mono)' }}>
+                        ({user.role.replace(/_/g, ' ')})
+                    </span>
+                    <div className="topbar-avatar">
+                        {user.name.charAt(0).toUpperCase()}
                     </div>
                 </div>
+            </header>
 
-                {/* Page content */}
-                <div className="page-content">
+            {/* Layout Wrapper */}
+            <div className="dash-body">
+                {/* Sidebar Component */}
+                <aside className="dash-sidebar">
+                    <div className="dash-nav-container">
+                        <div className="dash-sidebar-logo">
+                            <div className="sm"></div>
+                            {!collapsed && <span>StockVantage</span>}
+                        </div>
+
+                        {/* Custom Navigation Routing Map */}
+                        {visibleNavItems.map(item => {
+                            const isActive = currentPath === item.href || currentPath.startsWith(item.href + '/')
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={`dash-nav-item ${isActive ? 'active' : ''}`}
+                                    title={collapsed ? item.label : undefined}
+                                >
+                                    {item.icon}
+                                    {!collapsed && <span>{item.label}</span>}
+                                </Link>
+                            )
+                        })}
+                    </div>
+
+                    {/* Clean Action Log Out Anchor */}
+                    <Link
+                        href="/logout"
+                        method="post"
+                        as="button"
+                        className="logout-btn"
+                        title={collapsed ? "Logout" : undefined}
+                        onSuccess={() => window.location.replace('/login')}
+                    >
+                        <svg viewBox="0 0 15 15" fill="none" style={{ width: 15, height: 15, flexShrink: 0 }}>
+                            <path d="M10.5 2.5H12.5V12.5H10.5M2.5 7.5H9.5M2.5 7.5L5.5 4.5M2.5 7.5L5.5 10.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        {!collapsed && <span>Logout</span>}
+                    </Link>
+                </aside>
+
+                {/* Main Content Pane */}
+                <main className="dash-main">
                     {children}
-                </div>
+                </main>
             </div>
         </div>
     )
