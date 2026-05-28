@@ -22,82 +22,119 @@ export default function Edit({ supplier }) {
             <Head title="Edit Supplier" />
 
             <style>{`
+                /* Enforce explicit light background card wrapper & override global dark containers */
                 .sv-form-card {
-                    background: #0d0d10;
-                    border: 1px solid #16161a;
-                    border-radius: 12px;
-                    padding: 28px;
-                    max-width: 640px;
+                    background: #ffffff !important;
+                    border: 1px solid #e2e8f0 !important;
+                    border-radius: 12px !important;
+                    padding: 28px !important;
+                    max-width: 640px !important;
+                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
                 }
                 .sv-field { display: flex; flex-direction: column; gap: 6px; }
+                
+                /* High-contrast labels for clear visibility */
                 .sv-label {
-                    font-size: 12px; font-weight: 500; color: #6b6b7a;
-                    text-transform: uppercase; letter-spacing: 0.06em;
+                    font-size: 11.5px !important;
+                    font-weight: 700 !important;
+                    color: #475569 !important;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
                 }
+                
+                /* Crisp white interactive fields overriding dark style inheritance */
                 .sv-input, .sv-select, .sv-textarea {
-                    background: #0a0a0b; border: 1px solid #1e1e24;
-                    border-radius: 8px; padding: 10px 14px;
-                    color: #e2e0d6; font-size: 13.5px; font-family: inherit;
-                    outline: none; transition: border-color 0.15s; width: 100%;
+                    background: #ffffff !important;
+                    border: 1px solid #cbd5e1 !important;
+                    border-radius: 8px !important;
+                    padding: 10px 14px !important;
+                    color: #0f172a !important;
+                    font-size: 13.5px !important;
+                    font-family: inherit !important;
+                    outline: none !important;
+                    transition: border-color 0.15s, box-shadow 0.15s !important;
+                    width: 100% !important;
+                    box-sizing: border-box !important;
                 }
-                .sv-input:focus, .sv-select:focus, .sv-textarea:focus { border-color: #4f8ef7; }
-                .sv-input::placeholder, .sv-textarea::placeholder { color: #2e2e38; }
-                .sv-select option { background: #0d0d10; }
+                
+                /* Focus indicator utilizing your dashboard green accent theme */
+                .sv-input:focus, .sv-select:focus, .sv-textarea:focus {
+                    border-color: #00C488 !important;
+                    box-shadow: 0 0 0 3px rgba(0, 196, 136, 0.15) !important;
+                    background: #ffffff !important;
+                }
+                
+                .sv-input::placeholder, .sv-textarea::placeholder { color: #94a3b8 !important; opacity: 1 !important; }
+                .sv-select option { background: #ffffff !important; color: #0f172a !important; }
                 .sv-textarea { resize: vertical; min-height: 90px; }
-                .sv-error { font-size: 12px; color: #f74f4f; margin-top: 2px; }
+                
+                /* Clear high-visibility semantic validation text */
+                .sv-error { font-size: 12.5px !important; color: #dc2626 !important; margin-top: 4px !important; font-weight: 500 !important; }
+                
+                /* Brand Green Button */
                 .sv-btn-primary {
-                    display: inline-flex; align-items: center; gap: 7px;
-                    background: #4f8ef7; color: #fff; border: none;
-                    border-radius: 8px; padding: 10px 20px;
-                    font-size: 13px; font-weight: 500; cursor: pointer;
-                    text-decoration: none; transition: background 0.15s; font-family: inherit;
+                    display: inline-flex !important; align-items: center !important; gap: 7px !important;
+                    background: #00C488 !important; color: #ffffff !important; border: none !important;
+                    border-radius: 8px !important; padding: 10px 20px !important;
+                    font-size: 13.5px !important; font-weight: 600 !important; cursor: pointer !important;
+                    text-decoration: none !important; transition: background-color 0.15s !important; font-family: inherit !important;
                 }
-                .sv-btn-primary:hover { background: #3b7de8; }
-                .sv-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+                .sv-btn-primary:hover:not(:disabled) { background: #00a873 !important; }
+                .sv-btn-primary:disabled { opacity: 0.6 !important; cursor: not-allowed !important; }
+                
+                /* Bordered Neutral Secondary Action Button */
                 .sv-btn-ghost {
-                    display: inline-flex; align-items: center;
-                    background: none; color: #6b6b7a; border: 1px solid #1e1e24;
-                    border-radius: 8px; padding: 10px 20px; font-size: 13px;
-                    font-weight: 500; cursor: pointer; text-decoration: none;
-                    transition: all 0.15s; font-family: inherit;
+                    display: inline-flex !important; align-items: center !important;
+                    background: #ffffff !important; color: #64748b !important;
+                    border: 1px solid #e2e8f0 !important; border-radius: 8px !important;
+                    padding: 10px 20px !important; font-size: 13.5px !important; font-weight: 500 !important;
+                    cursor: pointer !important; text-decoration: none !important;
+                    transition: all 0.15s !important; font-family: inherit !important;
                 }
-                .sv-btn-ghost:hover { color: #e2e0d6; border-color: #232328; }
-                .sv-divider { height: 1px; background: #16161a; margin: 4px 0; }
+                .sv-btn-ghost:hover { color: #1e293b !important; border-color: #cbd5e1 !important; background: #f8fafc !important; }
+                
+                /* Clean dividers and sub-sectioning typography markers */
+                .sv-divider { height: 1px !important; background: #f1f5f9 !important; margin: 4px 0 !important; }
+                
                 .sv-section-label {
-                    font-size: 11px; font-weight: 600; color: #4b4b56;
-                    text-transform: uppercase; letter-spacing: 0.08em;
-                    margin-bottom: 16px; margin-top: 8px;
+                    font-size: 12px !important; font-weight: 700 !important; color: #94a3b8 !important;
+                    text-transform: uppercase; letter-spacing: 0.05em;
+                    margin-bottom: 16px !important; margin-top: 8px !important;
                 }
+                
+                /* Light-mode toggle wrapper container */
                 .sv-toggle-wrap {
                     display: flex; align-items: center; gap: 12px;
-                    padding: 14px; background: #0a0a0b;
-                    border: 1px solid #1e1e24; border-radius: 8px;
+                    padding: 14px !important; background: #f8fafc !important;
+                    border: 1px solid #e2e8f0 !important; border-radius: 8px !important;
                 }
+                
+                /* Toggle background slider states */
                 .sv-toggle {
                     position: relative; width: 36px; height: 20px;
-                    background: #1e1e24; border-radius: 20px;
+                    background: #cbd5e1 !important; border-radius: 20px !important;
                     cursor: pointer; transition: background 0.2s; flex-shrink: 0;
                     border: none; padding: 0;
                 }
-                .sv-toggle.on { background: #4f8ef7; }
+                .sv-toggle.on { background: #00C488 !important; }
                 .sv-toggle::after {
                     content: ''; position: absolute; top: 3px; left: 3px;
-                    width: 14px; height: 14px; background: #fff;
+                    width: 14px; height: 14px; background: #ffffff !important;
                     border-radius: 50%; transition: transform 0.2s;
                 }
                 .sv-toggle.on::after { transform: translateX(16px); }
             `}</style>
 
-            {/* Back link */}
+            {/* Light-Theme Normalized Back Navigation Link Wrapper */}
             <Link href="/suppliers" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 6,
-                fontSize: 13, color: '#4b4b56', textDecoration: 'none',
-                marginBottom: 20, transition: 'color 0.15s',
+                fontSize: 13, color: '#64748b', textDecoration: 'none',
+                marginBottom: 20, transition: 'color 0.15s', fontWeight: 500
             }}
-                onMouseEnter={e => e.currentTarget.style.color = '#e2e0d6'}
-                onMouseLeave={e => e.currentTarget.style.color = '#4b4b56'}
+                onMouseEnter={e => e.currentTarget.style.color = '#1e293b'}
+                onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
             >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M15 18l-6-6 6-6" />
                 </svg>
                 Back to Suppliers
@@ -192,10 +229,10 @@ export default function Edit({ supplier }) {
                             onClick={() => setData('is_active', !data.is_active)}
                         />
                         <div>
-                            <div style={{ fontSize: 13.5, fontWeight: 500, color: '#c8c6bc' }}>
+                            <div style={{ fontSize: 13.5, fontWeight: 600, color: '#0f172a' }}>
                                 {data.is_active ? 'Active' : 'Inactive'}
                             </div>
-                            <div style={{ fontSize: 12, color: '#4b4b56', marginTop: 2 }}>
+                            <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
                                 {data.is_active
                                     ? 'Supplier is visible and available for procurement'
                                     : 'Supplier is hidden from procurement workflows'}
@@ -204,8 +241,8 @@ export default function Edit({ supplier }) {
                         {errors.is_active && <span className="sv-error">{errors.is_active}</span>}
                     </div>
 
-                    {/* Actions */}
-                    <div style={{ display: 'flex', gap: 10, marginTop: 8, paddingTop: 20, borderTop: '1px solid #16161a' }}>
+                    {/* Actions Row Styles mapped to updated light-mode lines */}
+                    <div style={{ display: 'flex', gap: 12, marginTop: 8, paddingTop: 20, borderTop: '1px solid #f1f5f9' }}>
                         <button type="submit" disabled={processing} className="sv-btn-primary">
                             {processing ? 'Saving...' : 'Update Supplier'}
                         </button>

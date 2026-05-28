@@ -2,18 +2,18 @@ import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 
 const C = {
-    bg: '#0D0E11',
-    surface: '#16171B',
-    surfaceLow: '#1b1b1f',
-    surfaceHigh: '#292a2d',
-    outline: '#23252B',
-    primary: '#4edea3',
-    secondary: '#d0bcff',
-    tertiary: '#ffb95f',
-    onSurface: '#e3e2e6',
-    onSurfaceVar: '#bbcabf',
-    onPrimary: '#003824',
-    error: '#ffb4ab',
+    bg: '#F4F5F8',
+    surface: '#FFFFFF',
+    surfaceLow: '#F8F9FC',
+    surfaceHigh: '#E9EBF0',
+    outline: '#DDE2E5',
+    primary: '#00875A',       // High-contrast clean green for light mode
+    secondary: '#6554C0',     // Deep Indigo
+    tertiary: '#B65C00',      // Warm Amber
+    onSurface: '#1A1C1E',     // Charcoal text
+    onSurfaceVar: '#5D6166',  // Slate gray subtext
+    onPrimary: '#FFFFFF',
+    error: '#DE350B',         // Deep accessible red
 }
 
 const ROLES = [
@@ -45,6 +45,7 @@ export default function Create() {
                 .usr-card {
                     background: ${C.surface}; border: 1px solid ${C.outline};
                     border-radius: 16px; padding: 28px; max-width: 600px;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
                 }
                 .usr-field { display: flex; flex-direction: column; gap: 6px; }
                 .usr-label {
@@ -52,19 +53,19 @@ export default function Create() {
                     text-transform: uppercase; letter-spacing: 0.08em;
                 }
                 .usr-input, .usr-select {
-                    background: ${C.surfaceLow}; border: 1px solid ${C.outline};
+                    background: ${C.surface}; border: 1px solid ${C.outline};
                     border-radius: 10px; padding: 11px 14px; color: ${C.onSurface};
                     font-size: 14px; font-family: inherit; outline: none;
                     transition: border-color 0.15s, box-shadow 0.15s; width: 100%;
                 }
                 .usr-input:focus, .usr-select:focus {
-                    border-color: ${C.primary}70;
-                    box-shadow: 0 0 0 3px ${C.primary}10;
+                    border-color: ${C.primary};
+                    box-shadow: 0 0 0 3px ${C.primary}20;
                 }
-                .usr-input::placeholder { color: ${C.onSurfaceVar}40; }
-                .usr-select option { background: ${C.surfaceLow}; }
-                .usr-error { font-size: 12px; color: ${C.error}; margin-top: 3px; }
-                .usr-hint { font-size: 12px; color: ${C.onSurfaceVar}60; margin-top: 3px; }
+                .usr-input::placeholder { color: ${C.onSurfaceVar}60; }
+                .usr-select option { background: ${C.surface}; }
+                .usr-error { font-size: 12px; color: ${C.error}; margin-top: 3px; font-weight: 500; }
+                .usr-hint { font-size: 12px; color: ${C.onSurfaceVar}; margin-top: 3px; opacity: 0.7; }
                 .usr-btn-primary {
                     display: inline-flex; align-items: center; gap: 7px;
                     background: ${C.primary}; color: ${C.onPrimary};
@@ -72,7 +73,7 @@ export default function Create() {
                     font-size: 14px; font-weight: 600; cursor: pointer;
                     text-decoration: none; transition: filter 0.15s; font-family: inherit;
                 }
-                .usr-btn-primary:hover { filter: brightness(1.08); }
+                .usr-btn-primary:hover { filter: brightness(0.92); }
                 .usr-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
                 .usr-btn-ghost {
                     display: inline-flex; align-items: center;
@@ -81,12 +82,12 @@ export default function Create() {
                     padding: 11px 22px; font-size: 14px; font-weight: 500;
                     cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: inherit;
                 }
-                .usr-btn-ghost:hover { color: ${C.onSurface}; border-color: ${C.onSurfaceVar}50; }
+                .usr-btn-ghost:hover { color: ${C.onSurface}; background: ${C.surfaceLow}; border-color: ${C.onSurfaceVar}50; }
                 .usr-divider { height: 1px; background: ${C.outline}; margin: 6px 0; }
                 .usr-section {
-                    font-size: 11px; font-weight: 700; color: ${C.onSurfaceVar}60;
+                    font-size: 11px; font-weight: 700; color: ${C.onSurfaceVar};
                     text-transform: uppercase; letter-spacing: 0.1em;
-                    margin-bottom: 16px; margin-top: 6px;
+                    margin-bottom: 16px; margin-top: 6px; opacity: 0.8;
                 }
                 .usr-role-card {
                     display: flex; flex-direction: column; gap: 8px;
@@ -97,17 +98,18 @@ export default function Create() {
                     border: 1px solid ${C.outline}; border-radius: 10px;
                     cursor: pointer; transition: all 0.15s;
                 }
-                .usr-role-option:hover { border-color: ${C.onSurfaceVar}40; }
+                .usr-role-option:hover { border-color: ${C.onSurfaceVar}50; background: ${C.surfaceHigh}40; }
                 .usr-role-option.selected {
-                    border-color: ${C.primary}50;
-                    background: ${C.primary}08;
+                    border-color: ${C.primary}70;
+                    background: ${C.primary}0A;
                 }
                 .usr-role-radio {
                     width: 16px; height: 16px; border-radius: 50%;
                     border: 2px solid ${C.outline}; flex-shrink: 0;
                     display: flex; align-items: center; justify-content: center;
-                    transition: all 0.15s;
+                    transition: all 0.15s; background: ${C.surface};
                 }
+                .usr-role-option:hover .usr-role-radio { border-color: ${C.onSurfaceVar}50; }
                 .usr-role-radio.checked {
                     border-color: ${C.primary};
                     background: ${C.primary};

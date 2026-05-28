@@ -1,19 +1,24 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 
+// Refactored to light mode tokens matching the reference form design
 const C = {
-    bg: '#0D0E11',
-    surface: '#16171B',
-    surfaceLow: '#1b1b1f',
-    surfaceHigh: '#292a2d',
-    outline: '#23252B',
-    primary: '#4edea3',
-    secondary: '#d0bcff',
-    tertiary: '#ffb95f',
-    onSurface: '#e3e2e6',
-    onSurfaceVar: '#bbcabf',
-    onPrimary: '#003824',
-    error: '#ffb4ab',
+    bg: '#ffffff',
+    surface: '#ffffff',
+    surfaceLow: '#ffffff',
+    surfaceHigh: '#f1f5f9', // Used for toggle background
+    outline: '#e2e8f0',
+    borderInput: '#cbd5e1',
+    primary: '#17aa54',     // Brand green button fill & Active toggle state
+    primaryHover: '#1a8f4b',// Brand green button hover
+    primaryFocus: '#00C488',// Dashboard accent green for focus borders
+    onPrimary: '#ffffff',
+    textMain: '#0f172a',    // High-contrast input text
+    textMuted: '#64748b',   // Subdued text / neutral actions
+    textLabel: '#475569',   // High-visibility label gray
+    textSection: '#94a3b8', // Section headers
+    error: '#dc2626',       // Standard light-mode validation red
+    skuText: '#b45309',     // Amber-700 for a readable tech font accent in light mode
 }
 
 export default function Edit({ catalogItem, suppliers }) {
@@ -37,85 +42,127 @@ export default function Edit({ catalogItem, suppliers }) {
             <Head title="Edit Catalog Item" />
 
             <style>{`
+                /* Enforce explicit light background card wrapper & override global dark containers */
                 .ci-card {
-                    background: ${C.surface}; border: 1px solid ${C.outline};
-                    border-radius: 16px; padding: 28px; max-width: 660px;
+                    background: ${C.surface} !important;
+                    border: 1px solid ${C.outline} !important;
+                    border-radius: 12px !important;
+                    padding: 28px !important;
+                    max-width: 640px !important;
+                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
                 }
                 .ci-field { display: flex; flex-direction: column; gap: 6px; }
+                
+                /* High-contrast labels for clear visibility */
                 .ci-label {
-                    font-size: 11px; font-weight: 600; color: ${C.onSurfaceVar};
-                    text-transform: uppercase; letter-spacing: 0.08em;
+                    font-size: 11.5px !important;
+                    font-weight: 700 !important;
+                    color: ${C.textLabel} !important;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
                 }
+                
+                /* Crisp white interactive fields overriding dark style inheritance */
                 .ci-input, .ci-select {
-                    background: ${C.surfaceLow}; border: 1px solid ${C.outline};
-                    border-radius: 10px; padding: 11px 14px; color: ${C.onSurface};
-                    font-size: 14px; font-family: inherit; outline: none;
-                    transition: border-color 0.15s, box-shadow 0.15s; width: 100%;
+                    background: ${C.surfaceLow} !important;
+                    border: 1px solid ${C.borderInput} !important;
+                    border-radius: 8px !important;
+                    padding: 10px 14px !important;
+                    color: ${C.textMain} !important;
+                    font-size: 13.5px !important;
+                    font-family: inherit !important;
+                    outline: none !important;
+                    transition: border-color 0.15s, box-shadow 0.15s !important;
+                    width: 100% !important;
+                    box-sizing: border-box !important;
                 }
+                
+                /* Focus indicator utilizing the dashboard green accent theme */
                 .ci-input:focus, .ci-select:focus {
-                    border-color: ${C.primary}70;
-                    box-shadow: 0 0 0 3px ${C.primary}10;
+                    border-color: ${C.primaryFocus} !important;
+                    box-shadow: 0 0 0 3px rgba(0, 196, 136, 0.15) !important;
+                    background: #ffffff !important;
                 }
-                .ci-input::placeholder { color: ${C.onSurfaceVar}40; }
-                .ci-select option { background: ${C.surfaceLow}; }
-                .ci-error { font-size: 12px; color: ${C.error}; margin-top: 3px; display: flex; align-items: center; gap: 4px; }
-                .ci-hint { font-size: 12px; color: ${C.onSurfaceVar}60; margin-top: 3px; }
+                
+                .ci-input::placeholder { color: ${C.textSection} !important; opacity: 1 !important; }
+                .ci-select option { background: #ffffff !important; color: ${C.textMain} !important; }
+                
+                /* Clear high-visibility semantic validation text */
+                .ci-error { font-size: 12.5px !important; color: ${C.error} !important; margin-top: 4px !important; font-weight: 500 !important; }
+                .ci-hint { font-size: 12px !important; color: ${C.textMuted} !important; margin-top: 4px !important; }
+                
+                /* Brand Green Button */
                 .ci-btn-primary {
-                    display: inline-flex; align-items: center; gap: 7px;
-                    background: ${C.primary}; color: ${C.onPrimary};
-                    border: none; border-radius: 12px; padding: 11px 22px;
-                    font-size: 14px; font-weight: 600; cursor: pointer;
-                    text-decoration: none; transition: filter 0.15s; font-family: inherit;
+                    display: inline-flex !important; align-items: center !important; gap: 7px !important;
+                    background: ${C.primary} !important; color: ${C.onPrimary} !important; border: none !important;
+                    border-radius: 8px !important; padding: 10px 20px !important;
+                    font-size: 13.5px !important; font-weight: 600 !important; cursor: pointer !important;
+                    text-decoration: none !important; transition: background-color 0.15s !important; font-family: inherit !important;
                 }
-                .ci-btn-primary:hover { filter: brightness(1.08); }
-                .ci-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+                .ci-btn-primary:hover:not(:disabled) { background: ${C.primaryHover} !important; }
+                .ci-btn-primary:disabled { opacity: 0.6 !important; cursor: not-allowed !important; }
+                
+                /* Bordered Neutral Secondary Action Button */
                 .ci-btn-ghost {
-                    display: inline-flex; align-items: center;
-                    background: none; color: ${C.onSurfaceVar};
-                    border: 1px solid ${C.outline}; border-radius: 12px;
-                    padding: 11px 22px; font-size: 14px; font-weight: 500;
-                    cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: inherit;
+                    display: inline-flex !important; align-items: center !important;
+                    background: #ffffff !important; color: ${C.textMuted} !important;
+                    border: 1px solid ${C.outline} !important; border-radius: 8px !important;
+                    padding: 10px 20px !important; font-size: 13.5px !important; font-weight: 500 !important;
+                    cursor: pointer !important; text-decoration: none !important;
+                    transition: all 0.15s !important; font-family: inherit !important;
                 }
-                .ci-btn-ghost:hover { color: ${C.onSurface}; border-color: ${C.onSurfaceVar}50; }
-                .ci-divider { height: 1px; background: ${C.outline}; margin: 6px 0; }
+                .ci-btn-ghost:hover { color: ${C.textMain} !important; border-color: ${C.borderInput} !important; background: #f8fafc !important; }
+                
+                /* Clean dividers and sub-sectioning typography markers */
+                .ci-divider { height: 1px !important; background: #f1f5f9 !important; margin: 4px 0 !important; }
                 .ci-section {
-                    font-size: 11px; font-weight: 700; color: ${C.onSurfaceVar}60;
-                    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; margin-top: 6px;
+                    font-size: 12px !important; font-weight: 700 !important; color: ${C.textSection} !important;
+                    text-transform: uppercase; letter-spacing: 0.05em;
+                    margin-bottom: 16px !important; margin-top: 8px !important;
                 }
+                
+                /* Clean monospaced styling for SKU code block appearance */
                 .ci-sku-input {
                     font-family: 'Courier New', monospace !important;
-                    color: ${C.tertiary} !important; letter-spacing: 0.04em;
+                    color: ${C.skuText} !important; font-weight: 600 !important; letter-spacing: 0.04em;
                 }
+                
+                /* Polished Toggle Row Layout for Light Theme */
                 .ci-toggle-row {
                     display: flex; align-items: center; gap: 14px;
-                    padding: 14px 16px; background: ${C.surfaceLow};
-                    border: 1px solid ${C.outline}; border-radius: 12px;
+                    padding: 14px 16px; background: #f8fafc;
+                    border: 1px solid ${C.outline}; border-radius: 8px;
                 }
                 .ci-toggle {
                     position: relative; width: 40px; height: 22px;
-                    background: ${C.surfaceHigh}; border-radius: 20px;
-                    cursor: pointer; transition: background 0.2s;
-                    flex-shrink: 0; border: none; padding: 0;
+                    background: ${C.borderInput}; border-radius: 20px;
+                    cursor: pointer; transition: background-color 0.15s !important;
+                    flex-shrink: 0; border: none; padding: 0; outline: none;
                 }
-                .ci-toggle.on { background: ${C.primary}; }
+                /* Swapped toggle active state and hover colors to perfectly mirror Save button colors */
+                .ci-toggle.on { background: ${C.primary} !important; }
+                .ci-toggle:hover { filter: brightness(0.95); }
+                .ci-toggle.on:hover { background: ${C.primaryHover} !important; filter: none; }
+                
                 .ci-toggle::after {
                     content: ''; position: absolute; top: 3px; left: 3px;
-                    width: 16px; height: 16px; background: #fff;
+                    width: 16px; height: 16px; background: #ffffff;
                     border-radius: 50%; transition: transform 0.2s;
-                    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
                 }
                 .ci-toggle.on::after { transform: translateX(18px); }
             `}</style>
 
-            {/* Back */}
+            {/* Light-Theme Normalized Back Navigation Link Wrapper */}
             <Link href="/catalog-items" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13,
-                color: C.onSurfaceVar, textDecoration: 'none', marginBottom: 24, transition: 'color 0.15s',
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                fontSize: 13, color: '#64748b', textDecoration: 'none',
+                marginBottom: 20, transition: 'color 0.15s', fontWeight: 500
             }}
-                onMouseEnter={e => e.currentTarget.style.color = C.onSurface}
-                onMouseLeave={e => e.currentTarget.style.color = C.onSurfaceVar}
+                onMouseEnter={e => e.currentTarget.style.color = '#1e293b'}
+                onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
             >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M15 18l-6-6 6-6" />
                 </svg>
                 Back to Catalog
@@ -135,7 +182,7 @@ export default function Edit({ catalogItem, suppliers }) {
                                 <option key={s.id} value={s.id}>{s.name}</option>
                             ))}
                         </select>
-                        {errors.supplier_id && <span className="ci-error">⚠ {errors.supplier_id}</span>}
+                        {errors.supplier_id && <span className="ci-error">{errors.supplier_id}</span>}
                     </div>
 
                     {/* SKU + Name */}
@@ -147,7 +194,7 @@ export default function Edit({ catalogItem, suppliers }) {
                                 value={data.sku}
                                 onChange={e => setData('sku', e.target.value.toUpperCase())}
                             />
-                            {errors.sku && <span className="ci-error">⚠ {errors.sku}</span>}
+                            {errors.sku && <span className="ci-error">{errors.sku}</span>}
                         </div>
                         <div className="ci-field">
                             <label className="ci-label">Item Name *</label>
@@ -156,7 +203,7 @@ export default function Edit({ catalogItem, suppliers }) {
                                 value={data.name}
                                 onChange={e => setData('name', e.target.value)}
                             />
-                            {errors.name && <span className="ci-error">⚠ {errors.name}</span>}
+                            {errors.name && <span className="ci-error">{errors.name}</span>}
                         </div>
                     </div>
 
@@ -169,7 +216,7 @@ export default function Edit({ catalogItem, suppliers }) {
                             onChange={e => setData('category', e.target.value)}
                             placeholder="e.g. Office Supplies, Electronics"
                         />
-                        {errors.category && <span className="ci-error">⚠ {errors.category}</span>}
+                        {errors.category && <span className="ci-error">{errors.category}</span>}
                     </div>
 
                     <div className="ci-divider" />
@@ -183,7 +230,7 @@ export default function Edit({ catalogItem, suppliers }) {
                                 value={data.unit_cost}
                                 onChange={e => setData('unit_cost', e.target.value)}
                             />
-                            {errors.unit_cost && <span className="ci-error">⚠ {errors.unit_cost}</span>}
+                            {errors.unit_cost && <span className="ci-error">{errors.unit_cost}</span>}
                         </div>
                         <div className="ci-field">
                             <label className="ci-label">Safety Stock *</label>
@@ -193,7 +240,7 @@ export default function Edit({ catalogItem, suppliers }) {
                                 onChange={e => setData('safety_stock', e.target.value)}
                             />
                             <span className="ci-hint">Alert triggers below this threshold</span>
-                            {errors.safety_stock && <span className="ci-error">⚠ {errors.safety_stock}</span>}
+                            {errors.safety_stock && <span className="ci-error">{errors.safety_stock}</span>}
                         </div>
                     </div>
 
@@ -207,23 +254,20 @@ export default function Edit({ catalogItem, suppliers }) {
                             onClick={() => setData('is_active', !data.is_active)}
                         />
                         <div>
-                            <div style={{ fontSize: 14, fontWeight: 600, color: data.is_active ? C.primary : C.onSurfaceVar }}>
+                            <div style={{ fontSize: 13.5, fontWeight: 600, color: data.is_active ? C.primary : '#64748b' }}>
                                 {data.is_active ? 'Active' : 'Inactive'}
                             </div>
-                            <div style={{ fontSize: 12, color: C.onSurfaceVar, opacity: 0.6, marginTop: 2 }}>
+                            <div style={{ fontSize: 12, color: '#64748b', opacity: 0.8, marginTop: 2 }}>
                                 {data.is_active
                                     ? 'Item is visible in the procurement catalog'
                                     : 'Item is hidden from procurement requests'}
                             </div>
                         </div>
-                        {errors.is_active && <span className="ci-error">⚠ {errors.is_active}</span>}
+                        {errors.is_active && <span className="ci-error">{errors.is_active}</span>}
                     </div>
 
-                    {/* Actions */}
-                    <div style={{
-                        display: 'flex', gap: 10, marginTop: 6,
-                        paddingTop: 20, borderTop: `1px solid ${C.outline}`,
-                    }}>
+                    {/* Actions Row Styles */}
+                    <div style={{ display: 'flex', gap: 12, marginTop: 8, paddingTop: 20, borderTop: '1px solid #f1f5f9' }}>
                         <button type="submit" disabled={processing} className="ci-btn-primary">
                             {processing ? 'Saving...' : 'Update Item'}
                         </button>

@@ -3,18 +3,18 @@ import { useState } from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 
 const C = {
-    bg: '#0D0E11',
-    surface: '#16171B',
-    surfaceLow: '#1b1b1f',
-    surfaceHigh: '#292a2d',
-    outline: '#23252B',
-    primary: '#4edea3',
-    secondary: '#d0bcff',
-    tertiary: '#ffb95f',
-    onSurface: '#e3e2e6',
-    onSurfaceVar: '#bbcabf',
-    onPrimary: '#003824',
-    error: '#ffb4ab',
+    bg: '#F4F5F8',
+    surface: '#FFFFFF',
+    surfaceLow: '#F8F9FC',
+    surfaceHigh: '#E9EBF0',
+    outline: '#DDE2E5',
+    primary: '#00875A',       
+    secondary: '#6554C0',     
+    tertiary: '#B65C00',      
+    onSurface: '#1A1C1E',     
+    onSurfaceVar: '#5D6166',  
+    onPrimary: '#FFFFFF',
+    error: '#DE350B',         
 }
 
 export default function Create({ openPurchaseOrders, warehouses }) {
@@ -27,7 +27,6 @@ export default function Create({ openPurchaseOrders, warehouses }) {
         line_items: [],
     })
 
-    // when user selects a PO, auto-populate line items from PO's PR line items
     function handlePoSelect(poId) {
         setData('po_id', poId)
 
@@ -40,9 +39,8 @@ export default function Create({ openPurchaseOrders, warehouses }) {
         const po = openPurchaseOrders.find(p => p.id == poId)
         setSelectedPo(po)
 
-        // pre-fill line items from the PO's PR line items
         const lineItems = po?.purchase_request?.line_items
-            ?.filter(li => li.remaining_quantity > 0) // ← add this
+            ?.filter(li => li.remaining_quantity > 0)
             ?.map(li => ({
                 catalog_item_id: li.catalog_item_id,
                 catalog_item_name: li.catalog_item?.name ?? '—',
@@ -74,6 +72,7 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                 .grn-card {
                     background: ${C.surface}; border: 1px solid ${C.outline};
                     border-radius: 16px; padding: 28px; max-width: 760px;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
                 }
                 .grn-field { display: flex; flex-direction: column; gap: 6px; }
                 .grn-label {
@@ -81,19 +80,19 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                     text-transform: uppercase; letter-spacing: 0.08em;
                 }
                 .grn-input, .grn-select, .grn-textarea {
-                    background: ${C.surfaceLow}; border: 1px solid ${C.outline};
+                    background: ${C.surface}; border: 1px solid ${C.outline};
                     border-radius: 10px; padding: 11px 14px; color: ${C.onSurface};
                     font-size: 14px; font-family: inherit; outline: none;
                     transition: border-color 0.15s, box-shadow 0.15s; width: 100%;
                 }
                 .grn-input:focus, .grn-select:focus, .grn-textarea:focus {
-                    border-color: ${C.primary}70;
-                    box-shadow: 0 0 0 3px ${C.primary}10;
+                    border-color: ${C.primary};
+                    box-shadow: 0 0 0 3px ${C.primary}20;
                 }
-                .grn-input::placeholder, .grn-textarea::placeholder { color: ${C.onSurfaceVar}40; }
-                .grn-select option { background: ${C.surfaceLow}; }
+                .grn-input::placeholder, .grn-textarea::placeholder { color: ${C.onSurfaceVar}60; }
+                .grn-select option { background: ${C.surface}; }
                 .grn-textarea { resize: vertical; min-height: 80px; }
-                .grn-error { font-size: 12px; color: ${C.error}; margin-top: 3px; }
+                .grn-error { font-size: 12px; color: ${C.error}; margin-top: 3px; font-weight: 500; }
                 .grn-btn-primary {
                     display: inline-flex; align-items: center; gap: 7px;
                     background: ${C.primary}; color: ${C.onPrimary};
@@ -101,7 +100,7 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                     font-size: 14px; font-weight: 600; cursor: pointer;
                     text-decoration: none; transition: filter 0.15s; font-family: inherit;
                 }
-                .grn-btn-primary:hover { filter: brightness(1.08); }
+                .grn-btn-primary:hover { filter: brightness(0.92); }
                 .grn-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
                 .grn-btn-ghost {
                     display: inline-flex; align-items: center;
@@ -110,12 +109,12 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                     padding: 11px 22px; font-size: 14px; font-weight: 500;
                     cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: inherit;
                 }
-                .grn-btn-ghost:hover { color: ${C.onSurface}; border-color: ${C.onSurfaceVar}50; }
+                .grn-btn-ghost:hover { color: ${C.onSurface}; background: ${C.surfaceLow}; border-color: ${C.onSurfaceVar}50; }
                 .grn-divider { height: 1px; background: ${C.outline}; margin: 6px 0; }
                 .grn-section {
-                    font-size: 11px; font-weight: 700; color: ${C.onSurfaceVar}60;
+                    font-size: 11px; font-weight: 700; color: ${C.onSurfaceVar};
                     text-transform: uppercase; letter-spacing: 0.1em;
-                    margin-bottom: 16px; margin-top: 6px;
+                    margin-bottom: 16px; margin-top: 6px; opacity: 0.8;
                 }
                 .grn-line-table { width: 100%; border-collapse: collapse; }
                 .grn-line-table th {
@@ -127,25 +126,25 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                 }
                 .grn-line-table td {
                     padding: 12px 14px; color: ${C.onSurfaceVar};
-                    border-bottom: 1px solid ${C.outline}15; font-size: 14px;
+                    border-bottom: 1px solid ${C.outline}60; font-size: 14px;
                     vertical-align: middle;
                 }
                 .grn-line-table tbody tr:last-child td { border-bottom: none; }
                 .grn-qty-input {
-                    background: ${C.surfaceLow}; border: 1px solid ${C.outline};
+                    background: ${C.surface}; border: 1px solid ${C.outline};
                     border-radius: 8px; padding: 8px 12px; color: ${C.onSurface};
                     font-size: 14px; font-family: inherit; outline: none;
                     width: 100px; text-align: center;
                     transition: border-color 0.15s, box-shadow 0.15s;
                 }
                 .grn-qty-input:focus {
-                    border-color: ${C.primary}70;
-                    box-shadow: 0 0 0 3px ${C.primary}10;
+                    border-color: ${C.primary};
+                    box-shadow: 0 0 0 3px ${C.primary}20;
                 }
-                .grn-qty-short { border-color: ${C.tertiary}50 !important; }
+                .grn-qty-short { border-color: ${C.tertiary}80 !important; background: ${C.tertiary}05; }
                 .grn-sku {
                     font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700;
-                    color: ${C.tertiary}; background: ${C.tertiary}12;
+                    color: ${C.tertiary}; background: ${C.tertiary}0C;
                     border: 1px solid ${C.tertiary}25; padding: 2px 7px; border-radius: 5px;
                 }
                 .grn-po-info {
@@ -154,7 +153,7 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                     display: flex; gap: 20px; flex-wrap: wrap;
                 }
                 .grn-po-info-item { display: flex; flex-direction: column; gap: 3px; }
-                .grn-po-info-label { font-size: 11px; color: ${C.onSurfaceVar}60; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+                .grn-po-info-label { font-size: 11px; color: ${C.onSurfaceVar}; opacity: 0.7; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
                 .grn-po-info-value { font-size: 13px; color: ${C.onSurface}; font-weight: 500; }
             `}</style>
 
@@ -218,7 +217,7 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                         <div className="grn-po-info">
                             <div className="grn-po-info-item">
                                 <span className="grn-po-info-label">PO Number</span>
-                                <span className="grn-po-info-value" style={{ fontFamily: 'Courier New, monospace', color: C.primary }}>
+                                <span className="grn-po-info-value" style={{ fontFamily: 'Courier New, monospace', color: C.primary, fontWeight: '700' }}>
                                     {selectedPo.po_number}
                                 </span>
                             </div>
@@ -261,7 +260,7 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                             <div className="grn-divider" />
                             <div className="grn-section">Received Items</div>
 
-                            <p style={{ fontSize: 12, color: C.onSurfaceVar, opacity: 0.7, marginTop: -12 }}>
+                            <p style={{ fontSize: 12, color: C.onSurfaceVar, marginTop: -12 }}>
                                 Enter the actual quantity received for each item. Leave as-is if fully received.
                             </p>
 
@@ -302,7 +301,7 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                                                                 className={`grn-qty-input ${isShort ? 'grn-qty-short' : ''}`}
                                                             />
                                                             {isShort && (
-                                                                <span style={{ fontSize: 11, color: C.tertiary }}>
+                                                                <span style={{ fontSize: 11, color: C.tertiary, fontWeight: '600' }}>
                                                                     {item.quantity_ordered - item.quantity_received} short
                                                                 </span>
                                                             )}
@@ -324,15 +323,15 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                             {data.line_items.some(i => i.quantity_received < i.quantity_ordered) && (
                                 <div style={{
                                     display: 'flex', alignItems: 'center', gap: 10,
-                                    padding: '12px 16px', background: `${C.tertiary}10`,
-                                    border: `1px solid ${C.tertiary}25`, borderRadius: 10,
+                                    padding: '12px 16px', background: `${C.tertiary}0A`,
+                                    border: `1px solid ${C.tertiary}35`, borderRadius: 10,
                                 }}>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.tertiary} strokeWidth="2" style={{ flexShrink: 0 }}>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.tertiary} strokeWidth="2.5" style={{ flexShrink: 0 }}>
                                         <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                                         <line x1="12" y1="9" x2="12" y2="13" />
                                         <line x1="12" y1="17" x2="12.01" y2="17" />
                                     </svg>
-                                    <p style={{ fontSize: 13, color: C.tertiary }}>
+                                    <p style={{ fontSize: 13, color: C.tertiary, fontWeight: '500', margin: 0 }}>
                                         Some items are short — this GRN will be flagged as a discrepancy and the PO will be marked partially received.
                                     </p>
                                 </div>

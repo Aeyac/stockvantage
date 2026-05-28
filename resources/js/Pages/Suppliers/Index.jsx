@@ -9,11 +9,12 @@ export default function Index({ suppliers, flash }) {
         }
     }
 
+    // Soft, readable text colors with subtle background pills for light mode
     const termColor = {
-        Net30: '#4f8ef7',
-        Net60: '#f7934f',
-        Net90: '#f74f4f',
-        COD: '#4ff7a0',
+        Net30: { text: '#2563eb', bg: '#eff6ff', border: '#dbeafe' }, // Blue
+        Net60: { text: '#d97706', bg: '#fef3c7', border: '#fde68a' }, // Amber
+        Net90: { text: '#dc2626', bg: '#fef2f2', border: '#fee2e2' }, // Red
+        COD: { text: '#059669', bg: '#ecfdf5', border: '#d1fae5' },   // Emerald
     }
 
     return (
@@ -21,11 +22,12 @@ export default function Index({ suppliers, flash }) {
             <Head title="Suppliers" />
 
             <style>{`
+                /* Primary Brand Button - Updated to your dashboard accent green */
                 .sv-btn-primary {
                     display: inline-flex;
                     align-items: center;
                     gap: 7px;
-                    background: #4f8ef7;
+                    background: #00C488;
                     color: #fff;
                     border: none;
                     border-radius: 8px;
@@ -37,13 +39,15 @@ export default function Index({ suppliers, flash }) {
                     transition: background 0.15s;
                     font-family: inherit;
                 }
-                .sv-btn-primary:hover { background: #3b7de8; }
+                .sv-btn-primary:hover { background: #00a873; }
 
+                /* Crisp Light Mode Table Container */
                 .sv-table-wrap {
-                    background: #0d0d10;
-                    border: 1px solid #16161a;
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
                     border-radius: 12px;
                     overflow: hidden;
+                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
                 }
                 .sv-table {
                     width: 100%;
@@ -51,56 +55,61 @@ export default function Index({ suppliers, flash }) {
                     font-size: 13.5px;
                 }
                 .sv-table thead tr {
-                    border-bottom: 1px solid #16161a;
+                    background: #f8fafc;
+                    border-bottom: 1px solid #e2e8f0;
                 }
                 .sv-table th {
                     text-align: left;
-                    padding: 12px 18px;
+                    padding: 14px 18px;
                     font-size: 11px;
                     font-weight: 600;
-                    color: #4b4b56;
+                    color: #64748b;
                     text-transform: uppercase;
-                    letter-spacing: 0.07em;
+                    letter-spacing: 0.05em;
                 }
                 .sv-table td {
                     padding: 14px 18px;
-                    color: #c8c6bc;
-                    border-bottom: 1px solid #0f0f13;
+                    color: #334155;
+                    border-bottom: 1px solid #f1f5f9;
                 }
                 .sv-table tbody tr:last-child td { border-bottom: none; }
-                .sv-table tbody tr:hover td { background: #0f0f13; }
+                .sv-table tbody tr:hover td { background: #f8fafc; }
 
+                /* Light Mode Status Badges */
                 .sv-status {
                     display: inline-flex;
                     align-items: center;
-                    gap: 5px;
+                    gap: 6px;
                     font-size: 11.5px;
                     font-weight: 500;
-                    padding: 3px 9px;
+                    padding: 3px 10px;
                     border-radius: 20px;
                 }
                 .sv-status.active {
-                    background: rgba(79,247,160,0.08);
-                    color: #4ff7a0;
-                    border: 1px solid rgba(79,247,160,0.15);
+                    background: #f0fdf4;
+                    color: #166534;
+                    border: 1px solid #bbf7d0;
                 }
                 .sv-status.inactive {
-                    background: rgba(247,79,79,0.08);
-                    color: #f74f4f;
-                    border: 1px solid rgba(247,79,79,0.15);
+                    background: #fef2f2;
+                    color: #991b1b;
+                    border: 1px solid #fee2e2;
                 }
+                
+                /* Payment Terms Pill base */
                 .sv-term {
                     font-size: 11.5px;
                     font-weight: 600;
-                    padding: 3px 9px;
+                    padding: 3px 10px;
                     border-radius: 20px;
-                    background: #16161a;
-                    border: 1px solid #232328;
+                    border: 1px solid transparent;
                 }
+
+                /* Contextual Table Row Action Links */
                 .sv-action-link {
                     font-size: 12.5px;
                     font-weight: 500;
-                    color: #4b4b56;
+                    color: #64748b;
                     text-decoration: none;
                     padding: 5px 10px;
                     border-radius: 6px;
@@ -108,15 +117,15 @@ export default function Index({ suppliers, flash }) {
                     border: 1px solid transparent;
                 }
                 .sv-action-link:hover {
-                    color: #e2e0d6;
-                    background: #16161a;
-                    border-color: #232328;
+                    color: #1e293b;
+                    background: #f1f5f9;
                 }
                 .sv-action-link.danger:hover {
-                    color: #f74f4f;
-                    background: rgba(247,79,79,0.08);
-                    border-color: rgba(247,79,79,0.15);
+                    color: #df2c2c;
+                    background: #fef2f2;
                 }
+
+                /* Clean Light Mode Pagination Blocks */
                 .sv-pagination-btn {
                     display: inline-flex;
                     align-items: center;
@@ -126,21 +135,22 @@ export default function Index({ suppliers, flash }) {
                     padding: 0 10px;
                     border-radius: 6px;
                     font-size: 12.5px;
-                    color: #6b6b7a;
-                    background: #0d0d10;
-                    border: 1px solid #16161a;
+                    color: #64748b;
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
                     text-decoration: none;
                     transition: all 0.15s;
                 }
-                .sv-pagination-btn:hover { color: #e2e0d6; border-color: #232328; }
+                .sv-pagination-btn:hover { color: #1e293b; border-color: #cbd5e1; background: #f8fafc; }
                 .sv-pagination-btn.active {
-                    background: #4f8ef7;
+                    background: #00C488;
                     color: #fff;
-                    border-color: #4f8ef7;
+                    border-color: #00C488;
                 }
                 .sv-pagination-btn.disabled {
-                    opacity: 0.3;
+                    opacity: 0.4;
                     pointer-events: none;
+                    background: #f1f5f9;
                 }
                 .empty-state {
                     display: flex;
@@ -149,7 +159,8 @@ export default function Index({ suppliers, flash }) {
                     justify-content: center;
                     padding: 64px 24px;
                     gap: 12px;
-                    color: #4b4b56;
+                    color: #64748b;
+                    background: #ffffff;
                 }
             `}</style>
 
@@ -158,7 +169,7 @@ export default function Index({ suppliers, flash }) {
             {/* Header row */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <div>
-                    <p style={{ fontSize: 13, color: '#4b4b56', marginTop: 4 }}>
+                    <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>
                         {suppliers.total} supplier{suppliers.total !== 1 ? 's' : ''} registered
                     </p>
                 </div>
@@ -170,14 +181,14 @@ export default function Index({ suppliers, flash }) {
                 </Link>
             </div>
 
-            {/* Table */}
+            {/* Table wrapper */}
             <div className="sv-table-wrap">
                 {suppliers.data.length === 0 ? (
                     <div className="empty-state">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-10.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5-13.5h16.5M6.75 6.75h.008v.008H6.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM11.25 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM15.75 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                         </svg>
-                        <p style={{ fontSize: 14 }}>No suppliers yet</p>
+                        <p style={{ fontSize: 14, fontWeight: 500, color: '#475569' }}>No suppliers yet</p>
                         <Link href="/suppliers/create" className="sv-btn-primary" style={{ marginTop: 4 }}>
                             Add your first supplier
                         </Link>
@@ -194,58 +205,70 @@ export default function Index({ suppliers, flash }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {suppliers.data.map(supplier => (
-                                <tr key={supplier.id}>
-                                    <td>
-                                        <div style={{ fontWeight: 500, color: '#e2e0d6' }}>{supplier.name}</div>
-                                        {supplier.entity_number && (
-                                            <div style={{ fontSize: 11.5, color: '#4b4b56', marginTop: 2 }}>
-                                                {supplier.entity_number}
-                                            </div>
-                                        )}
-                                    </td>
-                                    <td>
-                                        <div>{supplier.contact_email}</div>
-                                        {supplier.phone && (
-                                            <div style={{ fontSize: 11.5, color: '#4b4b56', marginTop: 2 }}>
-                                                {supplier.phone}
-                                            </div>
-                                        )}
-                                    </td>
-                                    <td>
-                                        <span className="sv-term" style={{ color: termColor[supplier.payment_terms] ?? '#c8c6bc' }}>
-                                            {supplier.payment_terms}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span className={`sv-status ${supplier.is_active ? 'active' : 'inactive'}`}>
-                                            <span style={{
-                                                width: 5, height: 5, borderRadius: '50%',
-                                                background: supplier.is_active ? '#4ff7a0' : '#f74f4f',
-                                                display: 'inline-block'
-                                            }} />
-                                            {supplier.is_active ? 'Active' : 'Inactive'}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div style={{ display: 'flex', gap: 4 }}>
-                                            <Link
-                                                href={`/suppliers/${supplier.id}/edit`}
-                                                className="sv-action-link"
+                            {suppliers.data.map(supplier => {
+                                // Fallback mapping rules for terms styling
+                                const termStyle = termColor[supplier.payment_terms] ?? { text: '#475569', bg: '#f1f5f9', border: '#e2e8f0' };
+                                
+                                return (
+                                    <tr key={supplier.id}>
+                                        <td>
+                                            <div style={{ fontWeight: 600, color: '#0f172a' }}>{supplier.name}</div>
+                                            {supplier.entity_number && (
+                                                <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+                                                    {supplier.entity_number}
+                                                </div>
+                                            )}
+                                        </td>
+                                        <td>
+                                            <div style={{ color: '#334155' }}>{supplier.contact_email}</div>
+                                            {supplier.phone && (
+                                                <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+                                                    {supplier.phone}
+                                                </div>
+                                            )}
+                                        </td>
+                                        <td>
+                                            <span 
+                                                className="sv-term" 
+                                                style={{ 
+                                                    color: termStyle.text, 
+                                                    backgroundColor: termStyle.bg,
+                                                    borderColor: termStyle.border 
+                                                }}
                                             >
-                                                Edit
-                                            </Link>
-                                            <button
-                                                onClick={() => handleDelete(supplier.id)}
-                                                className="sv-action-link danger"
-                                                style={{ background: 'none', border: '1px solid transparent', cursor: 'pointer', fontFamily: 'inherit' }}
-                                            >
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                                {supplier.payment_terms}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span className={`sv-status ${supplier.is_active ? 'active' : 'inactive'}`}>
+                                                <span style={{
+                                                    width: 6, height: 6, borderRadius: '50%',
+                                                    background: supplier.is_active ? '#16a34a' : '#dc2626',
+                                                    display: 'inline-block'
+                                                }} />
+                                                {supplier.is_active ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div style={{ display: 'flex', gap: 4 }}>
+                                                <Link
+                                                    href={`/suppliers/${supplier.id}/edit`}
+                                                    className="sv-action-link"
+                                                >
+                                                    Edit
+                                                </Link>
+                                                <button
+                                                    onClick={() => handleDelete(supplier.id)}
+                                                    className="sv-action-link danger"
+                                                    style={{ background: 'none', border: '1px solid transparent', cursor: 'pointer', fontFamily: 'inherit' }}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 )}

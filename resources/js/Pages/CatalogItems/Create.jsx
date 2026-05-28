@@ -1,21 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 
-const C = {
-    bg: '#0D0E11',
-    surface: '#16171B',
-    surfaceLow: '#1b1b1f',
-    surfaceHigh: '#292a2d',
-    outline: '#23252B',
-    primary: '#4edea3',
-    secondary: '#d0bcff',
-    tertiary: '#ffb95f',
-    onSurface: '#e3e2e6',
-    onSurfaceVar: '#bbcabf',
-    onPrimary: '#003824',
-    error: '#ffb4ab',
-}
-
 export default function Create({ activeSuppliers }) {
     const { data, setData, post, processing, errors } = useForm({
         supplier_id: '',
@@ -36,162 +21,205 @@ export default function Create({ activeSuppliers }) {
             <Head title="Add Catalog Item" />
 
             <style>{`
-                .ci-card {
-                    background: ${C.surface}; border: 1px solid ${C.outline};
-                    border-radius: 16px; padding: 28px; max-width: 660px;
+                /* Enforce explicit light background card wrapper & override global dark containers */
+                .sv-form-card {
+                    background: #ffffff !important;
+                    border: 1px solid #e2e8f0 !important;
+                    border-radius: 12px !important;
+                    padding: 28px !important;
+                    max-width: 640px !important;
+                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
                 }
-                .ci-field { display: flex; flex-direction: column; gap: 6px; }
-                .ci-label {
-                    font-size: 11px; font-weight: 600; color: ${C.onSurfaceVar};
-                    text-transform: uppercase; letter-spacing: 0.08em;
+                .sv-field { display: flex; flex-direction: column; gap: 6px; }
+                
+                /* High-contrast labels for clear visibility */
+                .sv-label {
+                    font-size: 11.5px !important;
+                    font-weight: 700 !important;
+                    color: #475569 !important;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
                 }
-                .ci-input, .ci-select {
-                    background: ${C.surfaceLow}; border: 1px solid ${C.outline};
-                    border-radius: 10px; padding: 11px 14px; color: ${C.onSurface};
-                    font-size: 14px; font-family: inherit; outline: none;
-                    transition: border-color 0.15s, box-shadow 0.15s; width: 100%;
+                
+                /* Crisp white interactive fields overriding dark style inheritance */
+                .sv-input, .sv-select, .sv-textarea {
+                    background: #ffffff !important;
+                    border: 1px solid #cbd5e1 !important;
+                    border-radius: 8px !important;
+                    padding: 10px 14px !important;
+                    color: #0f172a !important;
+                    font-size: 13.5px !important;
+                    font-family: inherit !important;
+                    outline: none !important;
+                    transition: border-color 0.15s, box-shadow 0.15s !important;
+                    width: 100% !important;
+                    box-sizing: border-box !important;
                 }
-                .ci-input:focus, .ci-select:focus {
-                    border-color: ${C.primary}70;
-                    box-shadow: 0 0 0 3px ${C.primary}10;
+                
+                /* Focus indicator utilizing your dashboard green accent theme */
+                .sv-input:focus, .sv-select:focus, .sv-textarea:focus {
+                    border-color: #00C488 !important;
+                    box-shadow: 0 0 0 3px rgba(0, 196, 136, 0.15) !important;
+                    background: #ffffff !important;
                 }
-                .ci-input::placeholder { color: ${C.onSurfaceVar}40; }
-                .ci-select option { background: ${C.surfaceLow}; }
-                .ci-error { font-size: 12px; color: ${C.error}; margin-top: 3px; display: flex; align-items: center; gap: 4px; }
-                .ci-hint { font-size: 12px; color: ${C.onSurfaceVar}60; margin-top: 3px; }
-                .ci-btn-primary {
-                    display: inline-flex; align-items: center; gap: 7px;
-                    background: ${C.primary}; color: ${C.onPrimary};
-                    border: none; border-radius: 12px; padding: 11px 22px;
-                    font-size: 14px; font-weight: 600; cursor: pointer;
-                    text-decoration: none; transition: filter 0.15s; font-family: inherit;
+                
+                .sv-input::placeholder, .sv-textarea::placeholder { color: #94a3b8 !important; opacity: 1 !important; }
+                .sv-select option { background: #ffffff !important; color: #0f172a !important; }
+                .sv-textarea { resize: vertical; min-height: 90px; }
+                
+                /* Clear high-visibility semantic validation text */
+                .sv-error { font-size: 12.5px !important; color: #dc2626 !important; margin-top: 4px !important; font-weight: 500 !important; }
+                
+                /* Brand Green Button */
+                .sv-btn-primary {
+                    display: inline-flex !important; align-items: center !important; gap: 7px !important;
+                    background: #17aa54 !important; color: #ffffff !important; border: none !important;
+                    border-radius: 8px !important; padding: 10px 20px !important;
+                    font-size: 13.5px !important; font-weight: 600 !important; cursor: pointer !important;
+                    text-decoration: none !important; transition: background-color 0.15s !important; font-family: inherit !important;
                 }
-                .ci-btn-primary:hover { filter: brightness(1.08); }
-                .ci-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-                .ci-btn-ghost {
-                    display: inline-flex; align-items: center;
-                    background: none; color: ${C.onSurfaceVar};
-                    border: 1px solid ${C.outline}; border-radius: 12px;
-                    padding: 11px 22px; font-size: 14px; font-weight: 500;
-                    cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: inherit;
+                .sv-btn-primary:hover:not(:disabled) { background: #1a8f4b !important; }
+                .sv-btn-primary:disabled { opacity: 0.6 !important; cursor: not-allowed !important; }
+                
+                /* Bordered Neutral Secondary Action Button */
+                .sv-btn-ghost {
+                    display: inline-flex !important; align-items: center !important;
+                    background: #ffffff !important; color: #64748b !important;
+                    border: 1px solid #e2e8f0 !important; border-radius: 8px !important;
+                    padding: 10px 20px !important; font-size: 13.5px !important; font-weight: 500 !important;
+                    cursor: pointer !important; text-decoration: none !important;
+                    transition: all 0.15s !important; font-family: inherit !important;
                 }
-                .ci-btn-ghost:hover { color: ${C.onSurface}; border-color: ${C.onSurfaceVar}50; }
-                .ci-divider { height: 1px; background: ${C.outline}; margin: 6px 0; }
-                .ci-section {
-                    font-size: 11px; font-weight: 700; color: ${C.onSurfaceVar}60;
-                    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; margin-top: 6px;
+                .sv-btn-ghost:hover { color: #1e293b !important; border-color: #cbd5e1 !important; background: #f8fafc !important; }
+                
+                /* Clean dividers and sub-sectioning typography markers */
+                .sv-divider {
+                    height: 1px !important; background: #f1f5f9 !important; margin: 4px 0 !important;
                 }
-                .ci-sku-input {
+                .sv-section-label {
+                    font-size: 12px !important; font-weight: 700 !important; color: #94a3b8 !important;
+                    text-transform: uppercase; letter-spacing: 0.05em;
+                    margin-bottom: 16px !important; margin-top: 8px !important;
+                }
+
+                /* Unique identifier treatment */
+                .sv-sku-input {
                     font-family: 'Courier New', monospace !important;
-                    color: ${C.tertiary} !important; letter-spacing: 0.04em;
+                    color: #d97706 !important; letter-spacing: 0.04em;
                 }
+                .sv-hint { font-size: 12px !important; color: #94a3b8 !important; margin-top: 3px !important; }
             `}</style>
 
-            {/* Back */}
+            {/* Light-Theme Normalized Back Navigation Link Wrapper */}
             <Link href="/catalog-items" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13,
-                color: C.onSurfaceVar, textDecoration: 'none', marginBottom: 24,
-                transition: 'color 0.15s',
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                fontSize: 13, color: '#64748b', textDecoration: 'none',
+                marginBottom: 20, transition: 'color 0.15s', fontWeight: 500
             }}
-                onMouseEnter={e => e.currentTarget.style.color = C.onSurface}
-                onMouseLeave={e => e.currentTarget.style.color = C.onSurfaceVar}
+                onMouseEnter={e => e.currentTarget.style.color = '#1e293b'}
+                onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
             >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M15 18l-6-6 6-6" />
                 </svg>
                 Back to Catalog
             </Link>
 
-            <div className="ci-card">
+            <div className="sv-form-card">
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-                    <div className="ci-section">Item Details</div>
+                    <div className="sv-section-label">Item Details</div>
 
                     {/* Supplier */}
-                    <div className="ci-field">
-                        <label className="ci-label">Supplier *</label>
-                        <select className="ci-select" value={data.supplier_id} onChange={e => setData('supplier_id', e.target.value)}>
+                    <div className="sv-field">
+                        <label className="sv-label">Supplier *</label>
+                        <select className="sv-select" value={data.supplier_id} onChange={e => setData('supplier_id', e.target.value)}>
                             <option value="">Select a supplier</option>
                             {activeSuppliers.map(s => (
                                 <option key={s.id} value={s.id}>{s.name}</option>
                             ))}
                         </select>
-                        {errors.supplier_id && <span className="ci-error">⚠ {errors.supplier_id}</span>}
+                        {errors.supplier_id && <span className="sv-error">{errors.supplier_id}</span>}
                     </div>
 
                     {/* SKU + Name */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                        <div className="ci-field">
-                            <label className="ci-label">SKU *</label>
+                        <div className="sv-field">
+                            <label className="sv-label">SKU *</label>
                             <input
-                                className="ci-input ci-sku-input" type="text"
+                                className="sv-input sv-sku-input" 
+                                type="text"
                                 value={data.sku}
                                 onChange={e => setData('sku', e.target.value.toUpperCase())}
                                 placeholder="ITEM-001"
                             />
-                            <span className="ci-hint">Must be unique</span>
-                            {errors.sku && <span className="ci-error">⚠ {errors.sku}</span>}
+                            <span className="sv-hint">Must be unique</span>
+                            {errors.sku && <span className="sv-error">{errors.sku}</span>}
                         </div>
-                        <div className="ci-field">
-                            <label className="ci-label">Item Name *</label>
+                        <div className="sv-field">
+                            <label className="sv-label">Item Name *</label>
                             <input
-                                className="ci-input" type="text"
+                                className="sv-input" 
+                                type="text"
                                 value={data.name}
                                 onChange={e => setData('name', e.target.value)}
                                 placeholder="e.g. Mechanical Keyboard"
                             />
-                            {errors.name && <span className="ci-error">⚠ {errors.name}</span>}
+                            {errors.name && <span className="sv-error">{errors.name}</span>}
                         </div>
                     </div>
 
                     {/* Category */}
-                    <div className="ci-field">
-                        <label className="ci-label">Category</label>
+                    <div className="sv-field">
+                        <label className="sv-label">Category</label>
                         <input
-                            className="ci-input" type="text"
+                            className="sv-input" 
+                            type="text"
                             value={data.category}
                             onChange={e => setData('category', e.target.value)}
                             placeholder="e.g. Office Supplies, Electronics"
                         />
-                        {errors.category && <span className="ci-error">⚠ {errors.category}</span>}
+                        {errors.category && <span className="sv-error">{errors.category}</span>}
                     </div>
 
-                    <div className="ci-divider" />
-                    <div className="ci-section">Pricing & Stock</div>
+                    <div className="sv-divider" />
+                    <div className="sv-section-label">Pricing & Stock</div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                        <div className="ci-field">
-                            <label className="ci-label">Unit Cost (₱) *</label>
+                        <div className="sv-field">
+                            <label className="sv-label">Unit Cost (₱) *</label>
                             <input
-                                className="ci-input" type="number" min="0" step="0.01"
+                                className="sv-input" 
+                                type="number" 
+                                min="0" 
+                                step="0.01"
                                 value={data.unit_cost}
                                 onChange={e => setData('unit_cost', e.target.value)}
                                 placeholder="0.00"
                             />
-                            {errors.unit_cost && <span className="ci-error">⚠ {errors.unit_cost}</span>}
+                            {errors.unit_cost && <span className="sv-error">{errors.unit_cost}</span>}
                         </div>
-                        <div className="ci-field">
-                            <label className="ci-label">Safety Stock *</label>
+                        <div className="sv-field">
+                            <label className="sv-label">Safety Stock *</label>
                             <input
-                                className="ci-input" type="number" min="0"
+                                className="sv-input" 
+                                type="number" 
+                                min="0"
                                 value={data.safety_stock}
                                 onChange={e => setData('safety_stock', e.target.value)}
                                 placeholder="0"
                             />
-                            <span className="ci-hint">Alert triggers below this threshold</span>
-                            {errors.safety_stock && <span className="ci-error">⚠ {errors.safety_stock}</span>}
+                            <span className="sv-hint">Alert triggers below this threshold</span>
+                            {errors.safety_stock && <span className="sv-error">{errors.safety_stock}</span>}
                         </div>
                     </div>
 
-                    {/* Actions */}
-                    <div style={{
-                        display: 'flex', gap: 10, marginTop: 6,
-                        paddingTop: 20, borderTop: `1px solid ${C.outline}`,
-                    }}>
-                        <button type="submit" disabled={processing} className="ci-btn-primary">
+                    {/* Actions Row Styles mapped to updated standard */}
+                    <div style={{ display: 'flex', gap: 12, marginTop: 8, paddingTop: 20, borderTop: '1px solid #f1f5f9' }}>
+                        <button type="submit" disabled={processing} className="sv-btn-primary">
                             {processing ? 'Saving...' : 'Save Item'}
                         </button>
-                        <Link href="/catalog-items" className="ci-btn-ghost">Cancel</Link>
+                        <Link href="/catalog-items" className="sv-btn-ghost">Cancel</Link>
                     </div>
 
                 </form>

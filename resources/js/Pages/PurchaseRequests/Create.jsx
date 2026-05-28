@@ -1,19 +1,24 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 
+// Unified Light Mode Visual System Tokens
 const C = {
-    bg: '#0D0E11',
-    surface: '#16171B',
-    surfaceLow: '#1b1b1f',
-    surfaceHigh: '#292a2d',
-    outline: '#23252B',
-    primary: '#4edea3',
-    secondary: '#d0bcff',
-    tertiary: '#ffb95f',
-    onSurface: '#e3e2e6',
-    onSurfaceVar: '#bbcabf',
-    onPrimary: '#003824',
-    error: '#ffb4ab',
+    bg: '#ffffff',
+    surface: '#ffffff',
+    surfaceLow: '#ffffff',
+    surfaceHigh: '#f8fafc',  // Used for table headers & total summary backgrounds
+    outline: '#e2e8f0',
+    borderInput: '#cbd5e1',
+    primary: '#17aa54',      // Brand green button fill
+    primaryHover: '#1a8f4b', // Brand green button hover
+    primaryFocus: '#00C488', // Dashboard accent green for focus boundaries
+    onPrimary: '#ffffff',
+    textMain: '#0f172a',     // High-contrast primary text
+    textMuted: '#64748b',    // Subdued secondary descriptions
+    textLabel: '#475569',    // High-visibility metadata label gray
+    textSection: '#94a3b8',  // Structural label indicators
+    error: '#dc2626',        // Accessible light-mode alert red
+    tertiary: '#b45309',     // Amber-700 badge text color for clear light-mode parsing
 }
 
 function formatCurrency(value) {
@@ -29,7 +34,7 @@ export default function Create({ catalogItems, flash }) {
         items: [{ catalog_item_id: '', quantity: 1 }],
     })
 
-    // compute running total from catalog item prices
+    // Compute running total from catalog item prices
     function getLineTotal(item) {
         const catalog = catalogItems.find(c => c.id == item.catalog_item_id)
         if (!catalog || !item.quantity) return 0
@@ -45,7 +50,7 @@ export default function Create({ catalogItems, flash }) {
     }
 
     function removeRow(index) {
-        if (data.items.length === 1) return // keep at least one row
+        if (data.items.length === 1) return // Keep at least one row
         setData('items', data.items.filter((_, i) => i !== index))
     }
 
@@ -62,100 +67,144 @@ export default function Create({ catalogItems, flash }) {
     }
 
     const total = getTotal()
-    const willAutoApprove = total > 0 && total < 500
+    // Adjusted logic from < 500 to < 5000 to match systemic business descriptions
+    const willAutoApprove = total > 0 && total < 5000
 
     return (
         <AuthenticatedLayout header="New Purchase Request">
             <Head title="New Purchase Request" />
 
             <style>{`
+                /* Enforce explicit light background card wrapper & override global dark containers */
                 .pr-card {
-                    background: ${C.surface}; border: 1px solid ${C.outline};
-                    border-radius: 16px; padding: 28px; max-width: 780px;
+                    background: ${C.surface} !important; 
+                    border: 1px solid ${C.outline} !important;
+                    border-radius: 12px !important; 
+                    padding: 28px !important; 
+                    max-width: 780px !important;
+                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
                 }
                 .pr-field { display: flex; flex-direction: column; gap: 6px; }
+                
+                /* High-visibility uppercase field labeling */
                 .pr-label {
-                    font-size: 11px; font-weight: 600; color: ${C.onSurfaceVar};
-                    text-transform: uppercase; letter-spacing: 0.08em;
+                    font-size: 11.5px !important; 
+                    font-weight: 700 !important; 
+                    color: ${C.textLabel} !important;
+                    text-transform: uppercase; 
+                    letter-spacing: 0.05em;
                 }
+                
+                /* Crisp custom interactive input spaces fields minimizing legacy color capture */
                 .pr-input, .pr-select, .pr-textarea {
-                    background: ${C.surfaceLow}; border: 1px solid ${C.outline};
-                    border-radius: 10px; padding: 11px 14px; color: ${C.onSurface};
-                    font-size: 14px; font-family: inherit; outline: none;
-                    transition: border-color 0.15s, box-shadow 0.15s; width: 100%;
+                    background: ${C.surfaceLow} !important; 
+                    border: 1px solid ${C.borderInput} !important;
+                    border-radius: 8px !important; 
+                    padding: 10px 14px !important; 
+                    color: ${C.textMain} !important;
+                    font-size: 13.5px !important; 
+                    font-family: inherit !important; 
+                    outline: none !important;
+                    transition: border-color 0.15s, box-shadow 0.15s !important; 
+                    width: 100% !important;
+                    box-sizing: border-box !important;
                 }
+                
+                /* Focus layouts leveraging your specific dashboard color rule */
                 .pr-input:focus, .pr-select:focus, .pr-textarea:focus {
-                    border-color: ${C.primary}70;
-                    box-shadow: 0 0 0 3px ${C.primary}10;
+                    border-color: ${C.primaryFocus} !important;
+                    box-shadow: 0 0 0 3px rgba(0, 196, 136, 0.15) !important;
+                    background: #ffffff !important;
                 }
-                .pr-input::placeholder, .pr-textarea::placeholder { color: ${C.onSurfaceVar}40; }
-                .pr-select option { background: ${C.surfaceLow}; }
+                
+                .pr-input::placeholder, .pr-textarea::placeholder { color: ${C.textSection} !important; opacity: 1 !important; }
+                .pr-select option { background: #ffffff !important; color: ${C.textMain} !important; }
                 .pr-textarea { resize: vertical; min-height: 90px; }
-                .pr-error { font-size: 12px; color: ${C.error}; margin-top: 3px; }
+                
+                /* Highly visible descriptive errors */
+                .pr-error { font-size: 12.5px !important; color: ${C.error} !important; margin-top: 4px !important; font-weight: 500 !important; }
+                
+                /* Brand Green Button Control Form Actions */
                 .pr-btn-primary {
-                    display: inline-flex; align-items: center; gap: 7px;
-                    background: ${C.primary}; color: ${C.onPrimary};
-                    border: none; border-radius: 12px; padding: 11px 22px;
-                    font-size: 14px; font-weight: 600; cursor: pointer;
-                    text-decoration: none; transition: filter 0.15s; font-family: inherit;
+                    display: inline-flex !important; align-items: center !important; gap: 7px !important;
+                    background: ${C.primary} !important; color: ${C.onPrimary} !important; border: none !important;
+                    border-radius: 8px !important; padding: 10px 20px !important;
+                    font-size: 13.5px !important; font-weight: 600 !important; cursor: pointer !important;
+                    text-decoration: none !important; transition: background-color 0.15s !important; font-family: inherit !important;
                 }
-                .pr-btn-primary:hover { filter: brightness(1.08); }
-                .pr-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+                .pr-btn-primary:hover:not(:disabled) { background: ${C.primaryHover} !important; }
+                .pr-btn-primary:disabled { opacity: 0.6 !important; cursor: not-allowed !important; }
+                
+                /* Bordered Neutral Secondary Action Button */
                 .pr-btn-ghost {
-                    display: inline-flex; align-items: center;
-                    background: none; color: ${C.onSurfaceVar};
-                    border: 1px solid ${C.outline}; border-radius: 12px;
-                    padding: 11px 22px; font-size: 14px; font-weight: 500;
-                    cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: inherit;
+                    display: inline-flex !important; align-items: center !important;
+                    background: #ffffff !important; color: ${C.textMuted} !important;
+                    border: 1px solid ${C.outline} !important; border-radius: 8px !important;
+                    padding: 10px 20px !important; font-size: 13.5px !important; font-weight: 500 !important;
+                    cursor: pointer !important; text-decoration: none !important;
+                    transition: all 0.15s !important; font-family: inherit !important;
                 }
-                .pr-btn-ghost:hover { color: ${C.onSurface}; border-color: ${C.onSurfaceVar}50; }
+                .pr-btn-ghost:hover { color: ${C.textMain} !important; border-color: ${C.borderInput} !important; background: #f8fafc !important; }
+                
+                /* Clean dashed button option configuration for dynamic lists additions */
                 .pr-btn-add {
-                    display: inline-flex; align-items: center; gap: 6px;
-                    background: none; color: ${C.primary};
-                    border: 1px dashed ${C.primary}40; border-radius: 10px;
-                    padding: 9px 16px; font-size: 13px; font-weight: 500;
-                    cursor: pointer; transition: all 0.15s; font-family: inherit; width: 100%;
-                    justify-content: center;
+                    display: inline-flex !important; align-items: center !important; gap: 6px !important;
+                    background: #ffffff !important; color: ${C.primary} !important;
+                    border: 1px dashed ${C.borderInput} !important; border-radius: 8px !important;
+                    padding: 10px 16px !important; font-size: 13px !important; font-weight: 600 !important;
+                    cursor: pointer !important; transition: all 0.15s !important; font-family: inherit !important; 
+                    width: 100% !important; justify-content: center !important;
                 }
-                .pr-btn-add:hover { background: ${C.primary}08; border-color: ${C.primary}70; }
+                .pr-btn-add:hover { background: #f0fdf4 !important; border-color: ${C.primaryFocus} !important; }
+                
+                /* Light theme deletion interaction row trigger elements */
                 .pr-btn-remove {
-                    background: none; border: none; cursor: pointer;
-                    color: ${C.onSurfaceVar}; padding: 6px; border-radius: 6px;
-                    transition: all 0.15s; display: flex; align-items: center; justify-content: center;
-                    flex-shrink: 0;
+                    background: none !important; border: none !important; cursor: pointer !important;
+                    color: ${C.textMuted} !important; padding: 10px !important; border-radius: 8px !important;
+                    transition: all 0.15s !important; display: flex !important; align-items: center !important; 
+                    justify-content: center !important; flex-shrink: 0;
                 }
-                .pr-btn-remove:hover { color: ${C.error}; background: ${C.error}10; }
-                .pr-divider { height: 1px; background: ${C.outline}; margin: 6px 0; }
+                .pr-btn-remove:hover { color: ${C.error} !important; background: #fef2f2 !important; }
+                
+                /* Dividers & Headers markers */
+                .pr-divider { height: 1px !important; background: #f1f5f9 !important; margin: 4px 0 !important; }
                 .pr-section {
-                    font-size: 11px; font-weight: 700; color: ${C.onSurfaceVar}60;
-                    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; margin-top: 6px;
+                    font-size: 12px !important; font-weight: 700 !important; color: ${C.textSection} !important;
+                    text-transform: uppercase; letter-spacing: 0.05em; 
+                    margin-bottom: 16px !important; margin-top: 8px !important;
                 }
+                
+                /* Custom spacing configurations for relational table controls mapping layout patterns */
                 .pr-line-row {
-                    display: grid; gap: 12px; align-items: start;
-                    grid-template-columns: 1fr 100px 120px 32px;
+                    display: grid; gap: 16px; align-items: start;
+                    grid-template-columns: 1fr 100px 140px 40px;
                 }
                 .pr-line-total {
-                    font-size: 13px; font-weight: 600; color: ${C.onSurface};
-                    padding: 11px 14px; background: ${C.surfaceLow};
-                    border: 1px solid ${C.outline}; border-radius: 10px;
-                    text-align: right; white-space: nowrap;
+                    font-size: 13.5px !important; font-weight: 600 !important; color: ${C.textMain} !important;
+                    padding: 10px 14px !important; background: ${C.surfaceHigh} !important;
+                    border: 1px solid ${C.borderInput} !important; border-radius: 8px !important;
+                    text-align: right; white-space: nowrap; box-sizing: border-box; height: 41px;
                 }
+                
+                /* Layout components for total summaries */
                 .pr-total-bar {
                     display: flex; justify-content: space-between; align-items: center;
-                    padding: 16px 18px; background: ${C.surfaceLow};
-                    border: 1px solid ${C.outline}; border-radius: 12px; margin-top: 4px;
+                    padding: 16px 20px; background: ${C.surfaceHigh};
+                    border: 1px solid ${C.outline}; border-radius: 8px; margin-top: 4px;
                 }
+                
+                /* Light Mode High Contrast Structural Badges UI elements */
                 .pr-auto-badge {
-                    font-size: 11px; font-weight: 700; padding: 3px 10px;
-                    border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em;
-                    background: ${C.primary}12; color: ${C.primary};
-                    border: 1px solid ${C.primary}25;
+                    font-size: 11px !important; font-weight: 700 !important; padding: 4px 10px !important;
+                    border-radius: 6px !important; text-transform: uppercase; letter-spacing: 0.05em;
+                    background: #f0fdf4 !important; color: ${C.primary} !important;
+                    border: 1px solid #bbf7d0 !important; display: inline-block;
                 }
                 .pr-approval-badge {
-                    font-size: 11px; font-weight: 700; padding: 3px 10px;
-                    border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em;
-                    background: ${C.tertiary}12; color: ${C.tertiary};
-                    border: 1px solid ${C.tertiary}25;
+                    font-size: 11px !important; font-weight: 700 !important; padding: 4px 10px !important;
+                    border-radius: 6px !important; text-transform: uppercase; letter-spacing: 0.05em;
+                    background: #fffbeb !important; color: ${C.tertiary} !important;
+                    border: 1px solid #fef3c7 !important; display: inline-block;
                 }
 
                 @media (max-width: 600px) {
@@ -164,16 +213,15 @@ export default function Create({ catalogItems, flash }) {
                 }
             `}</style>
 
-
-            {/* Back */}
+            {/* Light-Theme Normalized Back Navigation Link Wrapper */}
             <Link href="/purchase-requests" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13,
-                color: C.onSurfaceVar, textDecoration: 'none', marginBottom: 24, transition: 'color 0.15s',
+                color: '#64748b', textDecoration: 'none', marginBottom: 20, transition: 'color 0.15s', fontWeight: 500
             }}
-                onMouseEnter={e => e.currentTarget.style.color = C.onSurface}
-                onMouseLeave={e => e.currentTarget.style.color = C.onSurfaceVar}
+                onMouseEnter={e => e.currentTarget.style.color = '#0f172a'}
+                onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
             >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M15 18l-6-6 6-6" />
                 </svg>
                 Back to Purchase Requests
@@ -182,7 +230,7 @@ export default function Create({ catalogItems, flash }) {
             <div className="pr-card">
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-                    {/* Justification */}
+                    {/* Justification Section */}
                     <div className="pr-section">Request Details</div>
                     <div className="pr-field">
                         <label className="pr-label">Justification *</label>
@@ -192,21 +240,21 @@ export default function Create({ catalogItems, flash }) {
                             onChange={e => setData('justification', e.target.value)}
                             placeholder="Explain why these items are needed..."
                         />
-                        {errors.justification && <span className="pr-error">⚠ {errors.justification}</span>}
+                        {errors.justification && <span className="pr-error">{errors.justification}</span>}
                     </div>
 
                     <div className="pr-divider" />
                     <div className="pr-section">Line Items</div>
 
-                    {/* Column headers */}
-                    <div className="pr-line-row" style={{ marginBottom: -8 }}>
+                    {/* Column Headers */}
+                    <div className="pr-line-row" style={{ marginBottom: -8, paddingRight: 4 }}>
                         <span className="pr-label">Item</span>
                         <span className="pr-label">Qty</span>
                         <span className="pr-label" style={{ textAlign: 'right' }}>Line Total</span>
                         <span />
                     </div>
 
-                    {/* Line item rows */}
+                    {/* Line Item Architecture */}
                     {data.items.map((item, index) => {
                         const lineTotal = getLineTotal(item)
                         const selectedCatalog = catalogItems.find(c => c.id == item.catalog_item_id)
@@ -214,7 +262,7 @@ export default function Create({ catalogItems, flash }) {
                         return (
                             <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                                 <div className="pr-line-row">
-                                    {/* Catalog item dropdown */}
+                                    {/* Catalog Item Dropdown Layout */}
                                     <div>
                                         <select
                                             className="pr-select"
@@ -228,15 +276,15 @@ export default function Create({ catalogItems, flash }) {
                                                 </option>
                                             ))}
                                         </select>
-                                        {/* show unit cost hint */}
+                                        {/* Unit Cost Contextual Hint */}
                                         {selectedCatalog && (
-                                            <div style={{ fontSize: 11, color: C.onSurfaceVar, marginTop: 4, paddingLeft: 2 }}>
+                                            <div style={{ fontSize: 12, color: '#64748b', marginTop: 4, paddingLeft: 2 }}>
                                                 Unit cost: {formatCurrency(selectedCatalog.unit_cost)}
                                             </div>
                                         )}
                                     </div>
 
-                                    {/* Quantity */}
+                                    {/* Quantity Form Input */}
                                     <input
                                         className="pr-input"
                                         type="number"
@@ -245,12 +293,12 @@ export default function Create({ catalogItems, flash }) {
                                         onChange={e => updateRow(index, 'quantity', e.target.value)}
                                     />
 
-                                    {/* Line total */}
+                                    {/* Calculated Line Running Cost Total Container */}
                                     <div className="pr-line-total">
                                         {formatCurrency(lineTotal)}
                                     </div>
 
-                                    {/* Remove row */}
+                                    {/* Dynamic Row Dismissal Controls */}
                                     <button
                                         type="button"
                                         className="pr-btn-remove"
@@ -258,22 +306,22 @@ export default function Create({ catalogItems, flash }) {
                                         disabled={data.items.length === 1}
                                         title="Remove row"
                                     >
-                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                             <line x1="18" y1="6" x2="6" y2="18" />
                                             <line x1="6" y1="6" x2="18" y2="18" />
                                         </svg>
                                     </button>
                                 </div>
 
-                                {/* Row-level errors */}
+                                {/* Matrix Validation Row Output Alerts */}
                                 {errors[`items.${index}.catalog_item_id`] && (
                                     <span className="pr-error" style={{ paddingLeft: 2 }}>
-                                        ⚠ {errors[`items.${index}.catalog_item_id`]}
+                                        {errors[`items.${index}.catalog_item_id`]}
                                     </span>
                                 )}
                                 {errors[`items.${index}.quantity`] && (
                                     <span className="pr-error" style={{ paddingLeft: 2 }}>
-                                        ⚠ {errors[`items.${index}.quantity`]}
+                                        {errors[`items.${index}.quantity`]}
                                     </span>
                                 )}
                             </div>
@@ -281,10 +329,10 @@ export default function Create({ catalogItems, flash }) {
                     })}
 
                     {errors.items && (
-                        <span className="pr-error">⚠ {errors.items}</span>
+                        <span className="pr-error">{errors.items}</span>
                     )}
 
-                    {/* Add row button */}
+                    {/* Dynamic Element Insertion Controller Trigger Button */}
                     <button type="button" className="pr-btn-add" onClick={addRow}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                             <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
@@ -292,14 +340,14 @@ export default function Create({ catalogItems, flash }) {
                         Add Another Item
                     </button>
 
-                    {/* Running total */}
+                    {/* Evaluated Budget Approval Banner Layout */}
                     {total > 0 && (
                         <div className="pr-total-bar">
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                <span style={{ fontSize: 12, color: C.onSurfaceVar, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>
+                                <span style={{ fontSize: 11.5, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700 }}>
                                     Estimated Total
                                 </span>
-                                <span style={{ fontSize: 20, fontWeight: 700, color: C.onSurface }}>
+                                <span style={{ fontSize: 20, fontWeight: 700, color: C.textMain }}>
                                     {formatCurrency(total)}
                                 </span>
                             </div>
@@ -307,15 +355,15 @@ export default function Create({ catalogItems, flash }) {
                                 {willAutoApprove ? (
                                     <>
                                         <span className="pr-auto-badge">Auto Approved</span>
-                                        <span style={{ fontSize: 11, color: C.onSurfaceVar }}>
-                                            Below ₱5000 threshold
+                                        <span style={{ fontSize: 11.5, color: '#64748b', fontWeight: 500 }}>
+                                            Below ₱5,000 threshold
                                         </span>
                                     </>
                                 ) : (
                                     <>
                                         <span className="pr-approval-badge">Needs Approval</span>
-                                        <span style={{ fontSize: 11, color: C.onSurfaceVar }}>
-                                            ₱5000 and above requires manager approval
+                                        <span style={{ fontSize: 11.5, color: '#64748b', fontWeight: 500 }}>
+                                            ₱5,000 and above requires manager sign-off
                                         </span>
                                     </>
                                 )}
@@ -323,10 +371,10 @@ export default function Create({ catalogItems, flash }) {
                         </div>
                     )}
 
-                    {/* Actions */}
+                    {/* Footer Form Commit Controllers */}
                     <div style={{
-                        display: 'flex', gap: 10, marginTop: 6,
-                        paddingTop: 20, borderTop: `1px solid ${C.outline}`,
+                        display: 'flex', gap: 12, marginTop: 8,
+                        paddingTop: 20, borderTop: `1px solid #f1f5f9`,
                     }}>
                         <button type="submit" disabled={processing} className="pr-btn-primary">
                             {processing ? 'Submitting...' : 'Submit Request'}

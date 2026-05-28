@@ -2,29 +2,29 @@ import { Head, Link } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 
 const C = {
-    bg: '#0D0E11',
-    surface: '#16171B',
-    surfaceLow: '#1b1b1f',
-    surfaceHigh: '#292a2d',
-    outline: '#23252B',
-    primary: '#4edea3',
-    secondary: '#d0bcff',
-    tertiary: '#ffb95f',
-    onSurface: '#e3e2e6',
-    onSurfaceVar: '#bbcabf',
-    onPrimary: '#003824',
-    error: '#ffb4ab',
+    bg:          '#f8fafc', // Slate 50
+    surface:     '#ffffff', // Pure White
+    surfaceLow:  '#f8fafc', // Light header tint
+    surfaceHigh: '#f1f5f9', // Slate 100 for hovers
+    outline:     '#e2e8f0', // Slate 200 border
+    primary:     '#00C488', // Premium Dashboard Accent Green
+    secondary:   '#334155', // Plain dark text alternative for system IDs
+    tertiary:    '#b45309', // Amber 700 (Legible light mode warning/discrepancies)
+    onSurface:   '#1e293b', // Slate 800 (Dark body text)
+    onSurfaceVar:'#64748b', // Slate 500 (Muted details/labels)
+    onPrimary:   '#ffffff', 
+    error:       '#dc2626', // Bright Red 600
 }
 
 const STATUS_CONFIG = {
     complete: {
-        label: 'Complete', color: C.primary, bg: `${C.primary}12`, border: `${C.primary}25`,
+        label: 'Complete', color: '#059669', bg: '#ecfdf5', border: '#d1fae5',
     },
     partially_received: {
-        label: 'Partially Received', color: C.tertiary, bg: `${C.tertiary}12`, border: `${C.tertiary}25`,
+        label: 'Partially Received', color: '#d97706', bg: '#fef3c7', border: '#fde68a',
     },
     discrepancy: {
-        label: 'Discrepancy', color: C.error, bg: `${C.error}12`, border: `${C.error}25`,
+        label: 'Discrepancy', color: '#dc2626', bg: '#fef2f2', border: '#fee2e2',
     },
 }
 
@@ -32,10 +32,10 @@ function StatusBadge({ status }) {
     const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.complete
     return (
         <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            fontSize: 12, fontWeight: 700, padding: '4px 12px',
-            borderRadius: 20, textTransform: 'uppercase', letterSpacing: '0.05em',
-            background: config.bg, color: config.color, border: `1px solid ${config.border}`,
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            fontSize: '11.5px', fontWeight: 600, padding: '4px 12px',
+            borderRadius: 20, background: config.bg, color: config.color, 
+            border: `1px solid ${config.border}`,
         }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }} />
             {config.label}
@@ -65,7 +65,8 @@ export default function Show({ grn }) {
             <style>{`
                 .grn-card {
                     background: ${C.surface}; border: 1px solid ${C.outline};
-                    border-radius: 16px; overflow: hidden;
+                    border-radius: 12px; overflow: hidden;
+                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
                 }
                 .grn-card-pad { padding: 24px 28px; }
                 .grn-meta-grid {
@@ -75,50 +76,53 @@ export default function Show({ grn }) {
                 }
                 .grn-meta-item { display: flex; flex-direction: column; gap: 5px; }
                 .grn-meta-label {
-                    font-size: 11px; font-weight: 600; color: ${C.onSurfaceVar}60;
-                    text-transform: uppercase; letter-spacing: 0.08em;
+                    font-size: 11px; font-weight: 600; color: ${C.onSurfaceVar};
+                    text-transform: uppercase; letter-spacing: 0.05em;
                 }
                 .grn-meta-value { font-size: 14px; font-weight: 500; color: ${C.onSurface}; }
-                .grn-table { width: 100%; border-collapse: collapse; }
+                
+                .grn-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
                 .grn-table th {
-                    text-align: left; padding: 12px 20px;
+                    text-align: left; padding: 14px 18px;
                     font-size: 11px; font-weight: 600; color: ${C.onSurfaceVar};
-                    text-transform: uppercase; letter-spacing: 0.07em;
+                    text-transform: uppercase; letter-spacing: 0.05em;
                     border-bottom: 1px solid ${C.outline};
                     background: ${C.surfaceLow};
                 }
                 .grn-table td {
-                    padding: 14px 20px; color: ${C.onSurfaceVar};
-                    border-bottom: 1px solid ${C.outline}15; font-size: 14px;
+                    padding: 14px 18px; color: #334155;
+                    border-bottom: 1px solid #f1f5f9;
                     vertical-align: middle;
                 }
                 .grn-table tbody tr:last-child td { border-bottom: none; }
-                .grn-table tbody tr:hover td { background: ${C.surfaceHigh}40; }
+                .grn-table tbody tr:hover td { background: ${C.surfaceHigh}; }
+                
                 .grn-section-title {
-                    font-size: 11px; font-weight: 700; color: ${C.onSurfaceVar}60;
-                    text-transform: uppercase; letter-spacing: 0.1em;
+                    font-size: 11px; font-weight: 700; color: ${C.onSurfaceVar};
+                    text-transform: uppercase; letter-spacing: 0.05em;
                 }
                 .grn-btn-back {
                     display: inline-flex; align-items: center; gap: 6px;
-                    background: none; color: ${C.onSurfaceVar};
-                    border: 1px solid ${C.outline}; border-radius: 12px;
-                    padding: 9px 16px; font-size: 13px; font-weight: 500;
+                    background: ${C.surface}; color: ${C.onSurfaceVar};
+                    border: 1px solid ${C.outline}; border-radius: 8px;
+                    padding: 8px 14px; font-size: 13px; font-weight: 500;
                     cursor: pointer; text-decoration: none; transition: all 0.15s;
                 }
-                .grn-btn-back:hover { color: ${C.onSurface}; border-color: ${C.onSurfaceVar}50; }
+                .grn-btn-back:hover { color: ${C.onSurface}; border-color: #cbd5e1; background: #f8fafc; }
+                
                 .grn-sku {
                     font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700;
-                    color: ${C.tertiary}; background: ${C.tertiary}12;
-                    border: 1px solid ${C.tertiary}25; padding: 2px 7px; border-radius: 5px;
+                    color: #1e3a8a; background: #eff6ff;
+                    border: 1px solid #bfdbfe; padding: 2px 7px; border-radius: 5px;
                 }
-                .grn-qty-ok { color: ${C.primary}; font-weight: 700; }
+                .grn-qty-ok { color: #059669; font-weight: 600; }
                 .grn-qty-short {
-                    color: ${C.tertiary}; font-weight: 700;
+                    color: ${C.tertiary}; font-weight: 600;
                     display: inline-flex; align-items: center; gap: 4px;
                 }
                 .grn-discrepancy-note {
-                    font-size: 11px; color: ${C.tertiary}; margin-top: 3px;
-                    display: flex; align-items: center; gap: 4px;
+                    font-size: 12px; color: ${C.tertiary}; margin-top: 3px;
+                    display: flex; align-items: center; gap: 5px;
                 }
 
                 @media (max-width: 600px) {
@@ -148,19 +152,21 @@ export default function Show({ grn }) {
                             <div>
                                 <div style={{
                                     fontFamily: "'Courier New', monospace",
-                                    fontSize: 13, fontWeight: 700,
-                                    color: C.secondary, marginBottom: 6,
+                                    fontSize: '14px', fontWeight: 500,
+                                    color: C.secondary, marginBottom: 4,
                                 }}>
                                     GRN-{String(grn.id).padStart(4, '0')}
                                 </div>
-                                <div style={{ fontSize: 14, color: C.onSurfaceVar }}>
+                                <div style={{ fontSize: 13.5, color: C.onSurfaceVar }}>
                                     Goods received against{' '}
                                     <Link
                                         href={`/purchase-orders/${po?.id}`}
                                         style={{
                                             fontFamily: 'Courier New, monospace',
-                                            color: C.primary, textDecoration: 'none',
-                                            fontWeight: 700,
+                                            color: '#1e3a8a', background: '#eff6ff',
+                                            border: '1px solid #bfdbfe', padding: '2px 6px',
+                                            borderRadius: 4, textDecoration: 'none',
+                                            fontWeight: 700, fontSize: 11.5
                                         }}
                                     >
                                         {po?.po_number}
@@ -180,20 +186,21 @@ export default function Show({ grn }) {
                             </div>
                             <div className="grn-meta-item">
                                 <span className="grn-meta-label">Linked PO</span>
-                                <Link
-                                    href={`/purchase-orders/${po?.id}`}
-                                    style={{
-                                        fontFamily: "'Courier New', monospace",
-                                        fontSize: 13, fontWeight: 700,
-                                        color: C.primary,
-                                        background: `${C.primary}12`,
-                                        border: `1px solid ${C.primary}25`,
-                                        padding: '3px 9px', borderRadius: 6,
-                                        textDecoration: 'none', display: 'inline-block',
-                                    }}
-                                >
-                                    {po?.po_number}
-                                </Link>
+                                <div>
+                                    <Link
+                                        href={`/purchase-orders/${po?.id}`}
+                                        style={{
+                                            fontFamily: "'Courier New', monospace",
+                                            fontSize: 11.5, fontWeight: 700,
+                                            color: '#1e3a8a', background: '#eff6ff',
+                                            border: '1px solid #bfdbfe',
+                                            padding: '3px 9px', borderRadius: 6,
+                                            textDecoration: 'none', display: 'inline-block',
+                                        }}
+                                    >
+                                        {po?.po_number}
+                                    </Link>
+                                </div>
                             </div>
                             <div className="grn-meta-item">
                                 <span className="grn-meta-label">Date Received</span>
@@ -211,11 +218,11 @@ export default function Show({ grn }) {
                         {grn.notes && (
                             <div style={{
                                 marginTop: 20, padding: '14px 16px',
-                                background: C.surfaceLow, borderRadius: 10,
+                                background: '#f8fafc', borderRadius: 8,
                                 border: `1px solid ${C.outline}`,
                             }}>
                                 <div className="grn-section-title" style={{ marginBottom: 8 }}>Notes</div>
-                                <p style={{ fontSize: 14, color: C.onSurfaceVar, lineHeight: 1.6 }}>
+                                <p style={{ fontSize: 13.5, color: '#334155', lineHeight: 1.6 }}>
                                     {grn.notes}
                                 </p>
                             </div>
@@ -228,8 +235,8 @@ export default function Show({ grn }) {
                     <div style={{
                         display: 'flex', alignItems: 'flex-start', gap: 12,
                         padding: '16px 20px',
-                        background: `${C.tertiary}10`,
-                        border: `1px solid ${C.tertiary}25`,
+                        background: '#fffbeb', // Soft Amber 50
+                        border: '1px solid #fde68a', // Amber 200
                         borderRadius: 12,
                     }}>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.tertiary} strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}>
@@ -241,7 +248,7 @@ export default function Show({ grn }) {
                             <div style={{ fontSize: 13, fontWeight: 600, color: C.tertiary }}>
                                 Discrepancy Detected
                             </div>
-                            <div style={{ fontSize: 12, color: C.onSurfaceVar, marginTop: 3 }}>
+                            <div style={{ fontSize: 12.5, color: '#475569', marginTop: 3, lineHeight: 1.5 }}>
                                 One or more items were received short of the ordered quantity. The purchase order has been marked as partially received.
                             </div>
                         </div>
@@ -278,7 +285,7 @@ export default function Show({ grn }) {
                                                 {line.catalog_item?.sku ?? '—'}
                                             </span>
                                         </td>
-                                        <td style={{ textAlign: 'center', fontWeight: 600, color: C.onSurface }}>
+                                        <td style={{ textAlign: 'center', fontWeight: 500, color: C.onSurface }}>
                                             {line.quantity_ordered}
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
@@ -306,7 +313,7 @@ export default function Show({ grn }) {
                                                     {line.discrepancy_note}
                                                 </div>
                                             ) : (
-                                                <span style={{ color: C.primary, fontSize: 13, fontWeight: 500 }}>
+                                                <span style={{ color: '#059669', fontSize: 13, fontWeight: 500 }}>
                                                     ✓ Full
                                                 </span>
                                             )}

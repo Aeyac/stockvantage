@@ -2,45 +2,51 @@ import { Head, Link } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 
+// Unified Light Mode Visual System Tokens
 const C = {
-    bg: '#0D0E11',
-    surface: '#16171B',
-    surfaceLow: '#1b1b1f',
-    surfaceHigh: '#292a2d',
-    outline: '#23252B',
-    primary: '#4edea3',
-    secondary: '#d0bcff',
-    tertiary: '#ffb95f',
-    onSurface: '#e3e2e6',
-    onSurfaceVar: '#bbcabf',
-    onPrimary: '#003824',
-    error: '#ffb4ab',
+    bg: '#ffffff',
+    surface: '#ffffff',
+    surfaceLow: '#ffffff',
+    surfaceHigh: '#f8fafc',    // Used for table header rows and action hovers
+    outline: '#e2e8f0',
+    borderInput: '#cbd5e1',
+    primary: '#17aa54',        // Brand green color
+    primaryHover: '#1a8f4b',
+    onPrimary: '#ffffff',
+    textMain: '#0f172a',       // Strong primary emphasis
+    textMuted: '#64748b',      // Subdued values and description labels
+    textLabel: '#475569',      // Structured subtitle metrics/subheadings
+    error: '#dc2626',          // Accessible deep red alert tone
+    errorBg: '#fef2f2',
+    errorBorder: '#fca5a5',
+    tertiary: '#b45309',       // Deep golden amber for warning/partial states
+    secondary: '#4338ca',      // High-contrast indigo for system links and badges
 }
 
 const STATUS_CONFIG = {
     open: {
         label: 'Open',
-        color: '#60a5fa',
-        bg: '#60a5fa12',
-        border: '#60a5fa25',
+        color: '#2563eb',       // Accessible high-contrast blue text
+        bg: '#eff6ff',
+        border: '#bfdbfe',
     },
     partially_received: {
         label: 'Partial',
         color: C.tertiary,
-        bg: '#ffb95f12',
-        border: '#ffb95f25',
+        bg: '#fffbeb',
+        border: '#fef3c7',
     },
     fully_received: {
         label: 'Fully Received',
         color: C.primary,
-        bg: '#4edea312',
-        border: '#4edea325',
+        bg: '#f0fdf4',
+        border: '#bbf7d0',
     },
     cancelled: {
         label: 'Cancelled',
         color: C.error,
-        bg: '#ffb4ab12',
-        border: '#ffb4ab25',
+        bg: C.errorBg,
+        border: C.errorBorder,
     },
 }
 
@@ -48,9 +54,9 @@ function StatusBadge({ status }) {
     const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.open
     return (
         <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            fontSize: 11, fontWeight: 700, padding: '3px 10px',
-            borderRadius: 20, textTransform: 'uppercase', letterSpacing: '0.05em',
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            fontSize: 10, fontWeight: 700, padding: '4px 10px',
+            borderRadius: 6, textTransform: 'uppercase', letterSpacing: '0.05em',
             background: config.bg, color: config.color, border: `1px solid ${config.border}`,
         }}>
             <span style={{
@@ -84,109 +90,140 @@ export default function Index({ purchaseOrders, flash }) {
             <Head title="Purchase Orders" />
 
             <style>{`
+                /* Card wrap and table structural frames */
                 .po-card {
-                    background: ${C.surface}; border: 1px solid ${C.outline};
-                    border-radius: 16px; overflow: hidden;
+                    background: ${C.surface} !important; 
+                    border: 1px solid ${C.outline} !important;
+                    border-radius: 12px !important; 
+                    overflow: hidden !important;
+                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
                 }
-                .po-table { width: 100%; border-collapse: collapse; }
+                
+                .po-table { width: 100% !important; border-collapse: collapse !important; }
+                
                 .po-table th {
-                    text-align: left; padding: 12px 20px;
-                    font-size: 11px; font-weight: 600; color: ${C.onSurfaceVar};
-                    text-transform: uppercase; letter-spacing: 0.07em;
-                    border-bottom: 1px solid ${C.outline};
+                    padding: 12px 20px !important;
+                    font-size: 11px !important; 
+                    font-weight: 700 !important; 
+                    color: ${C.textLabel} !important;
+                    text-transform: uppercase; 
+                    letter-spacing: 0.05em;
+                    border-bottom: 1px solid ${C.outline} !important;
+                    background: ${C.surfaceHigh} !important;
                 }
+                
                 .po-table td {
-                    padding: 15px 20px; color: ${C.onSurfaceVar};
-                    border-bottom: 1px solid ${C.outline}15; font-size: 14px;
+                    padding: 15px 20px !important; 
+                    color: ${C.textMuted} !important;
+                    border-bottom: 1px solid ${C.outline} !important; 
+                    font-size: 13.5px !important;
                 }
-                .po-table tbody tr:last-child td { border-bottom: none; }
+                .po-table tbody tr:last-child td { border-bottom: none !important; }
                 .po-table tbody tr { transition: background 0.1s; }
-                .po-table tbody tr:hover td { background: ${C.surfaceHigh}40; }
+                .po-table tbody tr:hover td { background: ${C.surfaceHigh}50 !important; }
+                
+                /* Standard dynamic table row view link item action buttons */
                 .po-action {
-                    font-size: 13px; font-weight: 500; color: ${C.onSurfaceVar};
-                    text-decoration: none; padding: 5px 12px; border-radius: 8px;
-                    transition: all 0.15s; border: 1px solid transparent;
+                    font-size: 13px !important; 
+                    font-weight: 500 !important; 
+                    color: #64748b !important;
+                    text-decoration: none; 
+                    padding: 6px 14px; 
+                    transition: all 0.15s; 
+                    background: #ffffff !important;
                 }
                 .po-action:hover {
-                    color: ${C.onSurface}; background: ${C.surfaceHigh};
-                    border-color: ${C.outline};
+                    color: ${C.textMain} !important; 
+                    background: ${C.surfaceHigh} !important;
+                    border-color: ${C.borderInput} !important;
                 }
+                
+                /* Pagination dynamic buttons control links template state wrappers */
                 .po-pg-btn {
-                    display: inline-flex; align-items: center; justify-content: center;
-                    min-width: 34px; height: 34px; padding: 0 10px; border-radius: 8px;
-                    font-size: 13px; color: ${C.onSurfaceVar}; background: ${C.surface};
-                    border: 1px solid ${C.outline}; text-decoration: none; transition: all 0.15s;
+                    display: inline-flex !important; align-items: center !important; justify-content: center !important;
+                    min-width: 34px !important; height: 34px !important; padding: 0 12px !important; 
+                    border-radius: 6px !important; font-size: 13px !important; 
+                    color: ${C.textMuted} !important; background: #ffffff !important;
+                    border: 1px solid ${C.outline} !important; text-decoration: none !important; transition: all 0.15s !important;
                 }
-                .po-pg-btn:hover { color: ${C.onSurface}; border-color: ${C.onSurfaceVar}50; }
+                .po-pg-btn:hover { color: ${C.textMain} !important; border-color: ${C.borderInput} !important; background: ${C.surfaceHigh} !important; }
                 .po-pg-btn.active {
-                    background: ${C.primary}; color: ${C.onPrimary};
-                    border-color: ${C.primary}; font-weight: 700;
+                    background: ${C.primary} !important; 
+                    color: ${C.onPrimary} !important;
+                    border-color: ${C.primary} !important; 
+                    font-weight: 700 !important;
                 }
-                .po-pg-btn.disabled { opacity: 0.3; pointer-events: none; }
+                .po-pg-btn.disabled { opacity: 0.4 !important; pointer-events: none !important; }
+                
+                /* Empty state feedback wrapper layout structures */
                 .po-empty {
-                    display: flex; flex-direction: column; align-items: center;
-                    justify-content: center; padding: 72px 24px; gap: 14px;
-                    color: ${C.onSurfaceVar};
+                    display: flex !important; flex-direction: column !important; align-items: center !important;
+                    justify-content: center !important; padding: 72px 24px !important; gap: 12px !important;
+                    color: ${C.textMuted} !important;
                 }
+                
+                /* Clean code identifiers monospace structural tags */
                 .po-number {
-                    font-family: 'Courier New', monospace; font-size: 12px;
-                    font-weight: 700; color: ${C.primary};
-                    background: ${C.primary}12; border: 1px solid ${C.primary}25;
-                    padding: 3px 9px; border-radius: 6px; letter-spacing: 0.03em;
+                    font-family: 'Courier New', monospace; font-size: 11.5px;
+                    font-weight: 700; color: ${C.textMain};
+                    background: ${C.surfaceHigh}; border: 1px solid ${C.outline};
+                    padding: 3px 8px; border-radius: 4px; letter-spacing: 0.02em;
                 }
+                
                 .po-pr-link {
-                    font-family: 'Courier New', monospace; font-size: 11px;
+                    font-family: 'Courier New', monospace; font-size: 11.5px;
                     font-weight: 700; color: ${C.secondary};
-                    background: ${C.secondary}12; border: 1px solid ${C.secondary}20;
-                    padding: 2px 8px; border-radius: 5px; text-decoration: none;
+                    background: #eef2ff; border: 1px solid #e0e7ff;
+                    padding: 3px 8px; border-radius: 4px; text-decoration: none;
                     transition: all 0.15s;
                 }
-                .po-pr-link:hover { background: ${C.secondary}20; }
+                .po-pr-link:hover { background: #e0e7ff; border-color: #c7d2fe; }
             `}</style>
 
             <FlashMessage flash={flash} />
-            {/* Header */}
+            
+            {/* Header Metrics Summary */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                <p style={{ fontSize: 14, color: C.onSurfaceVar }}>
-                    {purchaseOrders.total} order{purchaseOrders.total !== 1 ? 's' : ''}
+                <p style={{ fontSize: 14, color: C.textMuted, margin: 0, fontWeight: 500 }}>
+                    {purchaseOrders.total} order{purchaseOrders.total !== 1 ? 's' : ''} found
                 </p>
             </div>
 
-            {/* Table */}
+            {/* Table Matrix Framework Card Container */}
             <div className="po-card">
                 {purchaseOrders.data.length === 0 ? (
                     <div className="po-empty">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" opacity="0.4">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: C.textMuted, opacity: 0.6 }}>
                             <rect x="2" y="3" width="20" height="14" rx="2" />
                             <path d="M8 21h8M12 17v4" />
                         </svg>
-                        <p style={{ fontSize: 15, fontWeight: 500, color: C.onSurface }}>
+                        <p style={{ fontSize: 15, fontWeight: 600, color: C.textMain, margin: 0 }}>
                             No purchase orders yet
                         </p>
-                        <p style={{ fontSize: 13 }}>
-                            POs are generated automatically when a purchase request is approved
+                        <p style={{ fontSize: 13, color: C.textMuted, margin: 0, textAlign: 'center' }}>
+                            POs are generated automatically when a purchase request is approved.
                         </p>
                     </div>
                 ) : (
                     <table className="po-table">
                         <thead>
                             <tr>
-                                <th>PO Number</th>
-                                <th>Linked PR</th>
-                                <th>Requested By</th>
-                                <th>Total Amount</th>
-                                <th>Status</th>
-                                <th>Date Created</th>
-                                <th>Actions</th>
+                                <th style={{ textAlign: 'left', width: '18%' }}>PO Number</th>
+                                <th style={{ textAlign: 'left', width: '15%' }}>Linked PR</th>
+                                <th style={{ textAlign: 'left', width: '22%' }}>Requested By</th>
+                                <th style={{ textAlign: 'right', width: '16%' }}>Total Amount</th>
+                                <th style={{ textAlign: 'left', width: '15%', paddingLeft: '24px' }}>Status</th>
+                                <th style={{ textAlign: 'left', width: '14%' }}>Date Created</th>
+                                <th style={{ textAlign: 'center', width: '10%' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {purchaseOrders.data.map(po => (
                                 <tr key={po.id}>
-                                    <td>
+                                    <td style={{ textAlign: 'left' }}>
                                         <span className="po-number">{po.po_number}</span>
                                     </td>
-                                    <td>
+                                    <td style={{ textAlign: 'left' }}>
                                         <Link
                                             href={`/purchase-requests/${po.purchase_request?.id}`}
                                             className="po-pr-link"
@@ -194,21 +231,21 @@ export default function Index({ purchaseOrders, flash }) {
                                             {formatPrId(po.purchase_request?.id)}
                                         </Link>
                                     </td>
-                                    <td>
-                                        <span style={{ fontWeight: 500, color: C.onSurface }}>
+                                    <td style={{ textAlign: 'left' }}>
+                                        <span style={{ fontWeight: 600, color: C.textMain }}>
                                             {po.purchase_request?.requester?.name ?? '—'}
                                         </span>
                                     </td>
-                                    <td>
-                                        <span style={{ fontWeight: 600, color: C.onSurface }}>
-                                            {formatCurrency(po.total_amount)}
-                                        </span>
+                                    <td style={{ textAlign: 'right', fontWeight: 600, color: C.textMain }}>
+                                        {formatCurrency(po.total_amount)}
                                     </td>
-                                    <td><StatusBadge status={po.status} /></td>
-                                    <td style={{ color: C.onSurfaceVar }}>
+                                    <td style={{ textAlign: 'left', paddingLeft: '24px' }}>
+                                        <StatusBadge status={po.status} />
+                                    </td>
+                                    <td style={{ textAlign: 'left', color: C.textMuted }}>
                                         {formatDate(po.created_at)}
                                     </td>
-                                    <td>
+                                    <td style={{ textAlign: 'center' }}>
                                         <Link
                                             href={`/purchase-orders/${po.id}`}
                                             className="po-action"
@@ -223,9 +260,9 @@ export default function Index({ purchaseOrders, flash }) {
                 )}
             </div>
 
-            {/* Pagination */}
+            {/* Pagination Controls Footer Segment */}
             {purchaseOrders.last_page > 1 && (
-                <div style={{ display: 'flex', gap: 6, marginTop: 20, justifyContent: 'flex-end' }}>
+                <div style={{ display: 'flex', gap: 6, marginTop: 24, justifyContent: 'flex-end' }}>
                     {purchaseOrders.links.map((link, i) => (
                         <Link
                             key={i}

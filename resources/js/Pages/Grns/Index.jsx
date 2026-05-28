@@ -3,29 +3,29 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 
 const C = {
-    bg: '#0D0E11',
-    surface: '#16171B',
-    surfaceLow: '#1b1b1f',
-    surfaceHigh: '#292a2d',
-    outline: '#23252B',
-    primary: '#4edea3',
-    secondary: '#d0bcff',
-    tertiary: '#ffb95f',
-    onSurface: '#e3e2e6',
-    onSurfaceVar: '#bbcabf',
-    onPrimary: '#003824',
-    error: '#ffb4ab',
+    bg:          '#f8fafc', // Slate 50
+    surface:     '#ffffff', // Pure White
+    surfaceLow:  '#ffffff', 
+    surfaceHigh: '#f1f5f9', // Slate 100 (Table hover background)
+    outline:     '#e2e8f0', // Slate 200
+    primary:     '#00C488', // Premium Dashboard Accent Green
+    secondary:   '#d97706', // Amber / Warning
+    tertiary:    '#ffb95f', 
+    onSurface:   '#1e293b', // Slate 800 (Dark text)
+    onSurfaceVar:'#64748b', // Slate 500 (Muted text/labels)
+    onPrimary:   '#ffffff', // White text on green button
+    error:       '#dc2626', // Bright Red 600
 }
 
 const STATUS_CONFIG = {
     complete: {
-        label: 'Complete', color: C.primary, bg: `${C.primary}12`, border: `${C.primary}25`,
+        label: 'Complete', color: '#059669', bg: '#ecfdf5', border: '#d1fae5',
     },
     partially_received: {
-        label: 'Partial', color: C.tertiary, bg: `${C.tertiary}12`, border: `${C.tertiary}25`,
+        label: 'Partial', color: '#d97706', bg: '#fef3c7', border: '#fde68a',
     },
     discrepancy: {
-        label: 'Discrepancy', color: C.error, bg: `${C.error}12`, border: `${C.error}25`,
+        label: 'Discrepancy', color: '#dc2626', bg: '#fef2f2', border: '#fee2e2',
     },
 }
 
@@ -33,12 +33,12 @@ function StatusBadge({ status }) {
     const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.complete
     return (
         <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            fontSize: 11, fontWeight: 700, padding: '3px 10px',
-            borderRadius: 20, textTransform: 'uppercase', letterSpacing: '0.05em',
-            background: config.bg, color: config.color, border: `1px solid ${config.border}`,
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            fontSize: '11.5px', fontWeight: 600, padding: '3px 10px',
+            borderRadius: 20, background: config.bg, color: config.color, 
+            border: `1px solid ${config.border}`,
         }}>
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }} />
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }} />
             {config.label}
         </span>
     )
@@ -56,62 +56,71 @@ export default function Index({ grns, flash }) {
             <Head title="GRN" />
 
             <style>{`
+                /* Primary Dashboard Button styling */
                 .grn-btn-primary {
                     display: inline-flex; align-items: center; gap: 7px;
                     background: ${C.primary}; color: ${C.onPrimary};
-                    border: none; border-radius: 12px; padding: 10px 18px;
-                    font-size: 14px; font-weight: 600; cursor: pointer;
-                    text-decoration: none; transition: filter 0.15s; font-family: inherit;
+                    border: none; border-radius: 8px; padding: 9px 16px;
+                    font-size: 13px; font-weight: 500; cursor: pointer;
+                    text-decoration: none; transition: background 0.15s; font-family: inherit;
                 }
-                .grn-btn-primary:hover { filter: brightness(1.1); }
+                .grn-btn-primary:hover { background: #00a873; }
+                
+                /* Clean Light Mode Table Container */
                 .grn-card {
                     background: ${C.surface}; border: 1px solid ${C.outline};
-                    border-radius: 16px; overflow: hidden;
+                    border-radius: 12px; overflow: hidden;
+                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
                 }
-                .grn-table { width: 100%; border-collapse: collapse; }
+                .grn-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+                .grn-table thead tr { background: #f8fafc; }
                 .grn-table th {
-                    text-align: left; padding: 12px 20px;
+                    text-align: left; padding: 14px 18px;
                     font-size: 11px; font-weight: 600; color: ${C.onSurfaceVar};
-                    text-transform: uppercase; letter-spacing: 0.07em;
+                    text-transform: uppercase; letter-spacing: 0.05em;
                     border-bottom: 1px solid ${C.outline};
                 }
                 .grn-table td {
-                    padding: 15px 20px; color: ${C.onSurfaceVar};
-                    border-bottom: 1px solid ${C.outline}15; font-size: 14px;
+                    padding: 14px 18px; color: #334155;
+                    border-bottom: 1px solid #f1f5f9;
                 }
                 .grn-table tbody tr:last-child td { border-bottom: none; }
-                .grn-table tbody tr:hover td { background: ${C.surfaceHigh}40; }
+                .grn-table tbody tr:hover td { background: ${C.surfaceHigh}; }
+                
+                /* Row Action Links */
                 .grn-action {
-                    font-size: 13px; font-weight: 500; color: ${C.onSurfaceVar};
-                    text-decoration: none; padding: 5px 12px; border-radius: 8px;
+                    font-size: 12.5px; font-weight: 500; color: ${C.onSurfaceVar};
+                    text-decoration: none; padding: 5px 10px; border-radius: 6px;
                     transition: all 0.15s; border: 1px solid transparent;
                 }
                 .grn-action:hover {
-                    color: ${C.onSurface}; background: ${C.surfaceHigh};
-                    border-color: ${C.outline};
+                    color: #1e293b; background: #f1f5f9;
                 }
+                
+                /* Light Mode Pagination Elements */
                 .grn-pg-btn {
                     display: inline-flex; align-items: center; justify-content: center;
-                    min-width: 34px; height: 34px; padding: 0 10px; border-radius: 8px;
-                    font-size: 13px; color: ${C.onSurfaceVar}; background: ${C.surface};
+                    min-width: 32px; height: 32px; padding: 0 10px; border-radius: 6px;
+                    font-size: 12.5px; color: ${C.onSurfaceVar}; background: ${C.surface};
                     border: 1px solid ${C.outline}; text-decoration: none; transition: all 0.15s;
                 }
-                .grn-pg-btn:hover { color: ${C.onSurface}; border-color: ${C.onSurfaceVar}50; }
-                .grn-pg-btn.active { background: ${C.primary}; color: ${C.onPrimary}; border-color: ${C.primary}; font-weight: 700; }
-                .grn-pg-btn.disabled { opacity: 0.3; pointer-events: none; }
+                .grn-pg-btn:hover { color: #1e293b; border-color: #cbd5e1; background: #f8fafc; }
+                .grn-pg-btn.active { background: ${C.primary}; color: ${C.onPrimary}; border-color: ${C.primary}; font-weight: 600; }
+                .grn-pg-btn.disabled { opacity: 0.4; pointer-events: none; background: #f1f5f9; }
+                
+                /* Table Row Badges and Plain Typography */
                 .grn-empty {
                     display: flex; flex-direction: column; align-items: center;
-                    justify-content: center; padding: 72px 24px; gap: 14px; color: ${C.onSurfaceVar};
+                    justify-content: center; padding: 64px 24px; gap: 12px; color: ${C.onSurfaceVar};
                 }
                 .grn-po-badge {
-                    font-family: 'Courier New', monospace; font-size: 12px; font-weight: 700;
-                    color: ${C.primary}; background: ${C.primary}12;
-                    border: 1px solid ${C.primary}25; padding: 3px 9px; border-radius: 6px;
+                    font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700;
+                    color: #1e3a8a; background: #eff6ff;
+                    border: 1px solid #bfdbfe; padding: 2px 7px; border-radius: 6px;
                 }
                 .grn-id-badge {
-                    font-family: 'Courier New', monospace; font-size: 12px; font-weight: 700;
-                    color: ${C.secondary}; background: ${C.secondary}12;
-                    border: 1px solid ${C.secondary}20; padding: 3px 9px; border-radius: 6px;
+                    font-family: 'Courier New', monospace; font-size: 13px; font-weight: 500;
+                    color: #334155; letter-spacing: 0.02em;
                 }
             `}</style>
 
@@ -119,8 +128,8 @@ export default function Index({ grns, flash }) {
 
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                <p style={{ fontSize: 14, color: C.onSurfaceVar }}>
-                    {grns.total} record{grns.total !== 1 ? 's' : ''}
+                <p style={{ fontSize: 13, color: C.onSurfaceVar, fontWeight: 500 }}>
+                    {grns.total} record{grns.total !== 1 ? 's' : ''} registered
                 </p>
                 <Link href="/grn/create" className="grn-btn-primary">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -133,12 +142,12 @@ export default function Index({ grns, flash }) {
             <div className="grn-card">
                 {grns.data.length === 0 ? (
                     <div className="grn-empty">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" opacity="0.4">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5">
                             <polyline points="9 11 12 14 22 4" />
                             <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
                         </svg>
-                        <p style={{ fontSize: 15, fontWeight: 500, color: C.onSurface }}>No GRN records yet</p>
-                        <p style={{ fontSize: 13 }}>Record a goods receipt against an open purchase order</p>
+                        <p style={{ fontSize: 14, fontWeight: 500, color: '#475569' }}>No GRN records yet</p>
+                        <p style={{ fontSize: 13, color: C.onSurfaceVar, marginTop: -4 }}>Record a goods receipt against an open purchase order</p>
                         <Link href="/grn/create" className="grn-btn-primary" style={{ marginTop: 4 }}>
                             Record first GRN
                         </Link>
@@ -171,8 +180,8 @@ export default function Index({ grns, flash }) {
                                     <td><StatusBadge status={grn.status} /></td>
                                     <td>
                                         {grn.notes
-                                            ? <span style={{ fontSize: 13 }}>{grn.notes.substring(0, 50)}{grn.notes.length > 50 ? '...' : ''}</span>
-                                            : <span style={{ opacity: 0.3 }}>—</span>
+                                            ? <span style={{ fontSize: 13, color: '#334155' }}>{grn.notes.substring(0, 50)}{grn.notes.length > 50 ? '...' : ''}</span>
+                                            : <span style={{ opacity: 0.4 }}>—</span>
                                         }
                                     </td>
                                     <td style={{ color: C.onSurfaceVar }}>

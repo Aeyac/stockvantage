@@ -1,36 +1,44 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 
+// Unified Light Mode Visual System Tokens
 const C = {
-    bg:          '#0D0E11',
-    surface:     '#16171B',
-    surfaceLow:  '#1b1b1f',
-    surfaceHigh: '#292a2d',
-    outline:     '#23252B',
-    primary:     '#4edea3',
-    secondary:   '#d0bcff',
-    tertiary:    '#ffb95f',
-    onSurface:   '#e3e2e6',
-    onSurfaceVar:'#bbcabf',
-    onPrimary:   '#003824',
-    error:       '#ffb4ab',
+    bg: '#ffffff',
+    surface: '#ffffff',
+    surfaceLow: '#ffffff',
+    surfaceHigh: '#f8fafc',    // Used for table headers & detail panel wrappers
+    outline: '#e2e8f0',
+    borderInput: '#cbd5e1',
+    primary: '#17aa54',        // Brand green color
+    primaryHover: '#1a8f4b',
+    primaryFocus: '#00C488',
+    onPrimary: '#ffffff',
+    textMain: '#0f172a',       // High-contrast main headings
+    textMuted: '#64748b',      // Subdued description / cell value layout
+    textLabel: '#475569',      // Clean structural section subtitles
+    textSection: '#94a3b8',    // Muted structural descriptors
+    error: '#dc2626',          // Accessible destructive alert indicator 
+    errorBg: '#fef2f2',
+    errorBorder: '#fca5a5',
+    tertiary: '#b45309',       // Clean high-contrast amber for badge states
+    secondary: '#4338ca',      // Indigo token for decorative structural identifiers (IDs)
 }
 
 const STATUS_CONFIG = {
     pending: {
-        label: 'Pending', color: C.onSurfaceVar, bg: '#23252B', border: '#343538',
+        label: 'Pending', color: C.textMuted, bg: '#f1f5f9', border: '#cbd5e1',
     },
     awaiting_approval: {
-        label: 'Awaiting Approval', color: C.tertiary, bg: '#ffb95f12', border: '#ffb95f25',
+        label: 'Awaiting Approval', color: C.tertiary, bg: '#fffbeb', border: '#fef3c7',
     },
     auto_approved: {
-        label: 'Auto Approved', color: C.primary, bg: '#4edea312', border: '#4edea325',
+        label: 'Auto Approved', color: C.primary, bg: '#f0fdf4', border: '#bbf7d0',
     },
     approved: {
-        label: 'Approved', color: C.primary, bg: '#4edea312', border: '#4edea325',
+        label: 'Approved', color: C.primary, bg: '#f0fdf4', border: '#bbf7d0',
     },
     rejected: {
-        label: 'Rejected', color: C.error, bg: '#ffb4ab12', border: '#ffb4ab25',
+        label: 'Rejected', color: C.error, bg: C.errorBg, border: C.errorBorder,
     },
 }
 
@@ -38,9 +46,9 @@ function StatusBadge({ status }) {
     const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending
     return (
         <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            fontSize: 12, fontWeight: 700, padding: '4px 12px',
-            borderRadius: 20, textTransform: 'uppercase', letterSpacing: '0.05em',
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            fontSize: 11, fontWeight: 700, padding: '4px 12px',
+            borderRadius: 6, textTransform: 'uppercase', letterSpacing: '0.05em',
             background: config.bg, color: config.color, border: `1px solid ${config.border}`,
         }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }} />
@@ -91,105 +99,135 @@ export default function Show({ purchaseRequest }) {
             <Head title={`Purchase Request ${formatPrId(purchaseRequest.id)}`} />
 
             <style>{`
+                /* Unified structural layout card frames override global defaults */
                 .pr-card {
-                    background: ${C.surface}; border: 1px solid ${C.outline};
-                    border-radius: 16px; overflow: hidden;
+                    background: ${C.surface} !important; 
+                    border: 1px solid ${C.outline} !important;
+                    border-radius: 12px !important; 
+                    overflow: hidden !important;
+                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
                 }
-                .pr-card-pad { padding: 24px 28px; }
+                .pr-card-pad { padding: 24px 28px !important; }
+                
                 .pr-meta-grid {
-                    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                    display: grid; 
+                    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
                     gap: 20px;
                 }
-                .pr-meta-item { display: flex; flex-direction: column; gap: 5px; }
+                .pr-meta-item { display: flex; flex-direction: column; gap: 4px; }
+                
+                /* High-visibility uppercase labels metadata fields */
                 .pr-meta-label {
-                    font-size: 11px; font-weight: 600; color: ${C.onSurfaceVar}60;
-                    text-transform: uppercase; letter-spacing: 0.08em;
+                    font-size: 11px !important; 
+                    font-weight: 700 !important; 
+                    color: ${C.textLabel} !important;
+                    text-transform: uppercase; 
+                    letter-spacing: 0.05em;
                 }
-                .pr-meta-value { font-size: 14px; font-weight: 500; color: ${C.onSurface}; }
-                .pr-table { width: 100%; border-collapse: collapse; }
+                .pr-meta-value { font-size: 14px !important; font-weight: 500 !important; color: ${C.textMain} !important; }
+                
+                /* Crisp custom data table architecture specifications */
+                .pr-table { width: 100% !important; border-collapse: collapse !important; }
                 .pr-table th {
-                    text-align: left; padding: 12px 20px;
-                    font-size: 11px; font-weight: 600; color: ${C.onSurfaceVar};
-                    text-transform: uppercase; letter-spacing: 0.07em;
-                    border-bottom: 1px solid ${C.outline};
-                    background: ${C.surfaceLow};
+                    text-align: left !important; 
+                    padding: 12px 20px !important;
+                    font-size: 11px !important; 
+                    font-weight: 700 !important; 
+                    color: ${C.textLabel} !important;
+                    text-transform: uppercase; 
+                    letter-spacing: 0.05em;
+                    border-bottom: 1px solid ${C.outline} !important;
+                    background: ${C.surfaceHigh} !important;
                 }
                 .pr-table td {
-                    padding: 14px 20px; color: ${C.onSurfaceVar};
-                    border-bottom: 1px solid ${C.outline}15; font-size: 14px;
+                    padding: 14px 20px !important; 
+                    color: ${C.textMuted} !important;
+                    border-bottom: 1px solid ${C.outline} !important; 
+                    font-size: 13.5px !important;
                 }
-                .pr-table tbody tr:last-child td { border-bottom: none; }
-                .pr-table tbody tr:hover td { background: ${C.surfaceHigh}40; }
+                .pr-table tbody tr:last-child td { border-bottom: none !important; }
+                .pr-table tbody tr:hover td { background: ${C.surfaceHigh}50 !important; }
+                
                 .pr-table tfoot td {
-                    padding: 16px 20px; border-top: 1px solid ${C.outline};
-                    background: ${C.surfaceLow};
+                    padding: 16px 20px !important; 
+                    border-top: 2px solid ${C.outline} !important;
+                    background: ${C.surfaceHigh} !important;
                 }
+                
+                /* Green Confirmation CTA Action Control Button */
                 .pr-btn-approve {
-                    display: inline-flex; align-items: center; gap: 7px;
-                    background: ${C.primary}; color: ${C.onPrimary};
-                    border: none; border-radius: 12px; padding: 11px 22px;
-                    font-size: 14px; font-weight: 600; cursor: pointer;
-                    transition: filter 0.15s; font-family: inherit;
+                    display: inline-flex !important; align-items: center !important; gap: 7px !important;
+                    background: ${C.primary} !important; color: ${C.onPrimary} !important; border: none !important;
+                    border-radius: 8px !important; padding: 10px 20px !important;
+                    font-size: 13.5px !important; font-weight: 600 !important; cursor: pointer !important;
+                    transition: background-color 0.15s !important; font-family: inherit !important;
                 }
-                .pr-btn-approve:hover { filter: brightness(1.08); }
+                .pr-btn-approve:hover { background: ${C.primaryHover} !important; }
+                
+                /* Red Structural Destructive Dismissal Action Button */
                 .pr-btn-reject {
-                    display: inline-flex; align-items: center; gap: 7px;
-                    background: ${C.error}15; color: ${C.error};
-                    border: 1px solid ${C.error}30; border-radius: 12px; padding: 11px 22px;
-                    font-size: 14px; font-weight: 600; cursor: pointer;
-                    transition: all 0.15s; font-family: inherit;
+                    display: inline-flex !important; align-items: center !important; gap: 7px !important;
+                    background: ${C.errorBg} !important; color: ${C.error} !important;
+                    border: 1px solid ${C.errorBorder} !important; border-radius: 8px !important; 
+                    padding: 10px 20px !important; font-size: 13.5px !important; 
+                    font-weight: 600 !important; cursor: pointer !important;
+                    transition: all 0.15s !important; font-family: inherit !important;
                 }
-                .pr-btn-reject:hover { background: ${C.error}25; border-color: ${C.error}50; }
+                .pr-btn-reject:hover { background: #fee2e2 !important; border-color: ${C.error} !important; }
+                
+                /* Light Theme Primary Outline Back Navigation Component link */
                 .pr-btn-back {
-                    display: inline-flex; align-items: center; gap: 6px;
-                    background: none; color: ${C.onSurfaceVar};
-                    border: 1px solid ${C.outline}; border-radius: 12px;
-                    padding: 11px 18px; font-size: 14px; font-weight: 500;
-                    cursor: pointer; text-decoration: none; transition: all 0.15s;
+                    display: inline-flex !important; align-items: center !important; gap: 6px !important;
+                    background: #ffffff !important; color: ${C.textMuted} !important;
+                    border: 1px solid ${C.outline} !important; border-radius: 8px !important;
+                    padding: 10px 18px !important; font-size: 13.5px !important; font-weight: 500 !important;
+                    cursor: pointer !important; text-decoration: none !important; transition: all 0.15s !important;
                 }
-                .pr-btn-back:hover { color: ${C.onSurface}; border-color: ${C.onSurfaceVar}50; }
+                .pr-btn-back:hover { color: ${C.textMain} !important; border-color: ${C.borderInput} !important; background: ${C.surfaceHigh} !important; }
+                
+                /* Clear structural context badges for code identifiers text styling mapping */
                 .pr-sku {
-                    font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700;
-                    color: ${C.tertiary}; background: ${C.tertiary}12;
-                    border: 1px solid ${C.tertiary}25; padding: '2px 7px'; border-radius: 5px;
+                    font-family: 'Courier New', monospace; font-size: 11.5px; font-weight: 700;
+                    color: ${C.tertiary}; background: #fffbeb;
+                    border: 1px solid #fef3c7; padding: 2px 6px; border-radius: 4px;
                 }
                 .pr-section-title {
-                    font-size: 11px; font-weight: 700; color: ${C.onSurfaceVar}60;
-                    text-transform: uppercase; letter-spacing: 0.1em;
+                    font-size: 11.5px !important; font-weight: 700 !important; color: ${C.textLabel} !important;
+                    text-transform: uppercase; letter-spacing: 0.05em;
                 }
 
                 @media (max-width: 600px) {
-                    .pr-card-pad { padding: 18px 16px; }
+                    .pr-card-pad { padding: 18px 16px !important; }
                     .pr-meta-grid { grid-template-columns: 1fr 1fr; }
                 }
             `}</style>
 
-            {/* Back */}
+            {/* Back to Index Navigation Wrapper Anchor layout */}
             <Link href="/purchase-requests" className="pr-btn-back" style={{ marginBottom: 24, display: 'inline-flex' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M15 18l-6-6 6-6"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M15 18l-6-6 6-6" />
                 </svg>
                 Back to Purchase Requests
             </Link>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 860 }}>
 
-                {/* Header card */}
+                {/* Main Purchase Order Header Segment Card */}
                 <div className="pr-card">
                     <div className="pr-card-pad">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
                             <div>
-                                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 13, fontWeight: 700, color: C.secondary, marginBottom: 6 }}>
+                                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 13, fontWeight: 700, color: C.secondary, marginBottom: 4 }}>
                                     {formatPrId(purchaseRequest.id)}
                                 </div>
-                                <div style={{ fontSize: 20, fontWeight: 700, color: C.onSurface }}>
+                                <div style={{ fontSize: 22, fontWeight: 700, color: C.textMain }}>
                                     {formatCurrency(purchaseRequest.total_amount)}
                                 </div>
                             </div>
                             <StatusBadge status={purchaseRequest.status} />
                         </div>
 
-                        {/* Meta info */}
+                        {/* Order Metadata Metadata System Attributes Information Block */}
                         <div className="pr-meta-grid">
                             <div className="pr-meta-item">
                                 <span className="pr-meta-label">Requested By</span>
@@ -215,15 +253,15 @@ export default function Show({ purchaseRequest }) {
                             )}
                         </div>
 
-                        {/* Justification */}
+                        {/* Justification Field Text Wrapper */}
                         {purchaseRequest.justification && (
                             <div style={{
-                                marginTop: 20, padding: '14px 16px',
-                                background: C.surfaceLow, borderRadius: 10,
+                                marginTop: 24, padding: '16px 18px',
+                                background: C.surfaceHigh, borderRadius: 8,
                                 border: `1px solid ${C.outline}`,
                             }}>
                                 <div className="pr-section-title" style={{ marginBottom: 8 }}>Justification</div>
-                                <p style={{ fontSize: 14, color: C.onSurfaceVar, lineHeight: 1.6 }}>
+                                <p style={{ fontSize: 14, color: C.textMain, lineHeight: 1.6, margin: 0 }}>
                                     {purchaseRequest.justification}
                                 </p>
                             </div>
@@ -231,9 +269,9 @@ export default function Show({ purchaseRequest }) {
                     </div>
                 </div>
 
-                {/* Line items card */}
+                {/* Line Items Functional Matrix Table Card Block */}
                 <div className="pr-card">
-                    <div style={{ padding: '16px 20px', borderBottom: `1px solid ${C.outline}` }}>
+                    <div style={{ padding: '16px 20px', borderBottom: `1px solid ${C.outline}`, background: '#ffffff' }}>
                         <span className="pr-section-title">Line Items</span>
                     </div>
                     <table className="pr-table">
@@ -250,27 +288,22 @@ export default function Show({ purchaseRequest }) {
                             {purchaseRequest.line_items?.map((line, i) => (
                                 <tr key={i}>
                                     <td>
-                                        <span style={{ fontWeight: 500, color: C.onSurface }}>
+                                        <span style={{ fontWeight: 600, color: C.textMain }}>
                                             {line.catalog_item?.name ?? '—'}
                                         </span>
                                     </td>
                                     <td>
-                                        <span style={{
-                                            fontFamily: 'Courier New, monospace', fontSize: 11,
-                                            fontWeight: 700, color: C.tertiary,
-                                            background: `${C.tertiary}12`, border: `1px solid ${C.tertiary}25`,
-                                            padding: '2px 7px', borderRadius: 5,
-                                        }}>
+                                        <span className="pr-sku">
                                             {line.catalog_item?.sku ?? '—'}
                                         </span>
                                     </td>
-                                    <td style={{ textAlign: 'right' }}>
+                                    <td style={{ textAlign: 'right', color: C.textMain }}>
                                         {formatCurrency(line.unit_cost)}
                                     </td>
-                                    <td style={{ textAlign: 'right', fontWeight: 600, color: C.onSurface }}>
+                                    <td style={{ textAlign: 'right', fontWeight: 600, color: C.textMain }}>
                                         {line.quantity}
                                     </td>
-                                    <td style={{ textAlign: 'right', fontWeight: 600, color: C.onSurface }}>
+                                    <td style={{ textAlign: 'right', fontWeight: 600, color: C.textMain }}>
                                         {formatCurrency(line.line_total)}
                                     </td>
                                 </tr>
@@ -278,10 +311,10 @@ export default function Show({ purchaseRequest }) {
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colSpan={4} style={{ fontWeight: 600, color: C.onSurfaceVar, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                                    Total
+                                <td colSpan={4} style={{ fontWeight: 700, color: C.textLabel, fontSize: 11.5, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                    Total Amount
                                 </td>
-                                <td style={{ textAlign: 'right', fontWeight: 700, fontSize: 16, color: C.onSurface }}>
+                                <td style={{ textAlign: 'right', fontWeight: 700, fontSize: 16, color: C.textMain }}>
                                     {formatCurrency(purchaseRequest.total_amount)}
                                 </td>
                             </tr>
@@ -289,32 +322,33 @@ export default function Show({ purchaseRequest }) {
                     </table>
                 </div>
 
-                {/* Approve / Reject actions */}
+                {/* Contextual Management Review Decision Actions Bar Panel */}
                 {canActOnRequest && (
                     <div style={{
-                        display: 'flex', gap: 12, padding: '20px 24px',
-                        background: C.surface, border: `1px solid ${C.outline}`,
-                        borderRadius: 16, alignItems: 'center', flexWrap: 'wrap',
+                        display: 'flex', gap: 16, padding: '20px 24px',
+                        background: '#ffffff', border: `1px solid ${C.outline}`,
+                        borderRadius: 12, alignItems: 'center', flexWrap: 'wrap',
+                        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)'
                     }}>
                         <div style={{ flex: 1, minWidth: 200 }}>
-                            <div style={{ fontSize: 14, fontWeight: 600, color: C.onSurface }}>
+                            <div style={{ fontSize: 14, fontWeight: 700, color: C.textMain }}>
                                 Action Required
                             </div>
-                            <div style={{ fontSize: 13, color: C.onSurfaceVar, marginTop: 3 }}>
-                                This request is awaiting your approval.
+                            <div style={{ fontSize: 13, color: C.textMuted, marginTop: 2 }}>
+                                This request is awaiting your verification assessment choice.
                             </div>
                         </div>
-                        <div style={{ display: 'flex', gap: 10 }}>
+                        <div style={{ display: 'flex', gap: 12 }}>
                             <button onClick={handleApprove} className="pr-btn-approve">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                    <polyline points="20 6 9 17 4 12"/>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                                    <polyline points="20 6 9 17 4 12" />
                                 </svg>
                                 Approve
                             </button>
                             <button onClick={handleReject} className="pr-btn-reject">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                    <line x1="18" y1="6" x2="6" y2="18"/>
-                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                    <line x1="6" y1="6" x2="18" y2="18" />
                                 </svg>
                                 Reject
                             </button>

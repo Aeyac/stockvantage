@@ -3,44 +3,44 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 
 const C = {
-    bg: '#0D0E11',
-    surface: '#16171B',
-    surfaceLow: '#1b1b1f',
-    surfaceHigh: '#292a2d',
-    outline: '#23252B',
-    primary: '#4edea3',
-    secondary: '#d0bcff',
-    tertiary: '#ffb95f',
-    onSurface: '#e3e2e6',
-    onSurfaceVar: '#bbcabf',
-    onPrimary: '#003824',
-    error: '#ffb4ab',
+    bg: '#F4F5F8',
+    surface: '#FFFFFF',
+    surfaceLow: '#F8F9FC',
+    surfaceHigh: '#E9EBF0',
+    outline: '#DDE2E5',
+    primary: '#00875A',       // Richer green for crisp contrast on light backgrounds
+    secondary: '#6554C0',     // Deep Indigo
+    tertiary: '#B65C00',      // Warm Amber
+    onSurface: '#1A1C1E',     // Charcoal dark text
+    onSurfaceVar: '#5D6166',  // Medium gray for subtext/labels
+    onPrimary: '#FFFFFF',
+    error: '#DE350B',         // High-contrast red
 }
 
 const ROLE_CONFIG = {
     tenant_admin: {
         label: 'Admin',
-        color: '#d0bcff',
-        bg: '#d0bcff12',
-        border: '#d0bcff25',
+        color: '#5B41B0',     // Deepened for text readability
+        bg: '#6554C00D',
+        border: '#6554C025',
     },
     department_manager: {
         label: 'Manager',
-        color: '#60a5fa',
-        bg: '#60a5fa12',
-        border: '#60a5fa25',
+        color: '#1D63B8',     // Richer corporate blue
+        bg: '#1D63B80D',
+        border: '#1D63B820',
     },
     warehouse_staff: {
         label: 'Warehouse',
-        color: '#ffb95f',
-        bg: '#ffb95f12',
-        border: '#ffb95f25',
+        color: '#A04E00',     // Deep amber
+        bg: '#B65C000A',
+        border: '#B65C0020',
     },
     employee: {
         label: 'Employee',
         color: C.onSurfaceVar,
-        bg: C.outline,
-        border: '#343538',
+        bg: C.surfaceLow,
+        border: C.outline,
     },
 }
 
@@ -80,10 +80,11 @@ export default function Index({ users, flash }) {
                     font-size: 14px; font-weight: 600; cursor: pointer;
                     text-decoration: none; transition: filter 0.15s; font-family: inherit;
                 }
-                .usr-btn-primary:hover { filter: brightness(1.1); }
+                .usr-btn-primary:hover { filter: brightness(0.92); }
                 .usr-card {
                     background: ${C.surface}; border: 1px solid ${C.outline};
                     border-radius: 16px; overflow: hidden;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
                 }
                 .usr-table { width: 100%; border-collapse: collapse; }
                 .usr-table th {
@@ -91,26 +92,27 @@ export default function Index({ users, flash }) {
                     font-size: 11px; font-weight: 600; color: ${C.onSurfaceVar};
                     text-transform: uppercase; letter-spacing: 0.07em;
                     border-bottom: 1px solid ${C.outline};
+                    background: ${C.surfaceLow};
                 }
                 .usr-table td {
                     padding: 15px 20px; color: ${C.onSurfaceVar};
-                    border-bottom: 1px solid ${C.outline}15; font-size: 14px;
+                    border-bottom: 1px solid ${C.outline}60; font-size: 14px;
                 }
                 .usr-table tbody tr:last-child td { border-bottom: none; }
-                .usr-table tbody tr:hover td { background: ${C.surfaceHigh}40; }
+                .usr-table tbody tr:hover td { background: ${C.surfaceLow}; }
                 .usr-status-active {
                     display: inline-flex; align-items: center; gap: 5px;
                     font-size: 11px; font-weight: 700; padding: 3px 10px;
                     border-radius: 20px; text-transform: uppercase; letter-spacing: 0.04em;
-                    background: ${C.primary}15; color: ${C.primary};
+                    background: ${C.primary}0D; color: ${C.primary};
                     border: 1px solid ${C.primary}25;
                 }
                 .usr-status-inactive {
                     display: inline-flex; align-items: center; gap: 5px;
                     font-size: 11px; font-weight: 700; padding: 3px 10px;
                     border-radius: 20px; text-transform: uppercase; letter-spacing: 0.04em;
-                    background: ${C.error}15; color: ${C.error};
-                    border: 1px solid ${C.error}25;
+                    background: ${C.error}0A; color: ${C.error};
+                    border: 1px solid ${C.error}20;
                 }
                 .usr-action {
                     font-size: 13px; font-weight: 500; color: ${C.onSurfaceVar};
@@ -122,7 +124,7 @@ export default function Index({ users, flash }) {
                     border-color: ${C.outline};
                 }
                 .usr-action.del:hover {
-                    color: ${C.error}; background: ${C.error}10;
+                    color: ${C.error}; background: ${C.error}0A;
                     border-color: ${C.error}25;
                 }
                 .usr-pg-btn {
@@ -142,12 +144,12 @@ export default function Index({ users, flash }) {
                     width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
                     display: flex; align-items: center; justify-content: center;
                     font-size: 13px; font-weight: 700;
-                    background: linear-gradient(135deg, ${C.primary}, ${C.secondary});
+                    background: ${C.primary}; /* Changed from linear-gradient to flat plain green */
                     color: ${C.onPrimary};
                 }
                 .usr-you-badge {
                     font-size: 10px; font-weight: 700; padding: 2px 6px;
-                    border-radius: 4px; background: ${C.primary}15;
+                    border-radius: 4px; background: ${C.primary}0D;
                     color: ${C.primary}; border: 1px solid ${C.primary}25;
                     text-transform: uppercase; letter-spacing: 0.05em; margin-left: 6px;
                 }
@@ -210,7 +212,7 @@ export default function Index({ users, flash }) {
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{user.email}</td>
+                                    <td style={{ color: C.onSurface }}>{user.email}</td>
                                     <td><RoleBadge role={user.role} /></td>
                                     <td>
                                         {user.is_active
