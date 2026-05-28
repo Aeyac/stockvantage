@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
+import { ViewActionButton } from '@/Components/ActionButtons'
 
 // Unified Light Mode Visual System Tokens
 const C = {
@@ -122,21 +123,7 @@ export default function Index({ purchaseOrders, flash }) {
                 .po-table tbody tr { transition: background 0.1s; }
                 .po-table tbody tr:hover td { background: ${C.surfaceHigh}50 !important; }
                 
-                /* Standard dynamic table row view link item action buttons */
-                .po-action {
-                    font-size: 13px !important; 
-                    font-weight: 500 !important; 
-                    color: #64748b !important;
-                    text-decoration: none; 
-                    padding: 6px 14px; 
-                    transition: all 0.15s; 
-                    background: #ffffff !important;
-                }
-                .po-action:hover {
-                    color: ${C.textMain} !important; 
-                    background: ${C.surfaceHigh} !important;
-                    border-color: ${C.borderInput} !important;
-                }
+
                 
                 /* Pagination dynamic buttons control links template state wrappers */
                 .po-pg-btn {
@@ -181,7 +168,7 @@ export default function Index({ purchaseOrders, flash }) {
             `}</style>
 
             <FlashMessage flash={flash} />
-            
+
             {/* Header Metrics Summary */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <p style={{ fontSize: 14, color: C.textMuted, margin: 0, fontWeight: 500 }}>
@@ -246,12 +233,9 @@ export default function Index({ purchaseOrders, flash }) {
                                         {formatDate(po.created_at)}
                                     </td>
                                     <td style={{ textAlign: 'center' }}>
-                                        <Link
-                                            href={`/purchase-orders/${po.id}`}
-                                            className="po-action"
-                                        >
-                                            View
-                                        </Link>
+                                        <div style={{ display: 'flex', gap: 4 }}>
+                                            <ViewActionButton href={`/purchase-orders/${po.id}`} />
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

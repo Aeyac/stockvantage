@@ -1,5 +1,6 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import BackButton from '@/Components/BackButton'
 
 const C = {
     bg: '#F4F5F8',
@@ -146,18 +147,8 @@ export default function Edit({ user }) {
                 }
             `}</style>
 
-            <Link href="/users" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13,
-                color: C.onSurfaceVar, textDecoration: 'none', marginBottom: 24, transition: 'color 0.15s',
-            }}
-                onMouseEnter={e => e.currentTarget.style.color = C.onSurface}
-                onMouseLeave={e => e.currentTarget.style.color = C.onSurfaceVar}
-            >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M15 18l-6-6 6-6" />
-                </svg>
-                Back to Users
-            </Link>
+            <BackButton link={"/users"} text={"Back to Users"} />
+
 
             {/* Self-edit notice */}
             {isCurrentUser && (

@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
+import { EditActionButton, DeleteActionButton } from '@/Components/ActionButtons'
 
 // Soft, readable text colors with subtle background pills for light mode statuses
 const STATUS_CONFIG = {
@@ -21,8 +22,8 @@ const STATUS_CONFIG = {
 function StatusBadge({ isActive }) {
     const config = isActive ? STATUS_CONFIG.active : STATUS_CONFIG.inactive
     return (
-        <span 
-            className="wh-status" 
+        <span
+            className="wh-status"
             style={{
                 background: config.bg,
                 color: config.text,
@@ -30,7 +31,7 @@ function StatusBadge({ isActive }) {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                fontSize: '11.5px',
+                fontSize: '10px',
                 fontWeight: 500,
                 padding: '3px 10px',
                 borderRadius: '20px',
@@ -38,12 +39,12 @@ function StatusBadge({ isActive }) {
                 letterSpacing: '0.04em'
             }}
         >
-            <span style={{ 
-                width: 6, 
-                height: 6, 
-                borderRadius: '50%', 
-                background: config.text, 
-                display: 'inline-block' 
+            <span style={{
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                background: config.text,
+                display: 'inline-block'
             }} />
             {config.label}
         </span>
@@ -115,25 +116,7 @@ export default function Index({ warehouses, flash }) {
                 .wh-table tbody tr:last-child td { border-bottom: none; }
                 .wh-table tbody tr:hover td { background: #f8fafc; }
 
-                /* Contextual Table Row Action Links */
-                .wh-action-link {
-                    font-size: 12.5px;
-                    font-weight: 500;
-                    color: #64748b;
-                    text-decoration: none;
-                    padding: 5px 10px;
-                    border-radius: 6px;
-                    transition: all 0.15s;
-                    border: 1px solid transparent;
-                }
-                .wh-action-link:hover {
-                    color: #1e293b;
-                    background: #f1f5f9;
-                }
-                .wh-action-link.del:hover {
-                    color: #dc2626;
-                    background: #fef2f2;
-                }
+                
 
                 /* Clean Light Mode Pagination Blocks */
                 .wh-pagination-btn {
@@ -235,19 +218,8 @@ export default function Index({ warehouses, flash }) {
                                     </td>
                                     <td>
                                         <div style={{ display: 'flex', gap: 4 }}>
-                                            <Link
-                                                href={`/warehouses/${warehouse.id}/edit`}
-                                                className="wh-action-link"
-                                            >
-                                                Edit
-                                            </Link>
-                                            <button
-                                                onClick={() => handleDelete(warehouse.id)}
-                                                className="wh-action-link del"
-                                                style={{ background: 'none', border: '1px solid transparent', cursor: 'pointer', fontFamily: 'inherit' }}
-                                            >
-                                                Delete
-                                            </button>
+                                            <EditActionButton href={`/warehouses/${warehouse.id}/edit`} />
+                                            <DeleteActionButton onClick={() => handleDelete(warehouse.id)} />
                                         </div>
                                     </td>
                                 </tr>

@@ -1,5 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import BackButton from '@/Components/BackButton'
 
 // Unified Light Mode Visual System Tokens
 const C = {
@@ -175,15 +176,6 @@ export default function Show({ purchaseRequest }) {
                 }
                 .pr-btn-reject:hover { background: #fee2e2 !important; border-color: ${C.error} !important; }
                 
-                /* Light Theme Primary Outline Back Navigation Component link */
-                .pr-btn-back {
-                    display: inline-flex !important; align-items: center !important; gap: 6px !important;
-                    background: #ffffff !important; color: ${C.textMuted} !important;
-                    border: 1px solid ${C.outline} !important; border-radius: 8px !important;
-                    padding: 10px 18px !important; font-size: 13.5px !important; font-weight: 500 !important;
-                    cursor: pointer !important; text-decoration: none !important; transition: all 0.15s !important;
-                }
-                .pr-btn-back:hover { color: ${C.textMain} !important; border-color: ${C.borderInput} !important; background: ${C.surfaceHigh} !important; }
                 
                 /* Clear structural context badges for code identifiers text styling mapping */
                 .pr-sku {
@@ -202,13 +194,9 @@ export default function Show({ purchaseRequest }) {
                 }
             `}</style>
 
-            {/* Back to Index Navigation Wrapper Anchor layout */}
-            <Link href="/purchase-requests" className="pr-btn-back" style={{ marginBottom: 24, display: 'inline-flex' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M15 18l-6-6 6-6" />
-                </svg>
-                Back to Purchase Requests
-            </Link>
+
+            <BackButton link={"/purchase-requests"} text={"Back to Purchase Requests"} />
+            
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 860 }}>
 

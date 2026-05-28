@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react'
+import BackButton from '@/Components/BackButton'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 
 const C = {
@@ -132,12 +133,8 @@ export default function Show({ grn }) {
             `}</style>
 
             {/* Back */}
-            <Link href="/grn" className="grn-btn-back" style={{ marginBottom: 24, display: 'inline-flex' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M15 18l-6-6 6-6" />
-                </svg>
-                Back to GRN
-            </Link>
+            <BackButton link={"/grn"} text={"Back to GRN"} />
+
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 860 }}>
 

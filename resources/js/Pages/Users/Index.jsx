@@ -1,6 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
+import { EditActionButton, DeleteActionButton } from '@/Components/ActionButtons'
 
 const C = {
     bg: '#F4F5F8',
@@ -222,17 +223,9 @@ export default function Index({ users, flash }) {
                                     </td>
                                     <td>
                                         <div style={{ display: 'flex', gap: 4 }}>
-                                            <Link href={`/users/${user.id}/edit`} className="usr-action">
-                                                Edit
-                                            </Link>
+                                            <EditActionButton href={`/users/${user.id}/edit`} />
                                             {user.id !== currentUserId && (
-                                                <button
-                                                    onClick={() => handleDelete(user.id)}
-                                                    className="usr-action del"
-                                                    style={{ background: 'none', border: '1px solid transparent', cursor: 'pointer', fontFamily: 'inherit' }}
-                                                >
-                                                    Delete
-                                                </button>
+                                                <DeleteActionButton onClick={() => handleDelete(user.id)} />
                                             )}
                                         </div>
                                     </td>

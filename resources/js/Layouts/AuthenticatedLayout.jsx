@@ -193,6 +193,10 @@ export default function AuthenticatedLayout({ children, header }) {
                     flex-direction: column;
                     justify-content: space-between;
                     transition: width 0.15s ease;
+
+                    height: 100%; 
+                    max-height: calc(100vh - 52px); /* Forces sidebar to exactly match the body row */
+                    overflow: hidden;
                 }
                 .dash-sidebar-logo {
                     display: flex; 

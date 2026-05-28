@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
+import { EditActionButton, DeleteActionButton } from '@/Components/ActionButtons'
 
 export default function Index({ suppliers, flash }) {
     function handleDelete(id) {
@@ -208,7 +209,7 @@ export default function Index({ suppliers, flash }) {
                             {suppliers.data.map(supplier => {
                                 // Fallback mapping rules for terms styling
                                 const termStyle = termColor[supplier.payment_terms] ?? { text: '#475569', bg: '#f1f5f9', border: '#e2e8f0' };
-                                
+
                                 return (
                                     <tr key={supplier.id}>
                                         <td>
@@ -228,12 +229,12 @@ export default function Index({ suppliers, flash }) {
                                             )}
                                         </td>
                                         <td>
-                                            <span 
-                                                className="sv-term" 
-                                                style={{ 
-                                                    color: termStyle.text, 
+                                            <span
+                                                className="sv-term"
+                                                style={{
+                                                    color: termStyle.text,
                                                     backgroundColor: termStyle.bg,
-                                                    borderColor: termStyle.border 
+                                                    borderColor: termStyle.border
                                                 }}
                                             >
                                                 {supplier.payment_terms}
@@ -251,19 +252,8 @@ export default function Index({ suppliers, flash }) {
                                         </td>
                                         <td>
                                             <div style={{ display: 'flex', gap: 4 }}>
-                                                <Link
-                                                    href={`/suppliers/${supplier.id}/edit`}
-                                                    className="sv-action-link"
-                                                >
-                                                    Edit
-                                                </Link>
-                                                <button
-                                                    onClick={() => handleDelete(supplier.id)}
-                                                    className="sv-action-link danger"
-                                                    style={{ background: 'none', border: '1px solid transparent', cursor: 'pointer', fontFamily: 'inherit' }}
-                                                >
-                                                    Delete
-                                                </button>
+                                                <EditActionButton href={`/suppliers/${supplier.id}/edit`} />
+                                                <DeleteActionButton onClick={() => handleDelete(supplier.id)} />
                                             </div>
                                         </td>
                                     </tr>

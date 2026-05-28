@@ -1,6 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import { useState } from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import BackButton from '@/Components/BackButton'
 
 const C = {
     bg: '#F4F5F8',
@@ -8,13 +9,13 @@ const C = {
     surfaceLow: '#F8F9FC',
     surfaceHigh: '#E9EBF0',
     outline: '#DDE2E5',
-    primary: '#00875A',       
-    secondary: '#6554C0',     
-    tertiary: '#B65C00',      
-    onSurface: '#1A1C1E',     
-    onSurfaceVar: '#5D6166',  
+    primary: '#00875A',
+    secondary: '#6554C0',
+    tertiary: '#B65C00',
+    onSurface: '#1A1C1E',
+    onSurfaceVar: '#5D6166',
     onPrimary: '#FFFFFF',
-    error: '#DE350B',         
+    error: '#DE350B',
 }
 
 export default function Create({ openPurchaseOrders, warehouses }) {
@@ -157,18 +158,8 @@ export default function Create({ openPurchaseOrders, warehouses }) {
                 .grn-po-info-value { font-size: 13px; color: ${C.onSurface}; font-weight: 500; }
             `}</style>
 
-            <Link href="/grn" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13,
-                color: C.onSurfaceVar, textDecoration: 'none', marginBottom: 24, transition: 'color 0.15s',
-            }}
-                onMouseEnter={e => e.currentTarget.style.color = C.onSurface}
-                onMouseLeave={e => e.currentTarget.style.color = C.onSurfaceVar}
-            >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M15 18l-6-6 6-6" />
-                </svg>
-                Back to GRN
-            </Link>
+            <BackButton link={"/grn"} text={"Back to GRN"} />
+
 
             <div className="grn-card">
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>

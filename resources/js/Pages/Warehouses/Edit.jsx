@@ -1,19 +1,20 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import BackButton from '@/Components/BackButton'
 
 const C = {
-    bg:          '#f8fafc', // Slate 50
-    surface:     '#ffffff', // Pure White
-    surfaceLow:  '#ffffff', // input background
+    bg: '#f8fafc', // Slate 50
+    surface: '#ffffff', // Pure White
+    surfaceLow: '#ffffff', // input background
     surfaceHigh: '#cbd5e1', // Slate 300 (Toggle switch track background when off)
-    outline:     '#e2e8f0', // Slate 200
-    primary:     '#00C488', // Premium Dashboard Accent Green
-    secondary:   '#d97706', // Amber
-    tertiary:    '#ffb95f', 
-    onSurface:   '#1e293b', // Slate 800 (Dark text)
-    onSurfaceVar:'#64748b', // Slate 500 (Muted labels/placeholders)
-    onPrimary:   '#ffffff', // White text on green button
-    error:       '#dc2626', // Bright Red 600
+    outline: '#e2e8f0', // Slate 200
+    primary: '#00C488', // Premium Dashboard Accent Green
+    secondary: '#d97706', // Amber
+    tertiary: '#ffb95f',
+    onSurface: '#1e293b', // Slate 800 (Dark text)
+    onSurfaceVar: '#64748b', // Slate 500 (Muted labels/placeholders)
+    onPrimary: '#ffffff', // White text on green button
+    error: '#dc2626', // Bright Red 600
 }
 
 export default function Edit({ warehouse }) {
@@ -98,19 +99,11 @@ export default function Edit({ warehouse }) {
                 .wh-toggle.on::after { transform: translateX(18px); }
             `}</style>
 
-            <Link href="/warehouses" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13,
-                color: C.onSurfaceVar, textDecoration: 'none', marginBottom: 24, transition: 'color 0.15s',
-                fontWeight: 500
-            }}
-                onMouseEnter={e => e.currentTarget.style.color = C.onSurface}
-                onMouseLeave={e => e.currentTarget.style.color = C.onSurfaceVar}
-            >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M15 18l-6-6 6-6" />
-                </svg>
-                Back to Warehouses
-            </Link>
+
+
+            <BackButton link={"/warehouses"} text={"Back to Warehouses"} />
+
+
 
             <div className="wh-card">
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>

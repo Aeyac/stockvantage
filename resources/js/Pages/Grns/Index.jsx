@@ -1,20 +1,21 @@
 import { Head, Link } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
+import { ViewActionButton } from '@/Components/ActionButtons'
 
 const C = {
-    bg:          '#f8fafc', // Slate 50
-    surface:     '#ffffff', // Pure White
-    surfaceLow:  '#ffffff', 
+    bg: '#f8fafc', // Slate 50
+    surface: '#ffffff', // Pure White
+    surfaceLow: '#ffffff',
     surfaceHigh: '#f1f5f9', // Slate 100 (Table hover background)
-    outline:     '#e2e8f0', // Slate 200
-    primary:     '#00C488', // Premium Dashboard Accent Green
-    secondary:   '#d97706', // Amber / Warning
-    tertiary:    '#ffb95f', 
-    onSurface:   '#1e293b', // Slate 800 (Dark text)
-    onSurfaceVar:'#64748b', // Slate 500 (Muted text/labels)
-    onPrimary:   '#ffffff', // White text on green button
-    error:       '#dc2626', // Bright Red 600
+    outline: '#e2e8f0', // Slate 200
+    primary: '#00C488', // Premium Dashboard Accent Green
+    secondary: '#d97706', // Amber / Warning
+    tertiary: '#ffb95f',
+    onSurface: '#1e293b', // Slate 800 (Dark text)
+    onSurfaceVar: '#64748b', // Slate 500 (Muted text/labels)
+    onPrimary: '#ffffff', // White text on green button
+    error: '#dc2626', // Bright Red 600
 }
 
 const STATUS_CONFIG = {
@@ -35,7 +36,7 @@ function StatusBadge({ status }) {
         <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
             fontSize: '11.5px', fontWeight: 600, padding: '3px 10px',
-            borderRadius: 20, background: config.bg, color: config.color, 
+            borderRadius: 20, background: config.bg, color: config.color,
             border: `1px solid ${config.border}`,
         }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }} />
@@ -188,9 +189,9 @@ export default function Index({ grns, flash }) {
                                         {formatDate(grn.created_at)}
                                     </td>
                                     <td>
-                                        <Link href={`/grn/${grn.id}`} className="grn-action">
-                                            View
-                                        </Link>
+                                        <div style={{ display: 'flex', gap: 4 }}>
+                                            <ViewActionButton href={`/grn/${grn.id}`} />
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

@@ -1,5 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import BackButton from '@/Components/BackButton'
 
 export default function Create({ activeSuppliers }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -111,19 +112,8 @@ export default function Create({ activeSuppliers }) {
             `}</style>
 
             {/* Light-Theme Normalized Back Navigation Link Wrapper */}
-            <Link href="/catalog-items" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                fontSize: 13, color: '#64748b', textDecoration: 'none',
-                marginBottom: 20, transition: 'color 0.15s', fontWeight: 500
-            }}
-                onMouseEnter={e => e.currentTarget.style.color = '#1e293b'}
-                onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
-            >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M15 18l-6-6 6-6" />
-                </svg>
-                Back to Catalog
-            </Link>
+            <BackButton link={"/catalog-items"} text={"Back to Catalog"} />
+
 
             <div className="sv-form-card">
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -147,7 +137,7 @@ export default function Create({ activeSuppliers }) {
                         <div className="sv-field">
                             <label className="sv-label">SKU *</label>
                             <input
-                                className="sv-input sv-sku-input" 
+                                className="sv-input sv-sku-input"
                                 type="text"
                                 value={data.sku}
                                 onChange={e => setData('sku', e.target.value.toUpperCase())}
@@ -159,7 +149,7 @@ export default function Create({ activeSuppliers }) {
                         <div className="sv-field">
                             <label className="sv-label">Item Name *</label>
                             <input
-                                className="sv-input" 
+                                className="sv-input"
                                 type="text"
                                 value={data.name}
                                 onChange={e => setData('name', e.target.value)}
@@ -173,7 +163,7 @@ export default function Create({ activeSuppliers }) {
                     <div className="sv-field">
                         <label className="sv-label">Category</label>
                         <input
-                            className="sv-input" 
+                            className="sv-input"
                             type="text"
                             value={data.category}
                             onChange={e => setData('category', e.target.value)}
@@ -189,9 +179,9 @@ export default function Create({ activeSuppliers }) {
                         <div className="sv-field">
                             <label className="sv-label">Unit Cost (₱) *</label>
                             <input
-                                className="sv-input" 
-                                type="number" 
-                                min="0" 
+                                className="sv-input"
+                                type="number"
+                                min="0"
                                 step="0.01"
                                 value={data.unit_cost}
                                 onChange={e => setData('unit_cost', e.target.value)}
@@ -202,8 +192,8 @@ export default function Create({ activeSuppliers }) {
                         <div className="sv-field">
                             <label className="sv-label">Safety Stock *</label>
                             <input
-                                className="sv-input" 
-                                type="number" 
+                                className="sv-input"
+                                type="number"
                                 min="0"
                                 value={data.safety_stock}
                                 onChange={e => setData('safety_stock', e.target.value)}

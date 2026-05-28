@@ -1,5 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import BackButton from '@/Components/BackButton'
+
 
 // Unified Light Mode Visual System Tokens
 const C = {
@@ -214,18 +216,8 @@ export default function Create({ catalogItems, flash }) {
             `}</style>
 
             {/* Light-Theme Normalized Back Navigation Link Wrapper */}
-            <Link href="/purchase-requests" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13,
-                color: '#64748b', textDecoration: 'none', marginBottom: 20, transition: 'color 0.15s', fontWeight: 500
-            }}
-                onMouseEnter={e => e.currentTarget.style.color = '#0f172a'}
-                onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
-            >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M15 18l-6-6 6-6" />
-                </svg>
-                Back to Purchase Requests
-            </Link>
+            <BackButton link={"/purchase-requests"} text={"Back to Purchase Requests"} />
+
 
             <div className="pr-card">
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>

@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 import { useAuth } from '@/hooks/useAuth'
+import { EditActionButton, DeleteActionButton } from '@/Components/ActionButtons'
 
 export default function Index({ catalogItems, flash }) {
     const { isAdmin } = useAuth();
@@ -123,25 +124,7 @@ export default function Index({ catalogItems, flash }) {
                     font-weight: 600;
                 }
 
-                /* Contextual Table Row Action Links */
-                .sv-action-link {
-                    font-size: 12.5px;
-                    font-weight: 500;
-                    color: #64748b;
-                    text-decoration: none;
-                    padding: 5px 10px;
-                    border-radius: 6px;
-                    transition: all 0.15s;
-                    border: 1px solid transparent;
-                }
-                .sv-action-link:hover {
-                    color: #1e293b;
-                    background: #f1f5f9;
-                }
-                .sv-action-link.danger:hover {
-                    color: #df2c2c;
-                    background: #fef2f2;
-                }
+                
 
                 /* Clean Light Mode Pagination Blocks */
                 .sv-pagination-btn {
@@ -275,19 +258,8 @@ export default function Index({ catalogItems, flash }) {
                                     {isAdmin && (
                                         <td>
                                             <div style={{ display: 'flex', gap: 4 }}>
-                                                <Link
-                                                    href={`/catalog-items/${item.id}/edit`}
-                                                    className="sv-action-link"
-                                                >
-                                                    Edit
-                                                </Link>
-                                                <button
-                                                    onClick={() => handleDelete(item.id)}
-                                                    className="sv-action-link danger"
-                                                    style={{ background: 'none', border: '1px solid transparent', cursor: 'pointer', fontFamily: 'inherit' }}
-                                                >
-                                                    Delete
-                                                </button>
+                                                <EditActionButton href={`/catalog-items/${item.id}/edit`} />
+                                                <DeleteActionButton onClick={() => handleDelete(item.id)} />
                                             </div>
                                         </td>
                                     )}

@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import BackButton from '@/Components/BackButton'
 
 // Unified Light Mode Visual System Tokens (Matched perfectly with your template)
 const C = {
@@ -135,14 +136,7 @@ export default function Show({ purchaseOrder }) {
                 }
                 
                 /* Light Theme Primary Outline Back Navigation Component link */
-                .po-btn-back {
-                    display: inline-flex !important; align-items: center !important; gap: 6px !important;
-                    background: #ffffff !important; color: ${C.textMuted} !important;
-                    border: 1px solid ${C.outline} !important; border-radius: 8px !important;
-                    padding: 10px 18px !important; font-size: 13.5px !important; font-weight: 500 !important;
-                    cursor: pointer !important; text-decoration: none !important; transition: all 0.15s !important;
-                }
-                .po-btn-back:hover { color: ${C.textMain} !important; border-color: ${C.borderInput} !important; background: ${C.surfaceHigh} !important; }
+                
                 
                 /* Clear structural context badges for code identifiers text styling mapping */
                 .po-sku {
@@ -161,13 +155,8 @@ export default function Show({ purchaseOrder }) {
                 }
             `}</style>
 
-            {/* Back to Index Navigation Wrapper Anchor layout */}
-            <Link href="/purchase-orders" className="po-btn-back" style={{ marginBottom: 24, display: 'inline-flex' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M15 18l-6-6 6-6" />
-                </svg>
-                Back to Purchase Orders
-            </Link>
+            
+            <BackButton link={"/purchase-orders"} text={"Back to Purchase Orders"} />
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 860 }}>
 

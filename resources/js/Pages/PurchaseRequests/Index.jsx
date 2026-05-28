@@ -1,6 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
+import { ViewActionButton } from '@/Components/ActionButtons'
 
 // Soft, readable text colors with subtle background pills for light mode statuses
 const STATUS_CONFIG = {
@@ -39,8 +40,8 @@ const STATUS_CONFIG = {
 function StatusBadge({ status }) {
     const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending
     return (
-        <span 
-            className="pr-status" 
+        <span
+            className="pr-status"
             style={{
                 background: config.bg,
                 color: config.text,
@@ -54,12 +55,12 @@ function StatusBadge({ status }) {
                 borderRadius: '20px'
             }}
         >
-            <span style={{ 
-                width: 6, 
-                height: 6, 
-                borderRadius: '50%', 
-                background: config.text, 
-                display: 'inline-block' 
+            <span style={{
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                background: config.text,
+                display: 'inline-block'
             }} />
             {config.label}
         </span>
@@ -157,20 +158,7 @@ export default function Index({ purchaseRequests, flash = "" }) {
                     
 
                 /* Contextual Table Row Action Links */
-                .pr-action-link {
-                    font-size: 12.5px;
-                    font-weight: 500;
-                    color: #64748b;
-                    text-decoration: none;
-                    padding: 5px 10px;
-                    border-radius: 6px;
-                    transition: all 0.15s;
-                    border: 1px solid transparent;
-                }
-                .pr-action-link:hover {
-                    color: #1e293b;
-                    background: #f1f5f9;
-                }
+                
 
                 /* Clean Light Mode Pagination Blocks */
                 .pr-pagination-btn {
@@ -280,12 +268,7 @@ export default function Index({ purchaseRequests, flash = "" }) {
                                     </td>
                                     <td>
                                         <div style={{ display: 'flex', gap: 4 }}>
-                                            <Link
-                                                href={`/purchase-requests/${pr.id}`}
-                                                className="pr-action-link"
-                                            >
-                                                View
-                                            </Link>
+                                            <ViewActionButton href={`/purchase-requests/${pr.id}`} />
                                         </div>
                                     </td>
                                 </tr>

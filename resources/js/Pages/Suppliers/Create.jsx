@@ -1,5 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import BackButton from '@/Components/BackButton'
 
 export default function Create() {
     const { data, setData, post, processing, errors } = useForm({
@@ -104,25 +105,8 @@ export default function Create() {
             `}</style>
 
             {/* Light-Theme Normalized Back Navigation Link Wrapper */}
-            <Link href="/suppliers" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                fontSize: 13, color: '#64748b', textDecoration: 'none',
-                marginBottom: 20, transition: 'color 0.15s', fontWeight: 500
-            }}
-                onMouseEnter={e => e.currentTarget.style.color = '#1e293b'}
-                onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
-            >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M15 18l-6-6 6-6" />
-                </svg>
-                Back to Suppliers
-            </Link>
-            <Link href="/purchase-requests" className="pr-btn-back" style={{ marginBottom: 24, display: 'inline-flex' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M15 18l-6-6 6-6" />
-                </svg>
-                Back to Purchase Requests
-            </Link>
+            <BackButton link={"/suppliers"} text={"Back to Suppliers"} />
+           
 
             <div className="sv-form-card">
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
