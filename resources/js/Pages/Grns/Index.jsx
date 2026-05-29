@@ -12,6 +12,7 @@ const C = {
     primary: '#00C488', // Premium Dashboard Accent Green
     secondary: '#d97706', // Amber / Warning
     tertiary: '#ffb95f',
+    textMain: '#0f172a',       // High-contrast main text
     onSurface: '#1e293b', // Slate 800 (Dark text)
     onSurfaceVar: '#64748b', // Slate 500 (Muted text/labels)
     onPrimary: '#ffffff', // White text on green button
@@ -120,8 +121,8 @@ export default function Index({ grns, flash }) {
                     border: 1px solid #bfdbfe; padding: 2px 7px; border-radius: 6px;
                 }
                 .grn-id-badge {
-                    font-family: 'Courier New', monospace; font-size: 13px; font-weight: 500;
-                    color: #334155; letter-spacing: 0.02em;
+                     font-size: 11.5px; font-weight: 700;
+                    color: ${C.textMain}; letter-spacing: 0.02em;
                 }
             `}</style>
 

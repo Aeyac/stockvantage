@@ -79,9 +79,9 @@ export default function Index({ catalogItems, warehouses }) {
                 
                 /* High-visibility uppercase labels & code identifiers */
                 .inv-sku {
-                    font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700;
-                    color: ${C.tertiary}; background: ${C.tertiaryBg};
-                    border: 1px solid ${C.tertiaryBorder}; padding: 2px 7px; border-radius: 5px;
+                     font-size: 11px; font-weight: 700;
+                    color: ${C.textMain};
+                     padding: px 7px; border-radius: 5px;
                 }
                 .inv-alert-bar {
                     display: flex; align-items: center; gap: 12px;

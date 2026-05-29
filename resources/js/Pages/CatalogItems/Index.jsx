@@ -101,14 +101,11 @@ export default function Index({ catalogItems, flash }) {
 
                 /* Contextual Item Badges (SKU & Category styles structured like reference terms) */
                 .sv-sku {
-                    font-family: 'Courier New', monospace;
-                    font-size: 11.5px;
-                    font-weight: 600;
-                    padding: 3px 10px;
+                    font-size: 12px;
+                    font-weight: 700;
+                    padding: px 10px;
                     border-radius: 20px;
-                    background: #f1f5f9;
-                    color: #475569;
-                    border: 1px solid #e2e8f0;
+                    color: #0f172a;
                 }
                 .sv-category {
                     font-size: 11.5px;

@@ -108,6 +108,7 @@ export default function Index({ purchaseRequests, flash = "" }) {
                     text-decoration: none;
                     transition: background 0.15s;
                     font-family: inherit;
+                    vertical-align: middle;
                 }
                 .pr-btn-primary:hover { background: #00a873; }
 
@@ -145,21 +146,17 @@ export default function Index({ purchaseRequests, flash = "" }) {
                 .pr-table tbody tr:last-child td { border-bottom: none; }
                 .pr-table tbody tr:hover td { background: #f8fafc; }
 
-                //* Monospace PR ID Badge for Light Mode */
+                /* Bold ID Badge using inherited layout font family */
                 .pr-id-badge {
-                    font-family: 'Courier New', monospace;
-                    font-size: 11px; 
+                    font-family: inherit;
+                    font-size: 12px; 
                     font-weight: 700;
-                    background: #eff6ff;
-                    padding: 1.5px 6px; 
+                    padding: px 8px; 
+                    border-radius: 4px;
                     display: inline-block;
                     letter-spacing: 0.02em;
                 }
-                    
-
-                /* Contextual Table Row Action Links */
                 
-
                 /* Clean Light Mode Pagination Blocks */
                 .pr-pagination-btn {
                     display: inline-flex;

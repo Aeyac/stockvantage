@@ -151,10 +151,9 @@ export default function Index({ purchaseOrders, flash }) {
                 
                 /* Clean code identifiers monospace structural tags */
                 .po-number {
-                    font-family: 'Courier New', monospace; font-size: 11.5px;
+                     font-size: 11.5px;
                     font-weight: 700; color: ${C.textMain};
-                    background: ${C.surfaceHigh}; border: 1px solid ${C.outline};
-                    padding: 3px 8px; border-radius: 4px; letter-spacing: 0.02em;
+                    padding: px 8px; border-radius: 4px; letter-spacing: 0.02em;
                 }
                 
                 .po-pr-link {
