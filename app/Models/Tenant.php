@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Tenant extends Model
 {
@@ -59,5 +60,10 @@ class Tenant extends Model
     public function stockLedgers()
     {
         return $this->hasMany(StockLedger::class);
+    }
+
+    public function settings(): HasOne
+    {
+        return $this->hasOne(TenantSetting::class);
     }
 }
