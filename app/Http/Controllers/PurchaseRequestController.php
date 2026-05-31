@@ -6,10 +6,12 @@ use App\Http\Requests\StorePurchaseRequestRequest;
 use App\Models\CatalogItem;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseRequest;
+use App\Models\TenantSetting;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\DB;
+use User;
 
 
 
@@ -35,7 +37,7 @@ class PurchaseRequestController extends Controller
     {
         return Inertia::render('PurchaseRequests/Create', [
             'catalogItems' => CatalogItem::where('is_active', true)->get(),
-        ]); // plural
+        ]);
     }
 
     public function store(StorePurchaseRequestRequest $request): RedirectResponse

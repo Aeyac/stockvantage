@@ -28,5 +28,16 @@ class TenantSetting extends Model
         return $this->belongsTo(Tenant::class);
     }
 
+    public static function currencySymbol(string $currency): string
+    {
+        return match ($currency) {
+            'USD' => '$',
+            'PHP' => '₱',
+            'EUR' => '€',
+            'GBP' => '£',
+            default => '₱',
+        };
+    }
+
 
 }

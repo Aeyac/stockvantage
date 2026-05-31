@@ -2,6 +2,7 @@ import { Head, Link, usePage } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 import { ViewActionButton } from '@/Components/ActionButtons'
+import { useAuth } from '@/hooks/useAuth'
 
 // Soft, readable text colors with subtle background pills for light mode statuses
 const STATUS_CONFIG = {
@@ -67,11 +68,7 @@ function StatusBadge({ status }) {
     )
 }
 
-function formatCurrency(value) {
-    return '₱' + parseFloat(value).toLocaleString('en-PH', {
-        minimumFractionDigits: 2, maximumFractionDigits: 2,
-    })
-}
+
 
 function formatDate(dateStr) {
     return new Date(dateStr).toLocaleDateString('en-PH', {
@@ -84,8 +81,15 @@ function formatPrId(id) {
 }
 
 export default function Index({ purchaseRequests, flash = "" }) {
-    const { auth } = usePage().props
-    const user = auth.user
+    // const { auth } = usePage().props
+    // const user = auth.user
+    const { currencySymbol } = useAuth();
+
+    function formatCurrency(value) {
+        return currencySymbol + parseFloat(value).toLocaleString('en-PH', {
+            minimumFractionDigits: 2, maximumFractionDigits: 2,
+        })
+    }
 
     return (
         <AuthenticatedLayout header="Purchase Requests">

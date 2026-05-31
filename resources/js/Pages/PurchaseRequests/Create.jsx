@@ -1,6 +1,8 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import BackButton from '@/Components/BackButton'
+import { useSymbol } from '@/hooks/useSymbol';
+import { useAuth } from '@/hooks/useAuth';
 
 
 // Unified Light Mode Visual System Tokens
@@ -23,18 +25,22 @@ const C = {
     tertiary: '#b45309',     // Amber-700 badge text color for clear light-mode parsing
 }
 
-function formatCurrency(value) {
-    if (!value && value !== 0) return '₱0.00'
-    return '₱' + parseFloat(value).toLocaleString('en-PH', {
-        minimumFractionDigits: 2, maximumFractionDigits: 2,
+
+
+function formatCurrency(currencySymbol, value) {
+    return currencySymbol + parseFloat(value).toLocaleString('en-PH', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
     })
 }
 
-export default function Create({ catalogItems, flash }) {
+export default function Create({ catalogItems }) {
     const { data, setData, post, processing, errors } = useForm({
         justification: '',
         items: [{ catalog_item_id: '', quantity: 1 }],
     })
+
+    const { currencySymbol, approvalThreshold } = useAuth();
 
     // Compute running total from catalog item prices
     function getLineTotal(item) {
@@ -70,7 +76,7 @@ export default function Create({ catalogItems, flash }) {
 
     const total = getTotal()
     // Adjusted logic from < 500 to < 5000 to match systemic business descriptions
-    const willAutoApprove = total > 0 && total < 5000
+    const willAutoApprove = total > 0 && total < Number(approvalThreshold);
 
     return (
         <AuthenticatedLayout header="New Purchase Request">
@@ -271,7 +277,7 @@ export default function Create({ catalogItems, flash }) {
                                         {/* Unit Cost Contextual Hint */}
                                         {selectedCatalog && (
                                             <div style={{ fontSize: 12, color: '#64748b', marginTop: 4, paddingLeft: 2 }}>
-                                                Unit cost: {formatCurrency(selectedCatalog.unit_cost)}
+                                                Unit cost: {formatCurrency(currencySymbol, selectedCatalog.unit_cost)}
                                             </div>
                                         )}
                                     </div>
@@ -287,7 +293,7 @@ export default function Create({ catalogItems, flash }) {
 
                                     {/* Calculated Line Running Cost Total Container */}
                                     <div className="pr-line-total">
-                                        {formatCurrency(lineTotal)}
+                                        {formatCurrency(currencySymbol, lineTotal)}
                                     </div>
 
                                     {/* Dynamic Row Dismissal Controls */}
@@ -340,7 +346,7 @@ export default function Create({ catalogItems, flash }) {
                                     Estimated Total
                                 </span>
                                 <span style={{ fontSize: 20, fontWeight: 700, color: C.textMain }}>
-                                    {formatCurrency(total)}
+                                    {formatCurrency(currencySymbol, total)}
                                 </span>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
@@ -348,14 +354,14 @@ export default function Create({ catalogItems, flash }) {
                                     <>
                                         <span className="pr-auto-badge">Auto Approved</span>
                                         <span style={{ fontSize: 11.5, color: '#64748b', fontWeight: 500 }}>
-                                            Below ₱5,000 threshold
+                                            Below {`${currencySymbol}${approvalThreshold}`} threshold
                                         </span>
                                     </>
                                 ) : (
                                     <>
                                         <span className="pr-approval-badge">Needs Approval</span>
                                         <span style={{ fontSize: 11.5, color: '#64748b', fontWeight: 500 }}>
-                                            ₱5,000 and above requires manager sign-off
+                                            {`${currencySymbol}${approvalThreshold} and above requires manager approval`}
                                         </span>
                                     </>
                                 )}

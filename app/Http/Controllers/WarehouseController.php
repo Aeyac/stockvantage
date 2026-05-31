@@ -12,7 +12,7 @@ use Inertia\Response;
 class WarehouseController extends Controller
 {
     public function index(): Response
-    {        
+    {
         $warehouses = Warehouse::paginate(15);
 
         return Inertia::render('Warehouses/Index', [

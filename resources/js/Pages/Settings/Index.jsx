@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
+import FlashMessage from '@/Components/FlashMessage';
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const light = {
@@ -52,10 +53,10 @@ const dark = {
 const CURRENCY_SYMBOLS = { PHP: '₱', USD: '$', EUR: '€', GBP: '£' };
 
 const NAV_ITEMS = [
-    { id: 'general',       icon: 'building',     label: 'General' },
-    { id: 'billing',       icon: 'credit-card',  label: 'Billing' },
-    { id: 'notifications', icon: 'bell',         label: 'Notifications' },
-    { id: 'security',      icon: 'shield-lock',  label: 'Security' },
+    { id: 'general', icon: 'building', label: 'General' },
+    { id: 'billing', icon: 'credit-card', label: 'Billing' },
+    { id: 'notifications', icon: 'bell', label: 'Notifications' },
+    { id: 'security', icon: 'shield-lock', label: 'Security' },
 ];
 
 // ─── Icon ─────────────────────────────────────────────────────────────────────
@@ -232,8 +233,8 @@ function SectionHeading({ title, desc, C, danger }) {
 
 // ─── ThemeSegmented ───────────────────────────────────────────────────────────
 const THEME_OPTS = [
-    { id: 'light',  icon: 'sun',           label: 'Light' },
-    { id: 'dark',   icon: 'moon',          label: 'Dark' },
+    { id: 'light', icon: 'sun', label: 'Light' },
+    { id: 'dark', icon: 'moon', label: 'Dark' },
     { id: 'system', icon: 'device-laptop', label: 'System' },
 ];
 
@@ -277,8 +278,8 @@ function ThemeSegmented({ value, onChange, C }) {
 
 // ─── ThemeBadge ───────────────────────────────────────────────────────────────
 const THEME_LABELS = {
-    light:  'Light mode active',
-    dark:   'Dark mode active',
+    light: 'Light mode active',
+    dark: 'Dark mode active',
     system: 'Following system preference',
 };
 
@@ -378,12 +379,12 @@ function DangerZone({ C }) {
             {[
                 {
                     title: 'Delete all procurement data',
-                    desc:  'Permanently removes purchase orders, requests, and vendor records.',
+                    desc: 'Permanently removes purchase orders, requests, and vendor records.',
                     label: 'Delete data',
                 },
                 {
                     title: 'Reset organization',
-                    desc:  'Removes all members, settings, and configuration. The account itself is kept.',
+                    desc: 'Removes all members, settings, and configuration. The account itself is kept.',
                     label: 'Reset org',
                 },
             ].map((item, i, arr) => (
@@ -479,7 +480,7 @@ function Toast({ visible, C }) {
 }
 
 // ─── Main export ──────────────────────────────────────────────────────────────
-export default function Settings({ settings }) {
+export default function Index({ settings }) {
     const { flash } = usePage().props;
 
     const [themeMode, setThemeMode] = useState(() => {
@@ -487,16 +488,16 @@ export default function Settings({ settings }) {
     });
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        _method:            'POST',
-        company_name:       settings.company_name       ?? '',
-        currency:           settings.currency           ?? 'PHP',
+        _method: 'POST',
+        company_name: settings.company_name ?? '',
+        currency: settings.currency ?? 'PHP',
         approval_threshold: settings.approval_threshold ?? 500.00,
-        logo:               null,
+        logo: null,
     });
 
-    const [logoPreview, setLogoPreview]     = useState(settings.logo_url ?? null);
+    const [logoPreview, setLogoPreview] = useState(settings.logo_url ?? null);
     const [activeSection, setActiveSection] = useState('general');
-    const [toastVisible, setToastVisible]   = useState(false);
+    const [toastVisible, setToastVisible] = useState(false);
 
     const C = themeMode === 'dark' ? dark : light;
 
@@ -538,6 +539,7 @@ export default function Settings({ settings }) {
 
     return (
         <AuthenticatedLayout header="System Configurations">
+
             <Head title="Settings" />
 
             <link
@@ -738,6 +740,7 @@ export default function Settings({ settings }) {
                     </main>
                 </div>
             </div>
+            
         </AuthenticatedLayout>
     );
 }

@@ -1,6 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import BackButton from '@/Components/BackButton'
+import { useAuth } from '@/hooks/useAuth'
 
 // Unified Light Mode Visual System Tokens
 const C = {
@@ -58,11 +59,7 @@ function StatusBadge({ status }) {
     )
 }
 
-function formatCurrency(value) {
-    return '₱' + parseFloat(value).toLocaleString('en-PH', {
-        minimumFractionDigits: 2, maximumFractionDigits: 2,
-    })
-}
+
 
 function formatDate(dateStr) {
     return new Date(dateStr).toLocaleDateString('en-PH', {
@@ -76,9 +73,15 @@ function formatPrId(id) {
 }
 
 export default function Show({ purchaseRequest }) {
-    const { auth } = usePage().props
-    const user = auth.user
+    // const { auth } = usePage().props
+    // const user = auth.user
+    const { user, currencySymbol } = useAuth();
 
+    function formatCurrency(value) {
+        return currencySymbol + parseFloat(value).toLocaleString('en-PH', {
+            minimumFractionDigits: 2, maximumFractionDigits: 2,
+        })
+    }
     const canActOnRequest =
         purchaseRequest.status === 'awaiting_approval' &&
         (user.role === 'tenant_admin' || user.role === 'department_manager')
@@ -196,7 +199,7 @@ export default function Show({ purchaseRequest }) {
 
 
             <BackButton link={"/purchase-requests"} text={"Back to Purchase Requests"} />
-            
+
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 860 }}>
 
