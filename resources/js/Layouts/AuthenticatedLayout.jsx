@@ -154,9 +154,10 @@ export default function AuthenticatedLayout({ children, header }) {
                     background: #F2F5F4;
                     display: grid;
                     grid-template-rows: 52px 1fr;
-                    min-height: 100vh;
+                    height: 100vh; /* Changed from min-height to strict height */
                     font-family: 'DM Sans', sans-serif;
                     color: #0A0C0B;
+                    overflow: hidden; /* Stops the main application window from scrolling */
                 }
                 .dash-topbar {
                     background: #FFFFFF; 
@@ -181,7 +182,7 @@ export default function AuthenticatedLayout({ children, header }) {
                 .dash-body { 
                     display: flex; 
                     flex: 1; 
-                    overflow: hidden; 
+                    overflow: hidden; /* Retains flex bounding layout context */
                 }
                 .dash-sidebar {
                     background: #FFFFFF; 
@@ -195,8 +196,8 @@ export default function AuthenticatedLayout({ children, header }) {
                     transition: width 0.15s ease;
 
                     height: 100%; 
-                    max-height: calc(100vh - 52px); /* Forces sidebar to exactly match the body row */
-                    overflow: hidden;
+                    /* Allows the nav container items to independently scroll if menu is long */
+                    overflow-y: auto; 
                 }
                 .dash-sidebar-logo {
                     display: flex; 
@@ -272,7 +273,7 @@ export default function AuthenticatedLayout({ children, header }) {
                 .dash-main { 
                     flex: 1; 
                     padding: 20px; 
-                    overflow: auto; 
+                    overflow-y: auto; /* Keeps the main area container cleanly scrollable */
                 }
                 .toggle-btn {
                     background: none;

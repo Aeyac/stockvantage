@@ -6,6 +6,7 @@ use App\Http\Controllers\GrnController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PurchaseRequestController;
+use App\Http\Controllers\TenantSettingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
@@ -80,6 +81,9 @@ Route::middleware(['auth'])->group(function () {
         // so we skip it here to avoid duplicate route conflict
         Route::resource('/catalog-items', CatalogItemController::class)
             ->except(['index']);
+
+        Route::get('/settings', [TenantSettingController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [TenantSettingController::class, 'update'])->name('settings.update');
     });
 
 });

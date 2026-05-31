@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TenantSetting extends Model
 {
-    use BelongsToTenant;
 
     protected $fillable = [
         'tenant_id',
+        'company_name',
         'logo_path',
         'currency',
         'approval_threshold'

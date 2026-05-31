@@ -13,14 +13,12 @@ return new class extends Migration {
     {
         Schema::create('tenant_settings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->constrained()->cascadeOnDelete();
-            $table->string('company_name')->default('StockVantage');
-            $table->string('logo_path')->nullable();
+            $table->foreignId('tenant_id')->constrained('tenants')->cascadeOnDelete();
+            $table->string('company_name')->default('My Company');
             $table->string('currency', 10)->default('USD');
             $table->decimal('approval_threshold', 15, 2)->default(500.00);
+            $table->string('logo_path')->nullable();
             $table->timestamps();
-
-            // $table->renameColumn('company_logo', 'logo_path');
         });
     }
 

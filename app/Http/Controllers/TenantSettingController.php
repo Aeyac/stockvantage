@@ -14,33 +14,51 @@ class TenantSettingController extends Controller
     {
         abort_if(!auth()->user()->isAdmin(), 403, 'Unauthorized access.');
 
-        $settings = TenantSetting::where('tenant_id', auth()->id())->first();
+        $tenantId = session('tenant_id'); // ← was auth()->id()
 
-        return Inertia::render('TenantSettings/Index', [
-            'settings' => $settings
+        $settings = TenantSetting::firstOrCreate(
+            ['tenant_id' => $tenantId],
+            [
+                'company_name' => 'My Company',
+                'currency' => 'PHP',
+                'approval_threshold' => 500.00,
+                'logo_path' => null,
+            ]
+        );
+
+        return Inertia::render('Settings/Index', [
+            'settings' => [
+                'company_name' => $settings->company_name,
+                'currency' => $settings->currency,
+                'approval_threshold' => $settings->approval_threshold,
+                'logo_url' => $settings->logo_path
+                    ? Storage::disk('public')->url($settings->logo_path)
+                    : null,
+            ]
         ]);
     }
 
     public function update(UpdateTenantSettingRequest $request): RedirectResponse
     {
-        $settings = TenantSetting::where('tenant_id', auth()->id())->firstOrFail();
+        $tenantId = session('tenant_id'); // ← was auth()->id()
+
+        $settings = TenantSetting::where('tenant_id', $tenantId)->firstOrFail();
 
         $data = $request->validated();
+        unset($data['logo']); // ← remove file object before passing to update()
 
-        // Handle logo upload first
         if ($request->hasFile('logo')) {
             if ($settings->logo_path) {
                 Storage::disk('public')->delete($settings->logo_path);
             }
 
-            $data['logo_path'] = $request->file('logo')
-                ->store('branding', 'public');
+            $data['logo_path'] = $request->file('logo')->store('branding', 'public');
         }
 
         $settings->update($data);
 
         return redirect()
-            ->route('tenant_settings.index')
+            ->route('settings.index')
             ->with('success', 'Settings updated successfully.');
     }
 }
