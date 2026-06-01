@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 import { useAuth } from '@/hooks/useAuth'
 import { EditActionButton, DeleteActionButton } from '@/Components/ActionButtons'
+import { formatCurrency } from '@/hooks/useCurrency'
 
 export default function Index({ catalogItems, flash }) {
     const { isAdmin } = useAuth();
@@ -13,12 +14,7 @@ export default function Index({ catalogItems, flash }) {
         }
     }
 
-    function formatCurrency(value) {
-        return '₱' + parseFloat(value).toLocaleString('en-PH', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        })
-    }
+    
 
     return (
         <AuthenticatedLayout header="Catalog Items">

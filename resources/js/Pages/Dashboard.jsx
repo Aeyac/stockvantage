@@ -2,27 +2,23 @@ import { Head, Link, usePage } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { useAuth } from '@/hooks/useAuth'
 import { useEffect, useRef } from 'react'
+import { formatCurrency } from '@/hooks/useCurrency'
 
 const C = {
-    bg:        '#F2F5F4',
-    surface:   '#FFFFFF',
-    border:    '#E2E8E6',
-    ink:       '#0A0C0B',
-    ink2:      '#2C3833',
-    mute:      '#5A6E67',
-    mute2:     '#7A9189',
-    signal:    '#00C488',
+    bg: '#F2F5F4',
+    surface: '#FFFFFF',
+    border: '#E2E8E6',
+    ink: '#0A0C0B',
+    ink2: '#2C3833',
+    mute: '#5A6E67',
+    mute2: '#7A9189',
+    signal: '#00C488',
     signalDim: '#007A55',
-    warn:      '#F59B00',
-    danger:    '#E84040',
-    safe:      '#22C55E',
+    warn: '#F59B00',
+    danger: '#E84040',
+    safe: '#22C55E',
 }
 
-function formatCurrency(value) {
-    return '$' + parseFloat(value || 0).toLocaleString('en-US', {
-        minimumFractionDigits: 2, maximumFractionDigits: 2,
-    })
-}
 
 function formatPrId(id) {
     return 'PR-' + String(id).padStart(4, '0')
@@ -30,11 +26,11 @@ function formatPrId(id) {
 
 function Badge({ type }) {
     const map = {
-        auto_approved:     { bg: '#DCFCE7', color: '#15803D', label: 'Auto-Approved' },
-        approved:          { bg: '#DCFCE7', color: '#15803D', label: 'Approved' },
+        auto_approved: { bg: '#DCFCE7', color: '#15803D', label: 'Auto-Approved' },
+        approved: { bg: '#DCFCE7', color: '#15803D', label: 'Approved' },
         awaiting_approval: { bg: '#FEF3C7', color: '#92400E', label: 'Awaiting Approval' },
-        pending:           { bg: '#F1F5F9', color: '#475569', label: 'Pending' },
-        rejected:          { bg: '#FEE2E2', color: '#991B1B', label: 'Rejected' },
+        pending: { bg: '#F1F5F9', color: '#475569', label: 'Pending' },
+        rejected: { bg: '#FEE2E2', color: '#991B1B', label: 'Rejected' },
     }
     const s = map[type] ?? map.pending
     return (
@@ -77,6 +73,8 @@ function MetricTile({ label, value, sub, subType }) {
 function SpendChart({ data }) {
     const svgRef = useRef(null)
 
+    const { currencySymbol } = useAuth();
+
     useEffect(() => {
         if (!svgRef.current || !data?.length) return
         const W = 680, H = 140, padL = 8, padR = 8, padT = 10, padB = 28
@@ -87,11 +85,11 @@ function SpendChart({ data }) {
 
         let html = ''
         html += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="${C.border}" stroke-width="0.5"/>`
-        ;[0, 0.25, 0.5, 0.75, 1].forEach(pct => {
-            const y = padT + chartH * (1 - pct)
-            html += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="${C.border}" stroke-width="0.5" stroke-dasharray="3 4"/>`
-            if (pct > 0) html += `<text x="${padL + 2}" y="${y - 3}" font-size="9" fill="${C.mute2}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">$${Math.round(maxVal * pct / 1000)}k</text>`
-        })
+            ;[0, 0.25, 0.5, 0.75, 1].forEach(pct => {
+                const y = padT + chartH * (1 - pct)
+                html += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="${C.border}" stroke-width="0.5" stroke-dasharray="3 4"/>`
+                if (pct > 0) html += `<text x="${padL + 2}" y="${y - 3}" font-size="9" fill="${C.mute2}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">${currencySymbol}${Math.round(maxVal * pct / 1000)}k</text>`
+            })
 
         data.forEach((d, i) => {
             const val = parseFloat(d.spend || 0)
@@ -230,12 +228,7 @@ export default function Dashboard({ metrics, recentRequests, spendChart }) {
                 <div className="db-section-label">
                     Overview / {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                 </div>
-                {/* <h1 style={{
-                    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif", fontSize: 22,
-                    fontWeight: 700, color: C.ink, letterSpacing: '-0.02em',
-                }}>
-                    {greeting()}, {auth.user.name.split(' ')[0]}!
-                </h1> */}
+
             </div>
 
             {/* Metric tiles */}

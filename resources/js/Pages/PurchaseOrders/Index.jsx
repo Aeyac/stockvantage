@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 import { ViewActionButton } from '@/Components/ActionButtons'
+import { formatCurrency } from '@/hooks/useCurrency'
 
 // Unified Light Mode Visual System Tokens
 const C = {
@@ -69,11 +70,6 @@ function StatusBadge({ status }) {
     )
 }
 
-function formatCurrency(value) {
-    return '₱' + parseFloat(value).toLocaleString('en-PH', {
-        minimumFractionDigits: 2, maximumFractionDigits: 2,
-    })
-}
 
 function formatDate(dateStr) {
     return new Date(dateStr).toLocaleDateString('en-PH', {

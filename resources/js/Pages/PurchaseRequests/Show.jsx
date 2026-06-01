@@ -1,7 +1,8 @@
-import { Head, Link, router, usePage } from '@inertiajs/react'
+import { Head, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import BackButton from '@/Components/BackButton'
 import { useAuth } from '@/hooks/useAuth'
+import { formatCurrency } from '@/hooks/useCurrency'
 
 // Unified Light Mode Visual System Tokens
 const C = {
@@ -73,15 +74,9 @@ function formatPrId(id) {
 }
 
 export default function Show({ purchaseRequest }) {
-    // const { auth } = usePage().props
-    // const user = auth.user
-    const { user, currencySymbol } = useAuth();
+    const { user } = useAuth();
 
-    function formatCurrency(value) {
-        return currencySymbol + parseFloat(value).toLocaleString('en-PH', {
-            minimumFractionDigits: 2, maximumFractionDigits: 2,
-        })
-    }
+
     const canActOnRequest =
         purchaseRequest.status === 'awaiting_approval' &&
         (user.role === 'tenant_admin' || user.role === 'department_manager')

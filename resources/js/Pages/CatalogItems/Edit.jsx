@@ -1,6 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import BackButton from '@/Components/BackButton'
+import { useAuth } from '@/hooks/useAuth'
 
 // Refactored to light mode tokens matching the reference form design
 const C = {
@@ -32,6 +33,8 @@ export default function Edit({ catalogItem, suppliers }) {
         safety_stock: catalogItem.safety_stock,
         is_active: catalogItem.is_active,
     })
+
+    const { currencySymbol } = useAuth();
 
     function handleSubmit(e) {
         e.preventDefault()
@@ -214,7 +217,7 @@ export default function Edit({ catalogItem, suppliers }) {
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                         <div className="ci-field">
-                            <label className="ci-label">Unit Cost (₱) *</label>
+                            <label className="ci-label">Unit Cost ({currencySymbol}) *</label>
                             <input
                                 className="ci-input" type="number" min="0" step="0.01"
                                 value={data.unit_cost}

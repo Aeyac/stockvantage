@@ -3,6 +3,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 import { ViewActionButton } from '@/Components/ActionButtons'
 import { useAuth } from '@/hooks/useAuth'
+import { formatCurrency } from '@/hooks/useCurrency'
+
 
 // Soft, readable text colors with subtle background pills for light mode statuses
 const STATUS_CONFIG = {
@@ -83,13 +85,7 @@ function formatPrId(id) {
 export default function Index({ purchaseRequests, flash = "" }) {
     // const { auth } = usePage().props
     // const user = auth.user
-    const { currencySymbol } = useAuth();
 
-    function formatCurrency(value) {
-        return currencySymbol + parseFloat(value).toLocaleString('en-PH', {
-            minimumFractionDigits: 2, maximumFractionDigits: 2,
-        })
-    }
 
     return (
         <AuthenticatedLayout header="Purchase Requests">

@@ -1,8 +1,8 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import BackButton from '@/Components/BackButton'
-import { useSymbol } from '@/hooks/useSymbol';
 import { useAuth } from '@/hooks/useAuth';
+import { formatCurrency } from '@/hooks/useCurrency';
 
 
 // Unified Light Mode Visual System Tokens
@@ -26,13 +26,6 @@ const C = {
 }
 
 
-
-function formatCurrency(currencySymbol, value) {
-    return currencySymbol + parseFloat(value).toLocaleString('en-PH', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    })
-}
 
 export default function Create({ catalogItems }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -277,7 +270,7 @@ export default function Create({ catalogItems }) {
                                         {/* Unit Cost Contextual Hint */}
                                         {selectedCatalog && (
                                             <div style={{ fontSize: 12, color: '#64748b', marginTop: 4, paddingLeft: 2 }}>
-                                                Unit cost: {formatCurrency(currencySymbol, selectedCatalog.unit_cost)}
+                                                Unit cost: {formatCurrency(selectedCatalog.unit_cost)}
                                             </div>
                                         )}
                                     </div>
@@ -293,7 +286,7 @@ export default function Create({ catalogItems }) {
 
                                     {/* Calculated Line Running Cost Total Container */}
                                     <div className="pr-line-total">
-                                        {formatCurrency(currencySymbol, lineTotal)}
+                                        {formatCurrency(lineTotal)}
                                     </div>
 
                                     {/* Dynamic Row Dismissal Controls */}
@@ -346,7 +339,7 @@ export default function Create({ catalogItems }) {
                                     Estimated Total
                                 </span>
                                 <span style={{ fontSize: 20, fontWeight: 700, color: C.textMain }}>
-                                    {formatCurrency(currencySymbol, total)}
+                                    {formatCurrency(total)}
                                 </span>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>

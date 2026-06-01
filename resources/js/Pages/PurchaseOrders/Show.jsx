@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import BackButton from '@/Components/BackButton'
+import { formatCurrency } from '@/hooks/useCurrency'
 
 // Extracted Visual Tokens directly corresponding with your provided image reference
 const C = {
@@ -15,12 +16,6 @@ const C = {
     pillBorder: '#c4f6e1'
 }
 
-function formatCurrency(value) {
-    return '$' + parseFloat(value).toLocaleString('en-US', {
-        minimumFractionDigits: 2, maximumFractionDigits: 2,
-    })
-}
-
 function formatDate(dateStr) {
     if (!dateStr) return 'June 14, 2026'
     return new Date(dateStr).toLocaleDateString('en-US', {
@@ -29,8 +24,9 @@ function formatDate(dateStr) {
 }
 
 export default function Show({ purchaseOrder }) {
+    console.log(purchaseOrder);
     const pr = purchaseOrder?.purchase_request
-    const vendorName = purchaseOrder?.vendor?.name ?? 'Nexus Tech Supply Partners Ltd'
+    const supplierName = purchaseOrder.purchase_request.line_items[0].catalog_item.supplier.name ?? 'Unknown';
     const termsCondition = purchaseOrder?.terms ?? 'Net 30 Account Balances'
 
     return (
@@ -136,7 +132,7 @@ export default function Show({ purchaseOrder }) {
                     border-bottom: 1px solid #e2e8f0;
                 }
                 .po-table-spec td {
-                    padding: 16px 0;
+                    padding: 8px 0;
                     font-size: 13px;
                     color: ${C.textPrimary};
                     vertical-align: middle;
@@ -196,7 +192,7 @@ export default function Show({ purchaseOrder }) {
 
                 {/* Styled Card Blueprint Frame */}
                 <div className="po-spec-card">
-                    
+
                     {/* Header Workspace */}
                     <div className="po-header-row">
                         <div>
@@ -215,7 +211,7 @@ export default function Show({ purchaseOrder }) {
                     <div className="po-info-grid">
                         <div className="po-info-block">
                             <span className="po-label-cap">Vendor</span>
-                            <span className="po-value-strong">{vendorName}</span>
+                            <span className="po-value-strong">{supplierName}</span>
                         </div>
                         <div className="po-info-block">
                             <span className="po-label-cap">Date Stamp Valid</span>

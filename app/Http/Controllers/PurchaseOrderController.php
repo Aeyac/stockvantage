@@ -22,6 +22,7 @@ class PurchaseOrderController extends Controller
     {
         $purchaseOrder->load(
             'purchaseRequest.lineItems.catalogItem',
+            'purchaseRequest.lineItems.catalogItem.supplier:id,name',
             'purchaseRequest.requester'
         );
 

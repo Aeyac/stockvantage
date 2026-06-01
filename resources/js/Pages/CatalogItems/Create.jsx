@@ -1,6 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import BackButton from '@/Components/BackButton'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function Create({ activeSuppliers }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -11,6 +12,8 @@ export default function Create({ activeSuppliers }) {
         unit_cost: '',
         safety_stock: 0,
     })
+
+    const { currencySymbol } = useAuth();
 
     function handleSubmit(e) {
         e.preventDefault()
@@ -177,7 +180,7 @@ export default function Create({ activeSuppliers }) {
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                         <div className="sv-field">
-                            <label className="sv-label">Unit Cost (₱) *</label>
+                            <label className="sv-label">Unit Cost ({currencySymbol}) *</label>
                             <input
                                 className="sv-input"
                                 type="number"

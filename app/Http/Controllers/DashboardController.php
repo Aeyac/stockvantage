@@ -13,7 +13,6 @@ class DashboardController extends Controller
 {
     public function index(): Response
     {
-        $user = auth()->user();
 
         // Month-to-date spend
         $mtdSpend = PurchaseOrder::whereMonth('created_at', now()->month)
