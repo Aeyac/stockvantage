@@ -1,8 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 
 
-
-
 export default function formatCurrency(value) {
     const { currencySymbol } = useAuth();
 

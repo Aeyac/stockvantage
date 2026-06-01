@@ -49,14 +49,14 @@ class HandleInertiaRequests extends Middleware
 
 
 
+
     private function getCurrencySymbol(Request $request): string
     {
         if (!$request->user())
             return '₱';
 
-        return session()->remember('tenant_currency', function () {
-            $tenantId = session('tenant_id');
-            $settings = TenantSetting::where('tenant_id', $tenantId)->first();
+        return session()->remember('tenant_currency', function () use ($request) {
+            $settings = TenantSetting::where('tenant_id', $request->user()->tenant_id)->first();
             $currency = $settings?->currency ?? 'PHP';
             return TenantSetting::currencySymbol($currency);
         });
@@ -65,12 +65,11 @@ class HandleInertiaRequests extends Middleware
     private function getThreshold(Request $request): float
     {
         if (!$request->user())
-            return 0.0;
+            return 500.00;
 
-        return session()->remember('tenant_threshold', function () {
-            $tenantId = session('tenant_id');
-            $settings = TenantSetting::where('tenant_id', $tenantId)->first();
-            return $settings?->approval_threshold ?? 50.00;
+        return (float) session()->remember('tenant_threshold', function () use ($request) {
+            $settings = TenantSetting::where('tenant_id', $request->user()->tenant_id)->first();
+            return (float) ($settings?->approval_threshold ?? 500.00);
         });
     }
 }

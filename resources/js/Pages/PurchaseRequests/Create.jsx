@@ -362,6 +362,8 @@ export default function Create({ catalogItems }) {
                                         <span className="pr-approval-badge">Needs Approval</span>
                                         <span style={{ fontSize: 11.5, color: '#64748b', fontWeight: 500 }}>
                                             {`${currencySymbol}${approvalThreshold} and above requires manager approval`}
+                                            {console.log(currencySymbol)}
+
                                         </span>
                                     </>
                                 )}
