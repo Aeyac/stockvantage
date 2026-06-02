@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import BackButton from '@/Components/BackButton'
 import { useAuth } from '@/hooks/useAuth'
 import { formatCurrency } from '@/hooks/useCurrency'
+import { useMemo } from 'react'
 
 // Unified Light Mode Visual System Tokens
 const C = {
@@ -60,8 +61,6 @@ function StatusBadge({ status }) {
     )
 }
 
-
-
 function formatDate(dateStr) {
     return new Date(dateStr).toLocaleDateString('en-PH', {
         year: 'numeric', month: 'long', day: 'numeric',
@@ -75,7 +74,6 @@ function formatPrId(id) {
 
 export default function Show({ purchaseRequest }) {
     const { user } = useAuth();
-
 
     const canActOnRequest =
         purchaseRequest.status === 'awaiting_approval' &&
@@ -145,7 +143,12 @@ export default function Show({ purchaseRequest }) {
                     font-size: 13.5px !important;
                 }
                 .pr-table tbody tr:last-child td { border-bottom: none !important; }
-                .pr-table tbody tr:hover td { background: ${C.surfaceHigh}50 !important; }
+                
+                /* Fixed background opacity styling syntax rule safety */
+                .pr-table tbody tr:hover td { 
+                    background: ${C.surfaceHigh} !important; 
+                    opacity: 0.85; 
+                }
                 
                 .pr-table tfoot td {
                     padding: 16px 20px !important; 
@@ -174,7 +177,6 @@ export default function Show({ purchaseRequest }) {
                 }
                 .pr-btn-reject:hover { background: #fee2e2 !important; border-color: ${C.error} !important; }
                 
-                
                 /* Clear structural context badges for code identifiers text styling mapping */
                 .pr-sku {
                     font-family: 'Courier New', monospace; font-size: 11.5px; font-weight: 700;
@@ -192,9 +194,7 @@ export default function Show({ purchaseRequest }) {
                 }
             `}</style>
 
-
             <BackButton link={"/purchase-requests"} text={"Back to Purchase Requests"} />
-
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 860 }}>
 

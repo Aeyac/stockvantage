@@ -12,6 +12,7 @@ export function useAuth() {
         isEmployee: user.role === 'employee',
         hasRole: (...roles) => roles.includes(user.role),
         currencySymbol: settings?.currency_symbol ?? '₱',
-        approvalThreshold: settings?.approval_threshold ?? 50.00,
+        approvalThreshold: settings?.tenant_threshold ?? 50.00,
+        companyName: settings?.company_name ?? 'StockVantage',
     }
 }

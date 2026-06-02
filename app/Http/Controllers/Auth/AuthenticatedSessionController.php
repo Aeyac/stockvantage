@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        session()->forget(['tenant_currency', 'tenant_threshold']);
+        session()->forget(['tenant_currency', 'tenant_threshold', 'company_name']);
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

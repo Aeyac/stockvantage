@@ -30,6 +30,7 @@ class PurchaseRequest extends Model
 
     const STATUS_PENDING = 'pending';
     const STATUS_AUTO_APPROVED = 'auto_approved';
+    const STATUS_PARTIALLY_APPROVED = 'partially_approved';
     const STATUS_AWAITING_APPROVAL = 'awaiting_approval';
     const STATUS_APPROVED = 'approved';
     const STATUS_REJECTED = 'rejected';
@@ -54,6 +55,11 @@ class PurchaseRequest extends Model
             self::STATUS_APPROVED,
             self::STATUS_AUTO_APPROVED,
         ]);
+    }
+
+    public function isPartiallyApproved(): bool
+    {
+        return $this->status === self::STATUS_PARTIALLY_APPROVED;
     }
 
     public function isRejected(): bool

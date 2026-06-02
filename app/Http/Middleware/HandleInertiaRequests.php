@@ -42,13 +42,24 @@ class HandleInertiaRequests extends Middleware
             ],
             'settings' => [
                 'currency_symbol' => $this->getCurrencySymbol($request),
-                'approval_threshold' => $this->getThreshold($request),
+                'tenant_threshold' => $this->getThreshold($request),
+                'company_name' => $this->getCompanyName($request),
             ],
         ];
     }
 
 
+    private function getCompanyName(Request $request): string
+    {
+        if (!$request->user())
+            return 'StockVantage';
 
+        return session()->remember('company_name', function () use ($request) {
+            $settings = TenantSetting::where('tenant_id', $request->user()->tenant_id)->first();
+            $company = $settings?->company_name ?? 'StockVantage';
+            return $company;
+        });
+    }
 
     private function getCurrencySymbol(Request $request): string
     {

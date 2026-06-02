@@ -35,8 +35,11 @@ class PurchaseRequestController extends Controller
 
     public function create(): Response
     {
+
+        $catalogItems = CatalogItem::with('supplier')->where('is_active', true)->get();
+
         return Inertia::render('PurchaseRequests/Create', [
-            'catalogItems' => CatalogItem::where('is_active', true)->get(),
+            'catalogItems' => $catalogItems,
         ]);
     }
 
@@ -107,7 +110,11 @@ class PurchaseRequestController extends Controller
 
     public function show(PurchaseRequest $purchaseRequest): Response
     {
-        $purchaseRequest->load('lineItems.catalogItem', 'requester');
+        $purchaseRequest->load(
+            'lineItems.catalogItem',
+            'lineItems.catalogItem.supplier:id,name',
+            'requester'
+        );
 
         return Inertia::render('PurchaseRequests/Show', [
             'purchaseRequest' => $purchaseRequest,

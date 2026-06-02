@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->enum('status', [
                 'pending',
                 'auto_approved',
+                'partially_approved',
                 'awaiting_approval',
                 'approved',
                 'rejected'

@@ -4,36 +4,60 @@ import BackButton from '@/Components/BackButton'
 import { useAuth } from '@/hooks/useAuth';
 import { formatCurrency } from '@/hooks/useCurrency';
 
-
 // Unified Light Mode Visual System Tokens
 const C = {
     bg: '#ffffff',
     surface: '#ffffff',
     surfaceLow: '#ffffff',
-    surfaceHigh: '#f8fafc',  // Used for table headers & total summary backgrounds
+    surfaceHigh: '#f8fafc',
     outline: '#e2e8f0',
     borderInput: '#cbd5e1',
-    primary: '#17aa54',      // Brand green button fill
-    primaryHover: '#1a8f4b', // Brand green button hover
-    primaryFocus: '#00C488', // Dashboard accent green for focus boundaries
+    primary: '#17aa54',
+    primaryHover: '#1a8f4b',
+    primaryFocus: '#00C488',
     onPrimary: '#ffffff',
-    textMain: '#0f172a',     // High-contrast primary text
-    textMuted: '#64748b',    // Subdued secondary descriptions
-    textLabel: '#475569',    // High-visibility metadata label gray
-    textSection: '#94a3b8',  // Structural label indicators
-    error: '#dc2626',        // Accessible light-mode alert red
-    tertiary: '#b45309',     // Amber-700 badge text color for clear light-mode parsing
+    textMain: '#0f172a',
+    textMuted: '#64748b',
+    textLabel: '#475569',
+    textSection: '#94a3b8',
+    error: '#dc2626',
+    tertiary: '#b45309',
 }
 
+export default function Create({ catalogItems = [] }) {
+    // 1. Compute unique available suppliers from incoming catalog items list data matrix
+    const suppliers = Array.from(
+        new Map(
+            catalogItems
+                .filter(item => item.supplier) // Ensure supplier object/relation exists
+                .map(item => [item.supplier.id, item.supplier])
+        ).values()
+    );
 
-
-export default function Create({ catalogItems }) {
+    // 2. Initialize useForm tracking a top-level supplier_id anchor tracking mechanism
     const { data, setData, post, processing, errors } = useForm({
+        supplier_id: '',
         justification: '',
         items: [{ catalog_item_id: '', quantity: 1 }],
     })
 
     const { currencySymbol, approvalThreshold } = useAuth();
+
+    // 3. Derived reactive computing list showing only matching sub-items for the chosen supplier
+    const filteredCatalogItems = catalogItems.filter(
+        item => String(item.supplier_id || item.supplier?.id) === String(data.supplier_id)
+    );
+
+    // Dynamic reset safety layer when a user shifts root suppliers
+    function handleSupplierChange(e) {
+        const selectedSupplierId = e.target.value;
+        setData(prev => ({
+            ...prev,
+            supplier_id: selectedSupplierId,
+            // Reset existing rows to clean canvas configuration to avoid cross-contamination mismatch records
+            items: [{ catalog_item_id: '', quantity: 1 }]
+        }));
+    }
 
     // Compute running total from catalog item prices
     function getLineTotal(item) {
@@ -51,7 +75,7 @@ export default function Create({ catalogItems }) {
     }
 
     function removeRow(index) {
-        if (data.items.length === 1) return // Keep at least one row
+        if (data.items.length === 1) return
         setData('items', data.items.filter((_, i) => i !== index))
     }
 
@@ -68,7 +92,6 @@ export default function Create({ catalogItems }) {
     }
 
     const total = getTotal()
-    // Adjusted logic from < 500 to < 5000 to match systemic business descriptions
     const willAutoApprove = total > 0 && total < Number(approvalThreshold);
 
     return (
@@ -76,7 +99,6 @@ export default function Create({ catalogItems }) {
             <Head title="New Purchase Request" />
 
             <style>{`
-                /* Enforce explicit light background card wrapper & override global dark containers */
                 .pr-card {
                     background: ${C.surface} !important; 
                     border: 1px solid ${C.outline} !important;
@@ -86,8 +108,6 @@ export default function Create({ catalogItems }) {
                     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
                 }
                 .pr-field { display: flex; flex-direction: column; gap: 6px; }
-                
-                /* High-visibility uppercase field labeling */
                 .pr-label {
                     font-size: 11.5px !important; 
                     font-weight: 700 !important; 
@@ -95,8 +115,6 @@ export default function Create({ catalogItems }) {
                     text-transform: uppercase; 
                     letter-spacing: 0.05em;
                 }
-                
-                /* Crisp custom interactive input spaces fields minimizing legacy color capture */
                 .pr-input, .pr-select, .pr-textarea {
                     background: ${C.surfaceLow} !important; 
                     border: 1px solid ${C.borderInput} !important;
@@ -110,22 +128,15 @@ export default function Create({ catalogItems }) {
                     width: 100% !important;
                     box-sizing: border-box !important;
                 }
-                
-                /* Focus layouts leveraging your specific dashboard color rule */
                 .pr-input:focus, .pr-select:focus, .pr-textarea:focus {
                     border-color: ${C.primaryFocus} !important;
                     box-shadow: 0 0 0 3px rgba(0, 196, 136, 0.15) !important;
                     background: #ffffff !important;
                 }
-                
                 .pr-input::placeholder, .pr-textarea::placeholder { color: ${C.textSection} !important; opacity: 1 !important; }
                 .pr-select option { background: #ffffff !important; color: ${C.textMain} !important; }
                 .pr-textarea { resize: vertical; min-height: 90px; }
-                
-                /* Highly visible descriptive errors */
                 .pr-error { font-size: 12.5px !important; color: ${C.error} !important; margin-top: 4px !important; font-weight: 500 !important; }
-                
-                /* Brand Green Button Control Form Actions */
                 .pr-btn-primary {
                     display: inline-flex !important; align-items: center !important; gap: 7px !important;
                     background: ${C.primary} !important; color: ${C.onPrimary} !important; border: none !important;
@@ -135,8 +146,6 @@ export default function Create({ catalogItems }) {
                 }
                 .pr-btn-primary:hover:not(:disabled) { background: ${C.primaryHover} !important; }
                 .pr-btn-primary:disabled { opacity: 0.6 !important; cursor: not-allowed !important; }
-                
-                /* Bordered Neutral Secondary Action Button */
                 .pr-btn-ghost {
                     display: inline-flex !important; align-items: center !important;
                     background: #ffffff !important; color: ${C.textMuted} !important;
@@ -146,8 +155,6 @@ export default function Create({ catalogItems }) {
                     transition: all 0.15s !important; font-family: inherit !important;
                 }
                 .pr-btn-ghost:hover { color: ${C.textMain} !important; border-color: ${C.borderInput} !important; background: #f8fafc !important; }
-                
-                /* Clean dashed button option configuration for dynamic lists additions */
                 .pr-btn-add {
                     display: inline-flex !important; align-items: center !important; gap: 6px !important;
                     background: #ffffff !important; color: ${C.primary} !important;
@@ -157,8 +164,6 @@ export default function Create({ catalogItems }) {
                     width: 100% !important; justify-content: center !important;
                 }
                 .pr-btn-add:hover { background: #f0fdf4 !important; border-color: ${C.primaryFocus} !important; }
-                
-                /* Light theme deletion interaction row trigger elements */
                 .pr-btn-remove {
                     background: none !important; border: none !important; cursor: pointer !important;
                     color: ${C.textMuted} !important; padding: 10px !important; border-radius: 8px !important;
@@ -166,16 +171,12 @@ export default function Create({ catalogItems }) {
                     justify-content: center !important; flex-shrink: 0;
                 }
                 .pr-btn-remove:hover { color: ${C.error} !important; background: #fef2f2 !important; }
-                
-                /* Dividers & Headers markers */
                 .pr-divider { height: 1px !important; background: #f1f5f9 !important; margin: 4px 0 !important; }
                 .pr-section {
                     font-size: 12px !important; font-weight: 700 !important; color: ${C.textSection} !important;
                     text-transform: uppercase; letter-spacing: 0.05em; 
                     margin-bottom: 16px !important; margin-top: 8px !important;
                 }
-                
-                /* Custom spacing configurations for relational table controls mapping layout patterns */
                 .pr-line-row {
                     display: grid; gap: 16px; align-items: start;
                     grid-template-columns: 1fr 100px 140px 40px;
@@ -186,15 +187,11 @@ export default function Create({ catalogItems }) {
                     border: 1px solid ${C.borderInput} !important; border-radius: 8px !important;
                     text-align: right; white-space: nowrap; box-sizing: border-box; height: 41px;
                 }
-                
-                /* Layout components for total summaries */
                 .pr-total-bar {
                     display: flex; justify-content: space-between; align-items: center;
                     padding: 16px 20px; background: ${C.surfaceHigh};
                     border: 1px solid ${C.outline}; border-radius: 8px; margin-top: 4px;
                 }
-                
-                /* Light Mode High Contrast Structural Badges UI elements */
                 .pr-auto-badge {
                     font-size: 11px !important; font-weight: 700 !important; padding: 4px 10px !important;
                     border-radius: 6px !important; text-transform: uppercase; letter-spacing: 0.05em;
@@ -207,22 +204,36 @@ export default function Create({ catalogItems }) {
                     background: #fffbeb !important; color: ${C.tertiary} !important;
                     border: 1px solid #fef3c7 !important; display: inline-block;
                 }
-
                 @media (max-width: 600px) {
                     .pr-line-row { grid-template-columns: 1fr 80px; }
                     .pr-line-total { display: none; }
                 }
             `}</style>
 
-            {/* Light-Theme Normalized Back Navigation Link Wrapper */}
             <BackButton link={"/purchase-requests"} text={"Back to Purchase Requests"} />
-
 
             <div className="pr-card">
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-                    {/* Justification Section */}
-                    <div className="pr-section">Request Details</div>
+                    <div className="pr-section">Supplier Info & Details</div>
+
+                    {/* Supplier Root Dropdown Setup */}
+                    <div className="pr-field">
+                        <label className="pr-label">Supplier *</label>
+                        <select
+                            className="pr-select"
+                            value={data.supplier_id}
+                            onChange={handleSupplierChange}
+                            required
+                        >
+                            <option value="">Select a specific vendor...</option>
+                            {suppliers.map(s => (
+                                <option key={s.id} value={s.id}>{s.name}</option>
+                            ))}
+                        </select>
+                        {errors.supplier_id && <span className="pr-error">{errors.supplier_id}</span>}
+                    </div>
+
                     <div className="pr-field">
                         <label className="pr-label">Justification *</label>
                         <textarea
@@ -248,25 +259,31 @@ export default function Create({ catalogItems }) {
                     {/* Line Item Architecture */}
                     {data.items.map((item, index) => {
                         const lineTotal = getLineTotal(item)
+                        // Use original collection to maintain context hints if needed
                         const selectedCatalog = catalogItems.find(c => c.id == item.catalog_item_id)
 
                         return (
                             <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                                 <div className="pr-line-row">
-                                    {/* Catalog Item Dropdown Layout */}
+
+                                    {/* Catalog Item Dynamic Dropdown Layout */}
                                     <div>
                                         <select
                                             className="pr-select"
                                             value={item.catalog_item_id}
                                             onChange={e => updateRow(index, 'catalog_item_id', e.target.value)}
+                                            disabled={!data.supplier_id} // Lock fields until supplier context is given
                                         >
-                                            <option value="">Select item</option>
-                                            {catalogItems.map(c => (
+                                            <option value="">
+                                                {data.supplier_id ? 'Select item...' : '◄ Pick a supplier first'}
+                                            </option>
+                                            {filteredCatalogItems.map(c => (
                                                 <option key={c.id} value={c.id}>
                                                     {c.name} — {c.sku}
                                                 </option>
                                             ))}
                                         </select>
+
                                         {/* Unit Cost Contextual Hint */}
                                         {selectedCatalog && (
                                             <div style={{ fontSize: 12, color: '#64748b', marginTop: 4, paddingLeft: 2 }}>
@@ -281,6 +298,7 @@ export default function Create({ catalogItems }) {
                                         type="number"
                                         min="1"
                                         value={item.quantity}
+                                        disabled={!data.supplier_id}
                                         onChange={e => updateRow(index, 'quantity', e.target.value)}
                                     />
 
@@ -294,7 +312,7 @@ export default function Create({ catalogItems }) {
                                         type="button"
                                         className="pr-btn-remove"
                                         onClick={() => removeRow(index)}
-                                        disabled={data.items.length === 1}
+                                        disabled={data.items.length === 1 || !data.supplier_id}
                                         title="Remove row"
                                     >
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -324,7 +342,12 @@ export default function Create({ catalogItems }) {
                     )}
 
                     {/* Dynamic Element Insertion Controller Trigger Button */}
-                    <button type="button" className="pr-btn-add" onClick={addRow}>
+                    <button
+                        type="button"
+                        className="pr-btn-add"
+                        onClick={addRow}
+                        disabled={!data.supplier_id}
+                    >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                             <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
                         </svg>
@@ -355,8 +378,6 @@ export default function Create({ catalogItems }) {
                                         <span className="pr-approval-badge">Needs Approval</span>
                                         <span style={{ fontSize: 11.5, color: '#64748b', fontWeight: 500 }}>
                                             {`${currencySymbol}${approvalThreshold} and above requires manager approval`}
-                                            {console.log(currencySymbol)}
-
                                         </span>
                                     </>
                                 )}
@@ -369,7 +390,7 @@ export default function Create({ catalogItems }) {
                         display: 'flex', gap: 12, marginTop: 8,
                         paddingTop: 20, borderTop: `1px solid #f1f5f9`,
                     }}>
-                        <button type="submit" disabled={processing} className="pr-btn-primary">
+                        <button type="submit" disabled={processing || !data.supplier_id} className="pr-btn-primary">
                             {processing ? 'Submitting...' : 'Submit Request'}
                         </button>
                         <Link href="/purchase-requests" className="pr-btn-ghost">Cancel</Link>

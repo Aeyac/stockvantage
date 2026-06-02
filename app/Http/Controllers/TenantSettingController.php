@@ -57,7 +57,7 @@ class TenantSettingController extends Controller
 
         $settings->update($data);
 
-        session()->forget(['tenant_currency', 'approval_threshold']);
+        session()->forget(['tenant_currency', 'tenant_threshold', 'company_name']);
 
         return redirect()
             ->route('settings.index')
