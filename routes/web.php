@@ -4,6 +4,7 @@ use App\Http\Controllers\CatalogItemController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GrnController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\TenantSettingController;
@@ -55,6 +56,12 @@ Route::middleware(['auth'])->group(function () {
 
             Route::resource('/purchase-orders', PurchaseOrderController::class)
                 ->only(['index', 'show']);
+
+            Route::get(
+                '/purchase-orders/{purchaseOrder}/export-pdf',
+                [PdfController::class, 'exportPurchaseOrder']
+            )->name('purchase-orders.export-pdf');
+            
         });
 
     // -------------------------------------------------------
