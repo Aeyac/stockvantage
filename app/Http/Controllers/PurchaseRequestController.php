@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePurchaseRequestRequest;
+use App\Mail\SupplierPurchaseOrderMail;
 use App\Models\CatalogItem;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseRequest;
 use App\Models\TenantSetting;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\DB;
@@ -99,12 +101,21 @@ class PurchaseRequestController extends Controller
         $count = PurchaseOrder::whereYear('created_at', now()->year)->count() + 1;
         $poNumber = 'PO-' . now()->year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
-        PurchaseOrder::create([
+        $purchaseOrder = PurchaseOrder::create([
             'pr_id' => $pr->id,
             'po_number' => $poNumber,
             'status' => PurchaseOrder::STATUS_OPEN,
             'total_amount' => $pr->total_amount,
         ]);
+
+        $firstItem = $purchaseOrder->purchaseRequest->lineItems()->first();
+        $supplierEmail = $firstItem?->catalogItem?->supplier?->contact_email;
+
+        if ($supplierEmail) {
+            // Send the mail to the vendor context
+            Mail::to($supplierEmail)->send(new SupplierPurchaseOrderMail($purchaseOrder));
+        }
+
     }
 
 
@@ -140,9 +151,11 @@ class PurchaseRequestController extends Controller
 
         $this->generatePurchaseOrder($purchaseRequest);
 
+        // $purchaseOrder = PurchaseOrder::where('pr_id', $purchaseRequest->id);
+
         return redirect()
             ->route('purchase-requests.index')
-            ->with('success', 'Purchase request approved.');
+            ->with('success', 'Purchase request approved and purchase order is transmitted to the supplier.');
     }
 
     public function reject(PurchaseRequest $purchaseRequest): RedirectResponse

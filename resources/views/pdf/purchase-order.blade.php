@@ -244,7 +244,7 @@
                 <tr>
                     <td>
                         <div class="company-name">{{ $companyName }}</div>
-                        <div class="system-subtitle">StockVantage Procurement Network</div>
+                        <div class="system-subtitle">StockVantage Procurement System</div>
                     </td>
                     <td class="text-right" style="width: 250px;">
                         <div class="po-title-label">Purchase Order Registry</div>
