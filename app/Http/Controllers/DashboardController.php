@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CatalogItem;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseRequest;
+use App\Models\TenantSetting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;

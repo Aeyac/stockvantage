@@ -108,12 +108,15 @@ class PurchaseRequestController extends Controller
             'total_amount' => $pr->total_amount,
         ]);
 
-        $firstItem = $purchaseOrder->purchaseRequest->lineItems()->first();
-        $supplierEmail = $firstItem?->catalogItem?->supplier?->contact_email;
+        $isAutoSendEmail = TenantSetting::where('id', session('tenant_id'))->value('auto_send_email');
 
-        if ($supplierEmail) {
-            // Send the mail to the vendor context
-            Mail::to($supplierEmail)->send(new SupplierPurchaseOrderMail($purchaseOrder));
+        if ($isAutoSendEmail) {
+            $firstItem = $purchaseOrder->purchaseRequest->lineItems()->first();
+            $supplierEmail = $firstItem?->catalogItem?->supplier?->contact_email;
+
+            if ($supplierEmail) {
+                Mail::to($supplierEmail)->send(new SupplierPurchaseOrderMail($purchaseOrder));
+            }
         }
 
     }
@@ -151,11 +154,12 @@ class PurchaseRequestController extends Controller
 
         $this->generatePurchaseOrder($purchaseRequest);
 
-        // $purchaseOrder = PurchaseOrder::where('pr_id', $purchaseRequest->id);
+        $toastMessage = session('auto_send_email') ? 'Purchase request approved and purchase order is transmitted to the supplier.'
+            : 'Purchase request approved.';
 
         return redirect()
             ->route('purchase-requests.index')
-            ->with('success', 'Purchase request approved and purchase order is transmitted to the supplier.');
+            ->with('success', $toastMessage);
     }
 
     public function reject(PurchaseRequest $purchaseRequest): RedirectResponse
