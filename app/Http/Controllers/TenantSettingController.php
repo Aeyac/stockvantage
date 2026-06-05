@@ -22,6 +22,7 @@ class TenantSettingController extends Controller
                 'company_name' => 'My Company',
                 'currency' => 'PHP',
                 'approval_threshold' => 500.00,
+                'auto_send_email' => false,
                 'logo_path' => null,
             ]
         );
@@ -31,6 +32,7 @@ class TenantSettingController extends Controller
                 'company_name' => $settings->company_name,
                 'currency' => $settings->currency,
                 'approval_threshold' => $settings->approval_threshold,
+                'auto_send_email' => $settings->auto_send_email,
                 'logo_url' => $settings->logo_path
                     ? Storage::disk('public')->url($settings->logo_path)
                     : null,
@@ -57,7 +59,7 @@ class TenantSettingController extends Controller
 
         $settings->update($data);
 
-        session()->forget(['tenant_currency', 'tenant_threshold', 'company_name']);
+        session()->forget(['tenant_currency', 'tenant_threshold', 'company_name', 'auto_send_email']);
 
         return redirect()
             ->route('settings.index')

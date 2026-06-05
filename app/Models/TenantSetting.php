@@ -14,11 +14,13 @@ class TenantSetting extends Model
         'company_name',
         'logo_path',
         'currency',
-        'approval_threshold'
+        'approval_threshold',
+        'auto_send_email'
     ];
 
     protected $casts = [
         'approval_threshold' => 'decimal:2',
+        'auto_send_email' => 'boolean',
     ];
 
 

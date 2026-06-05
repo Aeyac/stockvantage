@@ -479,6 +479,35 @@ function Toast({ visible, C }) {
     );
 }
 
+function Toggle({ id, checked, onChange, C }) {
+    return (
+        <button
+            id={id}
+            type="button"
+            role="switch"
+            aria-checked={checked}
+            onClick={() => onChange(!checked)}
+            style={{
+                position: 'relative',
+                width: 40, height: 22,
+                borderRadius: 20, border: 'none',
+                background: checked ? C.signal : C.border,
+                cursor: 'pointer', flexShrink: 0,
+                transition: 'background 0.2s', padding: 0,
+            }}
+        >
+            <span style={{
+                position: 'absolute',
+                top: 3, left: checked ? 21 : 3,
+                width: 16, height: 16,
+                borderRadius: '50%', background: '#fff',
+                transition: 'left 0.2s',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+            }} />
+        </button>
+    )
+}
+
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function Index({ settings }) {
     const { flash } = usePage().props;
@@ -492,8 +521,12 @@ export default function Index({ settings }) {
         company_name: settings.company_name ?? '',
         currency: settings.currency ?? 'PHP',
         approval_threshold: settings.approval_threshold ?? 500.00,
+        auto_send_email: settings.auto_send_email ?? false,
         logo: null,
     });
+
+    console.log(data.auto_send_email);
+    console.log(data.approval_threshold);
 
     const [logoPreview, setLogoPreview] = useState(settings.logo_url ?? null);
     const [activeSection, setActiveSection] = useState('general');
@@ -555,6 +588,7 @@ export default function Index({ settings }) {
                 <div style={{
                     display: 'flex', maxWidth: 900, margin: '0 auto',
                     padding: '32px 24px', gap: 32, alignItems: 'flex-start',
+                    paddingBottom: 80,
                 }}>
 
                     {/* Sidebar */}
@@ -643,6 +677,42 @@ export default function Index({ settings }) {
                                                 </p>
                                             )}
                                         </SettingsRow>
+                                        <SettingsRow
+                                            label="Auto-send PO email"
+                                            hint="Automatically email the approved Purchase Order PDF to the supplier's contact when a PR is approved."
+                                            C={C}
+                                            last
+                                        >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                                <Toggle
+                                                    id="auto-send-email"
+                                                    checked={data.auto_send_email}
+                                                    onChange={val => patch('auto_send_email', val)}
+                                                    C={C}
+                                                />
+                                                <div>
+                                                    <span style={{
+                                                        fontSize: 13.5, fontWeight: 500,
+                                                        color: data.auto_send_email ? C.signal : C.muted,
+                                                    }}>
+                                                        {data.auto_send_email ? 'Enabled' : 'Disabled'}
+                                                    </span>
+                                                    {data.auto_send_email && (
+                                                        <p style={{
+                                                            fontSize: 12, color: C.faint,
+                                                            margin: '2px 0 0', lineHeight: 1.4,
+                                                        }}>
+                                                            Supplier will receive the PO PDF at their registered contact email.
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {errors.auto_send_email && (
+                                                <p style={{ fontSize: 12, color: C.danger, marginTop: 4 }}>
+                                                    {errors.auto_send_email}
+                                                </p>
+                                            )}
+                                        </SettingsRow>
                                     </Card>
                                 </section>
 
@@ -673,9 +743,21 @@ export default function Index({ settings }) {
                                 </section>
 
                                 {/* Footer actions */}
+                                {/* Sticky footer actions */}
                                 <div style={{
-                                    display: 'flex', justifyContent: 'flex-end',
-                                    alignItems: 'center', gap: 12, paddingTop: 4,
+                                    position: 'fixed',
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    zIndex: 100,
+                                    background: C.surface,
+                                    borderTop: `1px solid ${C.border}`,
+                                    padding: '12px 24px',
+                                    display: 'flex',
+                                    justifyContent: 'flex-end',
+                                    alignItems: 'center',
+                                    gap: 12,
+                                    boxShadow: '0 -4px 16px rgba(0,0,0,0.06)',
                                 }}>
                                     <Toast visible={toastVisible} C={C} />
                                     <button
@@ -740,7 +822,7 @@ export default function Index({ settings }) {
                     </main>
                 </div>
             </div>
-            
+
         </AuthenticatedLayout>
     );
 }

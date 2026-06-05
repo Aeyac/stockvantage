@@ -22,6 +22,7 @@ class UpdateTenantSettingRequest extends FormRequest
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
             'currency' => ['required', 'string', Rule::in(['PHP', 'USD', 'EUR'])],
             'approval_threshold' => 'required|numeric|min:0',
+            'auto_send_email' => 'boolean',
         ];
 
     }
@@ -43,6 +44,8 @@ class UpdateTenantSettingRequest extends FormRequest
             'approval_threshold.required' => 'The approval threshold is required.',
             'approval_threshold.numeric' => 'The approval threshold must be a valid number.',
             'approval_threshold.min' => 'The approval threshold cannot be less than 0.',
+
+            'auto_send_email.boolean' => 'The automatic email setting must be true or false.',
         ];
     }
 }

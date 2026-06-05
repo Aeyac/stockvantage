@@ -13,6 +13,7 @@ export function useAuth() {
         hasRole: (...roles) => roles.includes(user.role),
         currencySymbol: settings?.currency_symbol ?? '₱',
         approvalThreshold: settings?.tenant_threshold ?? 50.00,
+        autoSendEmail: settings.auto_send_email ?? false,
         companyName: settings?.company_name ?? 'StockVantage',
     }
 }

@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
                 'currency_symbol' => $this->getCurrencySymbol($request),
                 'tenant_threshold' => $this->getThreshold($request),
                 'company_name' => $this->getCompanyName($request),
+                'auto_send_email' => $this->isAutoSendEmail($request),
             ],
         ];
     }
@@ -81,6 +82,17 @@ class HandleInertiaRequests extends Middleware
         return (float) session()->remember('tenant_threshold', function () use ($request) {
             $settings = TenantSetting::where('tenant_id', $request->user()->tenant_id)->first();
             return (float) ($settings?->approval_threshold ?? 500.00);
+        });
+    }
+
+    private function isAutoSendEmail(Request $request): bool
+    {
+        if (!$request->user())
+            return false;
+
+        return session()->remember('auto_send_email', function () use ($request) {
+            $settings = TenantSetting::where('tenant_id', $request->user()->tenant_id)->first();
+            return $settings?->auto_send_email ?? false;
         });
     }
 }
