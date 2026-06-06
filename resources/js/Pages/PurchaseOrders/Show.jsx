@@ -1,5 +1,5 @@
 import React from 'react'
-import { Head, Link } from '@inertiajs/react'
+import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import BackButton from '@/Components/BackButton'
 import { formatCurrency } from '@/hooks/useCurrency'
@@ -43,6 +43,12 @@ const Icons = {
     hash: (
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path d="M2 4h8M2 8h8M4.5 1.5l-1 9M8.5 1.5l-1 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        </svg>
+    ),
+    email: (
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <rect x="1" y="3" width="12" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
+            <path d="M1.5 3.5l5.5 4 5.5-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     ),
 }
@@ -118,7 +124,16 @@ export default function Show({ purchaseOrder }) {
     const statusKey = purchaseOrder?.status ?? 'auto_approved'
     const status = STATUS[statusKey] ?? STATUS.auto_approved
     const currency = purchaseOrder?.currency ?? 'PHP'
+    const isSentEmail = purchaseOrder?.is_email_sent ?? false;
+    console.log(isSentEmail)
 
+
+
+    console.log(purchaseOrder)
+console.log({
+    is_email_sent: purchaseOrder?.is_email_sent,
+    is_sent_email: purchaseOrder?.is_sent_email,
+})
 
     // Detect if line items span multiple suppliers
     const uniqueSuppliers = [...new Set(lineItems.map(l => l.catalog_item?.supplier?.name).filter(Boolean))]
@@ -182,16 +197,21 @@ export default function Show({ purchaseOrder }) {
                 <div style={{ maxWidth: 860, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
                     {/* ── Top Bar Controls ── */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-                        <BackButton link="/purchase-orders" text="Back to Purchase Orders" />
-                        <div style={{ display: 'flex', gap: 8 }}>
-                            <button className="po-action-btn" onClick={() => window.print()}>
-                                {Icons.print} Print
+                    <div style={{ display: 'flex', gap: 8 }}>
+                        <button className="po-action-btn" onClick={() => window.print()}>
+                            {Icons.print} Print
+                        </button>
+                        <a className="po-action-btn primary" href={`/purchase-orders/${purchaseOrder.id}/export-pdf`}>
+                            {Icons.download} Download PDF
+                        </a>
+                        {!isSentEmail && (
+                            <button
+                                className="po-action-btn"
+                                onClick={() => router.post(route('purchase-orders.send-email', purchaseOrder.id))}
+                            >
+                                {Icons.email} Send Email to Supplier
                             </button>
-                            <a className="po-action-btn primary" href={`/purchase-orders/${purchaseOrder.id}/export-pdf`} >
-                                {Icons.download} Download PDF
-                            </a>
-                        </div>
+                        )}
                     </div>
 
                     {/* ── Architectural Check: Multi-Vendor Warning ── */}

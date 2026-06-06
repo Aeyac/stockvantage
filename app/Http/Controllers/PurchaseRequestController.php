@@ -88,6 +88,7 @@ class PurchaseRequestController extends Controller
                 }
             });
         } catch (\Exception $e) {
+            \Log::error($e->getMessage()); // add this
             return redirect()->back()->with('error', 'Something went wrong. Please try again.');
         }
 
@@ -108,7 +109,7 @@ class PurchaseRequestController extends Controller
             'total_amount' => $pr->total_amount,
         ]);
 
-        $isAutoSendEmail = TenantSetting::where('id', session('tenant_id'))->value('auto_send_email');
+        $isAutoSendEmail = TenantSetting::where('id', auth()->user()->tenant_id)->value('auto_send_email');
 
         if ($isAutoSendEmail) {
             $firstItem = $purchaseOrder->purchaseRequest->lineItems()->first();
@@ -161,6 +162,7 @@ class PurchaseRequestController extends Controller
             ->route('purchase-requests.index')
             ->with('success', $toastMessage);
     }
+
 
     public function reject(PurchaseRequest $purchaseRequest): RedirectResponse
     {

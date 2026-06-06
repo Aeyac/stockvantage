@@ -61,7 +61,12 @@ Route::middleware(['auth'])->group(function () {
                 '/purchase-orders/{purchaseOrder}/export-pdf',
                 [PdfController::class, 'exportPurchaseOrder']
             )->name('purchase-orders.export-pdf');
-            
+
+            Route::post(
+                'purchase-orders/{purchaseOrder}/send-email',
+                [PurchaseOrderController::class, 'sendEmail']
+            )->name('purchase-orders.send-email');
+
         });
 
     // -------------------------------------------------------

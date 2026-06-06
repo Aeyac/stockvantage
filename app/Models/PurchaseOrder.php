@@ -14,12 +14,15 @@ class PurchaseOrder extends Model
         'pr_id',
         'po_number',
         'status',
+        'is_email_sent',
         'total_amount',
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'is_email_sent' => 'boolean',
     ];
+
 
     // -------------------------------------------------------
     // Status constants
