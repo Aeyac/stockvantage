@@ -14,7 +14,6 @@ class DashboardController extends Controller
 {
     public function index(): Response
     {
-
         // Month-to-date spend
         $mtdSpend = PurchaseOrder::whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)

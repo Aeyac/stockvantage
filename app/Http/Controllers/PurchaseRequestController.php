@@ -7,6 +7,7 @@ use App\Mail\SupplierPurchaseOrderMail;
 use App\Models\CatalogItem;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseRequest;
+use App\Models\StockLedger;
 use App\Models\TenantSetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
@@ -136,7 +137,6 @@ class PurchaseRequestController extends Controller
         ]);
     }
 
-    // correct — route model binding gives you the specific PR
     public function approve(PurchaseRequest $purchaseRequest): RedirectResponse
     {
         abort_if(
@@ -155,7 +155,8 @@ class PurchaseRequestController extends Controller
 
         $this->generatePurchaseOrder($purchaseRequest);
 
-        $toastMessage = session('auto_send_email') ? 'Purchase request approved and purchase order is transmitted to the supplier.'
+        $toastMessage = session('auto_send_email')
+            ? 'Purchase request approved and purchase order is transmitted to the supplier.'
             : 'Purchase request approved.';
 
         return redirect()
