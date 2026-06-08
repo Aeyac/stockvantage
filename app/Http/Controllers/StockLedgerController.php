@@ -13,13 +13,15 @@ class StockLedgerController extends Controller
 
     public function index(): Response
     {
-        $stockLedger = StockLedger::query()
+        $stockLedgers = StockLedger::query()
+            ->with(['warehouse', 'catalogItem', 'performer'])
             ->orderByDesc('created_at')
             ->paginate(15);
 
-        return Inertia::render('Suppliers/Index', [
-            'stockLedger' => $stockLedger,
+        return Inertia::render('StockLedgers/Index', [
+            'stockLedgers' => $stockLedgers,
         ]);
-
     }
+
+    
 }

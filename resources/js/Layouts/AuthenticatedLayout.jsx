@@ -83,6 +83,20 @@ const NAV_ITEMS = [
         roles: ['tenant_admin', 'warehouse_staff'],
     },
     {
+        label: 'Stock Ledger',
+        href: '/stock-ledger',
+        icon: (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+            </svg>
+        ),
+        roles: ['tenant_admin', 'warehouse_staff'],
+    },
+    {
         label: 'GRN',
         href: '/grn',
         icon: (
@@ -154,10 +168,10 @@ export default function AuthenticatedLayout({ children, header }) {
                     background: #F2F5F4;
                     display: grid;
                     grid-template-rows: 52px 1fr;
-                    height: 100vh; /* Changed from min-height to strict height */
+                    height: 100vh;
                     font-family: 'DM Sans', sans-serif;
                     color: #0A0C0B;
-                    overflow: hidden; /* Stops the main application window from scrolling */
+                    overflow: hidden;
                 }
                 .dash-topbar {
                     background: #FFFFFF; 
@@ -182,7 +196,7 @@ export default function AuthenticatedLayout({ children, header }) {
                 .dash-body { 
                     display: flex; 
                     flex: 1; 
-                    overflow: hidden; /* Retains flex bounding layout context */
+                    overflow: hidden;
                 }
                 .dash-sidebar {
                     background: #FFFFFF; 
@@ -194,9 +208,7 @@ export default function AuthenticatedLayout({ children, header }) {
                     flex-direction: column;
                     justify-content: space-between;
                     transition: width 0.15s ease;
-
                     height: 100%; 
-                    /* Allows the nav container items to independently scroll if menu is long */
                     overflow-y: auto; 
                 }
                 .dash-sidebar-logo {
@@ -273,7 +285,7 @@ export default function AuthenticatedLayout({ children, header }) {
                 .dash-main { 
                     flex: 1; 
                     padding: 20px; 
-                    overflow-y: auto; /* Keeps the main area container cleanly scrollable */
+                    overflow-y: auto;
                 }
                 .toggle-btn {
                     background: none;
@@ -350,6 +362,7 @@ export default function AuthenticatedLayout({ children, header }) {
                                     href={item.href}
                                     className={`dash-nav-item ${isActive ? 'active' : ''}`}
                                     title={collapsed ? item.label : undefined}
+                                    prefetch
                                 >
                                     {item.icon}
                                     {!collapsed && <span>{item.label}</span>}

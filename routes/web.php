@@ -7,6 +7,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PurchaseRequestController;
+use App\Http\Controllers\StockLedgerController;
 use App\Http\Controllers\TenantSettingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
@@ -96,6 +97,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/settings', [TenantSettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [TenantSettingController::class, 'update'])->name('settings.update');
+
+        Route::get('/stock-ledger', [StockLedgerController::class, 'index'])->name('stock-ledger.index');
+
     });
 
 });

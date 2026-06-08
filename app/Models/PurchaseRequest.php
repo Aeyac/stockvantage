@@ -64,7 +64,7 @@ class PurchaseRequest extends Model
 
     public function isRejected(): bool
     {
-        return $this->status === self::STATUS_REJECTED;
+        return $this->status === self2::STATUS_REJECTED;
     }
 
     // -------------------------------------------------------
