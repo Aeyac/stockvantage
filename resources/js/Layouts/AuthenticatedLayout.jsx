@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, usePage } from '@inertiajs/react'
+import { Toaster } from 'react-hot-toast'
 
 const NAV_ITEMS = [
     {
@@ -391,6 +392,8 @@ export default function AuthenticatedLayout({ children, header }) {
                 <main className="dash-main">
                     {children}
                 </main>
+
+                <Toaster position="top-right" reverseOrder={false} />
             </div>
         </div>
     )

@@ -51,6 +51,18 @@ class StockLedger extends Model
         return (int) $query->sum('quantity_change');
     }
 
+    public static function reduceCurrentStock(int $catalogItemId, ?int $warehouseId = null, int $quantity): int
+    {
+        $query = self::where('catalog_item_id', $catalogItemId);
+
+        if ($warehouseId) {
+            $query->where('warehouse_id', $warehouseId);
+        }
+
+        $query->sum('quantity_change');
+        return (int) $query->decrement('quantity_change', $quantity);
+    }
+
     // -------------------------------------------------------
     // Relationships
     // -------------------------------------------------------

@@ -4,6 +4,7 @@ import BackButton from '@/Components/BackButton'
 import { useAuth } from '@/hooks/useAuth'
 import { formatCurrency } from '@/hooks/useCurrency'
 import { useMemo } from 'react'
+import confirmToast from '@/utils/confirmToast'
 
 // Unified Light Mode Visual System Tokens
 const C = {
@@ -79,9 +80,13 @@ export default function Show({ purchaseRequest }) {
         purchaseRequest.status === 'awaiting_approval' &&
         (user.role === 'tenant_admin' || user.role === 'department_manager')
 
-    function handleApprove() {
-        if (confirm('Approve this purchase request?')) {
-            router.patch(`/purchase-requests/${purchaseRequest.id}/approve`)
+    async function handleApprove() {
+        // Wait for user interaction
+        const confirmed = await confirmToast("Are you sure you want to delete this purchase request?");
+
+        if (confirmed) {
+            // Proceed with Inertia request if confirmed
+            router.patch(`/purchase-requests/${purchaseRequest.id}/approve`);
         }
     }
 
