@@ -1,7 +1,6 @@
 import React from 'react'
 import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import BackButton from '@/Components/BackButton'
 import { formatCurrency } from '@/hooks/useCurrency'
 
 // ─── ICONS ────────────────────────────────────────────────────────────────

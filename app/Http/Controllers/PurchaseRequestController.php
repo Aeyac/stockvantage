@@ -65,8 +65,8 @@ class PurchaseRequestController extends Controller
                     ];
                 }
 
-                // 2. determine status
-                $status = $total < 5000
+                // // 2. determine status
+                $status = $total < session('tenant_threshold')
                     ? PurchaseRequest::STATUS_AUTO_APPROVED
                     : PurchaseRequest::STATUS_AWAITING_APPROVAL;
 
@@ -146,6 +146,7 @@ class PurchaseRequestController extends Controller
         );
 
         abort_if(!$purchaseRequest->isAwaitingApproval(), 403, 'This request cannot be approved.');
+
 
         $purchaseRequest->update([
             'status' => PurchaseRequest::STATUS_APPROVED,

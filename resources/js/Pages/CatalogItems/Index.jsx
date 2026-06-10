@@ -4,17 +4,18 @@ import FlashMessage from '@/Components/FlashMessage'
 import { useAuth } from '@/hooks/useAuth'
 import { EditActionButton, DeleteActionButton } from '@/Components/ActionButtons'
 import { formatCurrency } from '@/hooks/useCurrency'
+import confirmToast from '@/utils/confirmToast'
 
 export default function Index({ catalogItems, flash }) {
     const { isAdmin } = useAuth();
 
-    function handleDelete(id) {
-        if (confirm('Are you sure you want to delete this catalog item?')) {
+    async function handleDelete(id) {
+        const confirmed = await confirmToast("Are you sure you want to delete this catalog item?", "Do not show this warning again.");
+        if (confirmed) {
             router.delete(`/catalog-items/${id}`)
         }
     }
 
-    
 
     return (
         <AuthenticatedLayout header="Catalog Items">

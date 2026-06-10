@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 import { EditActionButton, DeleteActionButton } from '@/Components/ActionButtons'
+import confirmToast from '@/utils/confirmToast'
 
 // Soft, readable text colors with subtle background pills for light mode statuses
 const STATUS_CONFIG = {
@@ -52,12 +53,13 @@ function StatusBadge({ isActive }) {
 }
 
 export default function Index({ warehouses, flash }) {
-    function handleDelete(id) {
-        if (confirm('Are you sure you want to delete this warehouse?')) {
+
+    async function handleDelete(id) {
+        const confirmed = await confirmToast("Are you sure you want to delete this purchase request?", "Do not show this warning again.");
+        if (confirmed) {
             router.delete(`/warehouses/${id}`)
         }
     }
-
     return (
         <AuthenticatedLayout header="Warehouses">
             <Head title="Warehouses" />

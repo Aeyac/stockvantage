@@ -2,10 +2,13 @@ import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 import { EditActionButton, DeleteActionButton } from '@/Components/ActionButtons'
+import confirmToast from '@/utils/confirmToast'
 
 export default function Index({ suppliers, flash }) {
-    function handleDelete(id) {
-        if (confirm('Are you sure you want to delete this supplier?')) {
+
+    async function handleDelete(id) {
+        const confirmed = await confirmToast("Are you sure you want to delete this purchase request?", "Do not show this warning again.");
+        if (confirmed) {
             router.delete(`/suppliers/${id}`)
         }
     }

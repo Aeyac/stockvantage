@@ -80,18 +80,17 @@ export default function Show({ purchaseRequest }) {
         purchaseRequest.status === 'awaiting_approval' &&
         (user.role === 'tenant_admin' || user.role === 'department_manager')
 
-    async function handleApprove() {
-        // Wait for user interaction
-        const confirmed = await confirmToast("Are you sure you want to delete this purchase request?");
 
+    async function handleApprove() {
+        const confirmed = await confirmToast("Are you sure you want to delete this catalog item?", "Do not show this warning again.");
         if (confirmed) {
-            // Proceed with Inertia request if confirmed
             router.patch(`/purchase-requests/${purchaseRequest.id}/approve`);
         }
     }
 
-    function handleReject() {
-        if (confirm('Reject this purchase request? This cannot be undone.')) {
+    async function handleReject() {
+        const confirmed = await confirmToast("Are you sure you want to delete this catalog item?", "Do not show this warning again.");
+        if (confirmed) {
             router.patch(`/purchase-requests/${purchaseRequest.id}/reject`)
         }
     }
