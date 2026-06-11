@@ -82,6 +82,7 @@ function formatPrId(id) {
 }
 
 export default function Index({ purchaseOrders, flash }) {
+    console.log(purchaseOrders);
     return (
         <AuthenticatedLayout header="Purchase Orders">
             <Head title="Purchase Orders" />

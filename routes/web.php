@@ -7,6 +7,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PurchaseRequestController;
+use App\Http\Controllers\PurchaseRequestRecycleBinController;
 use App\Http\Controllers\StockLedgerController;
 use App\Http\Controllers\TenantSettingController;
 use App\Http\Controllers\UserController;
@@ -36,6 +37,15 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/catalog-items', [CatalogItemController::class, 'index'])
                 ->name('catalog-items.index');
 
+            Route::prefix('purchase-requests/recycle-bin')
+                ->name('purchase-requests.recycle-bin')
+                ->controller(PurchaseRequestRecycleBinController::class)
+                ->group(function () {
+                    Route::get('/', 'index')->name('.index');
+                    Route::patch('/{id}/restore', 'restore')->name('.restore');
+                    Route::delete('/{id}/force-delete', 'forceDelete')->name('.force-delete');
+                });
+
             Route::resource('/purchase-requests', PurchaseRequestController::class)
                 ->only(['index', 'create', 'store', 'show']);
         });
@@ -54,6 +64,12 @@ Route::middleware(['auth'])->group(function () {
                 '/purchase-requests/{purchaseRequest}/reject',
                 [PurchaseRequestController::class, 'reject']
             )->name('purchase-requests.reject');
+
+            Route::delete(
+                '/purchase-requests/{purchaseRequest}/delete',
+                [PurchaseRequestController::class, 'destroy']
+            )->name('purchase-requests.destroy');
+
 
             Route::resource('/purchase-orders', PurchaseOrderController::class)
                 ->only(['index', 'show']);

@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PurchaseRequest extends Model
 {
-    use BelongsToTenant;
-
+    use BelongsToTenant, SoftDeletes;
     protected $fillable = [
         'tenant_id',
+        'pr_number',
         'requested_by',
         'approved_by',
         'status',

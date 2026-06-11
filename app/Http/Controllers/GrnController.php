@@ -33,7 +33,7 @@ class GrnController extends Controller
             'Unauthorized action.'
         );
 
-        $openPos = PurchaseOrder::with('purchaseRequest.lineItems.catalogItem')
+        $openPos = PurchaseOrder::with(['purchaseRequest' => fn($q) => $q->withTrashed()->with('lineItems.catalogItem')])
             ->whereIn('status', ['open', 'partially_received'])
             ->get()
             ->map(function ($po) {

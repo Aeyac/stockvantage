@@ -13,7 +13,9 @@ class PurchaseOrderController extends Controller
 {
     public function index(): Response
     {
-        $purchaseOrders = PurchaseOrder::with('purchaseRequest.requester')->latest()->paginate(15);
+        $purchaseOrders = PurchaseOrder::with([
+            'purchaseRequest' => fn($q) => $q->withTrashed()->with('requester'),
+        ])->latest()->paginate(15);
 
         return Inertia::render(
             'PurchaseOrders/Index',

@@ -72,6 +72,12 @@ class PurchaseRequestController extends Controller
 
                 // 3. create the PR
                 $pr = PurchaseRequest::create([
+                    'pr_number' => 'PR-' . str_pad(
+                        PurchaseRequest::withTrashed()->where('tenant_id', auth()->user()->tenant_id)->count() + 1,
+                        4,
+                        '0',
+                        STR_PAD_LEFT
+                    ),
                     'requested_by' => auth()->id(),
                     'status' => $status,
                     'total_amount' => $total,
@@ -186,4 +192,22 @@ class PurchaseRequestController extends Controller
             ->route('purchase-requests.index')
             ->with('success', 'Purchase request rejected.');
     }
+
+
+    public function destroy(PurchaseRequest $purchaseRequest)
+    {
+        if ($purchaseRequest->purchaseOrder()->with('status', 'open')) {
+            return redirect()->route('purchase-requests.index')
+                ->with('error', 'Purchase request has an existing open status purchase order.');
+        }
+
+        abort_if(!auth()->user()->isAdmin() && !auth()->user()->isManager(), 403, 'Unauthorized action.');
+        $purchaseRequest->delete();
+
+        return redirect()->route('purchase-requests.index')
+            ->with('success', 'Purchase request moved to recycle bin.');
+    }
+
+
+
 }

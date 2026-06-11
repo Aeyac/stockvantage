@@ -1,9 +1,11 @@
-import { Head, Link, usePage } from '@inertiajs/react'
+import { Head, Link } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 import { ViewActionButton } from '@/Components/ActionButtons'
-import { useAuth } from '@/hooks/useAuth'
 import { formatCurrency } from '@/hooks/useCurrency'
+import { router } from '@inertiajs/react';
+import confirmToast from '@/utils/confirmToast'
+
 
 
 // Soft, readable text colors with subtle background pills for light mode statuses
@@ -72,6 +74,25 @@ function StatusBadge({ status }) {
 
 
 
+function DeleteButton({ id }) {
+
+
+    const handleDelete = async () => {
+        $confirmed = await confirmToast('Move this purchase request to the recycle bin?', "Don't show this warning again.");
+
+        if ($confirmed) {
+            router.delete(route('purchase-requests.destroy', id));
+        }
+    };
+
+    return (
+        <button onClick={handleDelete} className="text-red-500 hover:text-red-700">
+            Delete
+        </button>
+    );
+}
+
+
 function formatDate(dateStr) {
     return new Date(dateStr).toLocaleDateString('en-PH', {
         year: 'numeric', month: 'short', day: 'numeric',
@@ -82,10 +103,8 @@ function formatPrId(id) {
     return 'PR-' + String(id).padStart(4, '0')
 }
 
-export default function Index({ purchaseRequests, flash = "" }) {
-    // const { auth } = usePage().props
-    // const user = auth.user
 
+export default function Index({ purchaseRequests, flash = "" }) {
 
     return (
         <AuthenticatedLayout header="Purchase Requests">
@@ -207,12 +226,40 @@ export default function Index({ purchaseRequests, flash = "" }) {
                         {purchaseRequests.total} purchase request{purchaseRequests.total !== 1 ? 's' : ''} registered
                     </p>
                 </div>
-                <Link href="/purchase-requests/create" className="pr-btn-primary">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    New Request
-                </Link>
+
+                {/* ✅ Wrap both buttons together */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <Link
+                        href={route('purchase-requests.recycle-bin.index')}
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            fontSize: 13,
+                            color: '#64748b',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: 8,
+                            padding: '8px 14px',
+                            textDecoration: 'none',
+                            background: '#fff',
+                        }}
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                            <path d="M10 11v6M14 11v6" />
+                            <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                        </svg>
+                        Recycle Bin
+                    </Link>
+
+                    <Link href="/purchase-requests/create" className="pr-btn-primary">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        New Request
+                    </Link>
+                </div>
             </div>
 
             {/* Table wrapper */}
@@ -266,6 +313,7 @@ export default function Index({ purchaseRequests, flash = "" }) {
                                     <td>
                                         <div style={{ display: 'flex', gap: 4 }}>
                                             <ViewActionButton href={`/purchase-requests/${pr.id}`} />
+                                            {pr.status !== 'awaiting_approval' && <DeleteButton id={pr.id} />}
                                         </div>
                                     </td>
                                 </tr>
