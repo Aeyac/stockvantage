@@ -55,4 +55,20 @@ class PurchaseOrderController extends Controller
             ->route('purchase-orders.index')
             ->with('success', 'Purchase order order is transmitted to the supplier.');
     }
+
+
+    public function destroy(PurchaseOrder $purchaseOrder)
+    {
+        abort_if(!auth()->user()->isAdmin() && !auth()->user()->isManager(), 403, 'Unauthorized action.');
+
+        if ($purchaseOrder->status === 'open') {
+            return redirect()->route('purchase-orders.index')
+                ->with('error', 'Purchase order is currently open.');
+        }
+
+        $purchaseOrder->delete();
+
+        return redirect()->route('purchase-orders.index')
+            ->with('success', 'Purchase order moved to recycle bin.');
+    }
 }

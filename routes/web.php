@@ -6,6 +6,7 @@ use App\Http\Controllers\GrnController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\PurchaseOrderRecycleBinController;
 use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\PurchaseRequestRecycleBinController;
 use App\Http\Controllers\StockLedgerController;
@@ -71,8 +72,18 @@ Route::middleware(['auth'])->group(function () {
             )->name('purchase-requests.destroy');
 
 
+            Route::prefix('purchase-orders/recycle-bin')
+                ->name('purchase-orders.recycle-bin')
+                ->controller(PurchaseOrderRecycleBinController::class)
+                ->group(function () {
+                    Route::get('/', 'index')->name('.index');
+                    Route::patch('/{id}/restore', 'restore')->name('.restore');
+                    Route::delete('/{id}/force-delete', 'forceDelete')->name('.force-delete');
+                });
+
+
             Route::resource('/purchase-orders', PurchaseOrderController::class)
-                ->only(['index', 'show']);
+                ->only(['index', 'show', 'destroy']);
 
             Route::get(
                 '/purchase-orders/{purchaseOrder}/export-pdf',
@@ -83,6 +94,11 @@ Route::middleware(['auth'])->group(function () {
                 'purchase-orders/{purchaseOrder}/send-email',
                 [PurchaseOrderController::class, 'sendEmail']
             )->name('purchase-orders.send-email');
+
+            Route::delete(
+                '/purchase-orders/{purchaseOrder}/delete',
+                [PurchaseOrderController::class, 'destroy']
+            )->name('purchase-orders.destroy');
 
         });
 

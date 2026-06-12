@@ -1,8 +1,10 @@
-import { Head, Link } from '@inertiajs/react'
+import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 import { ViewActionButton } from '@/Components/ActionButtons'
 import { formatCurrency } from '@/hooks/useCurrency'
+import RecycleBinButton from '@/Components/RecycleBinButton'
+import confirmToast from '@/utils/confirmToast'
 
 // Unified Light Mode Visual System Tokens
 const C = {
@@ -60,6 +62,7 @@ function StatusBadge({ status }) {
             fontSize: 10, fontWeight: 700, padding: '4px 10px',
             borderRadius: 6, textTransform: 'uppercase', letterSpacing: '0.05em',
             background: config.bg, color: config.color, border: `1px solid ${config.border}`,
+            whiteSpace: 'nowrap'
         }}>
             <span style={{
                 width: 5, height: 5, borderRadius: '50%',
@@ -70,7 +73,6 @@ function StatusBadge({ status }) {
     )
 }
 
-
 function formatDate(dateStr) {
     return new Date(dateStr).toLocaleDateString('en-PH', {
         year: 'numeric', month: 'short', day: 'numeric',
@@ -79,6 +81,25 @@ function formatDate(dateStr) {
 
 function formatPrId(id) {
     return 'PR-' + String(id).padStart(4, '0')
+}
+
+function DeleteButton({ id }) {
+    const handleDelete = async () => {
+        const confirmed = await confirmToast('Move this purchase order to the recycle bin?', "Don't show this warning again.");
+
+        if (confirmed) {
+            router.delete(route('purchase-orders.destroy', id));
+        }
+    };
+
+    return (
+        <button 
+            onClick={handleDelete} 
+            className="text-xs font-semibold text-red-600 hover:text-red-800 transition-colors px-2 py-1 rounded hover:bg-red-50"
+        >
+            Delete
+        </button>
+    );
 }
 
 export default function Index({ purchaseOrders, flash }) {
@@ -97,6 +118,11 @@ export default function Index({ purchaseOrders, flash }) {
                     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
                 }
                 
+                .po-table-wrapper {
+                    width: 100%;
+                    overflow-x: auto;
+                }
+                
                 .po-table { width: 100% !important; border-collapse: collapse !important; }
                 
                 .po-table th {
@@ -108,6 +134,7 @@ export default function Index({ purchaseOrders, flash }) {
                     letter-spacing: 0.05em;
                     border-bottom: 1px solid ${C.outline} !important;
                     background: ${C.surfaceHigh} !important;
+                    white-space: nowrap;
                 }
                 
                 .po-table td {
@@ -115,12 +142,12 @@ export default function Index({ purchaseOrders, flash }) {
                     color: ${C.textMuted} !important;
                     border-bottom: 1px solid ${C.outline} !important; 
                     font-size: 13.5px !important;
+                    white-space: nowrap;
+                    vertical-align: middle;
                 }
                 .po-table tbody tr:last-child td { border-bottom: none !important; }
                 .po-table tbody tr { transition: background 0.1s; }
                 .po-table tbody tr:hover td { background: ${C.surfaceHigh}50 !important; }
-                
-
                 
                 /* Pagination dynamic buttons control links template state wrappers */
                 .po-pg-btn {
@@ -148,9 +175,9 @@ export default function Index({ purchaseOrders, flash }) {
                 
                 /* Clean code identifiers monospace structural tags */
                 .po-number {
-                     font-size: 11.5px;
+                    font-size: 11.5px;
                     font-weight: 700; color: ${C.textMain};
-                    padding: px 8px; border-radius: 4px; letter-spacing: 0.02em;
+                    padding: 4px 8px; border-radius: 4px; letter-spacing: 0.02em;
                 }
                 
                 .po-pr-link {
@@ -165,14 +192,15 @@ export default function Index({ purchaseOrders, flash }) {
 
             <FlashMessage flash={flash} />
 
-            {/* Header Metrics Summary */}
+            {/* Header Metrics Summary Layout */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <p style={{ fontSize: 14, color: C.textMuted, margin: 0, fontWeight: 500 }}>
                     {purchaseOrders.total} order{purchaseOrders.total !== 1 ? 's' : ''} found
                 </p>
+                <RecycleBinButton endpoint={'purchase-orders.recycle-bin.index'} />
             </div>
 
-            {/* Table Matrix Framework Card Container */}
+            {/* Table Matrix Container */}
             <div className="po-card">
                 {purchaseOrders.data.length === 0 ? (
                     <div className="po-empty">
@@ -188,59 +216,71 @@ export default function Index({ purchaseOrders, flash }) {
                         </p>
                     </div>
                 ) : (
-                    <table className="po-table">
-                        <thead>
-                            <tr>
-                                <th style={{ textAlign: 'left', width: '18%' }}>PO Number</th>
-                                <th style={{ textAlign: 'left', width: '15%' }}>Linked PR</th>
-                                <th style={{ textAlign: 'left', width: '22%' }}>Requested By</th>
-                                <th style={{ textAlign: 'right', width: '16%' }}>Total Amount</th>
-                                <th style={{ textAlign: 'left', width: '15%', paddingLeft: '24px' }}>Status</th>
-                                <th style={{ textAlign: 'left', width: '14%' }}>Date Created</th>
-                                <th style={{ textAlign: 'center', width: '10%' }}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {purchaseOrders.data.map(po => (
-                                <tr key={po.id}>
-                                    <td style={{ textAlign: 'left' }}>
-                                        <span className="po-number">{po.po_number}</span>
-                                    </td>
-                                    <td style={{ textAlign: 'left' }}>
-                                        <Link
-                                            href={`/purchase-requests/${po.purchase_request?.id}`}
-                                            className="po-pr-link"
-                                        >
-                                            {formatPrId(po.purchase_request?.id)}
-                                        </Link>
-                                    </td>
-                                    <td style={{ textAlign: 'left' }}>
-                                        <span style={{ fontWeight: 600, color: C.textMain }}>
-                                            {po.purchase_request?.requester?.name ?? '—'}
-                                        </span>
-                                    </td>
-                                    <td style={{ textAlign: 'right', fontWeight: 600, color: C.textMain }}>
-                                        {formatCurrency(po.total_amount)}
-                                    </td>
-                                    <td style={{ textAlign: 'left', paddingLeft: '24px' }}>
-                                        <StatusBadge status={po.status} />
-                                    </td>
-                                    <td style={{ textAlign: 'left', color: C.textMuted }}>
-                                        {formatDate(po.created_at)}
-                                    </td>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <div style={{ display: 'flex', gap: 4 }}>
-                                            <ViewActionButton href={`/purchase-orders/${po.id}`} />
-                                        </div>
-                                    </td>
+                    <div className="po-table-wrapper">
+                        <table className="po-table">
+                            <thead>
+                                <tr>
+                                    <th style={{ textAlign: 'left', width: '15%' }}>PO Number</th>
+                                    <th style={{ textAlign: 'left', width: '10%' }}>Linked PR</th>
+                                    <th style={{ textAlign: 'left', width: '20%' }}>Requested By</th>
+                                    <th style={{ textAlign: 'left', width: '16%' }}>Total Amount</th>
+                                    <th style={{ textAlign: 'center', width: '15%' }}>Status</th>
+                                    <th style={{ textAlign: 'left', width: '12%' }}>Date Created</th>
+                                    <th style={{ textAlign: 'left', width: '12%' }}>Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {purchaseOrders.data.map(po => (
+                                    <tr key={po.id}>
+                                        <td style={{ textAlign: 'left' }}>
+                                            <span className="po-number">{po.po_number}</span>
+                                        </td>
+                                        <td style={{ textAlign: 'left' }}>
+                                            <Link
+                                                href={`/purchase-requests/${po.purchase_request?.id}`}
+                                                className="po-pr-link"
+                                            >
+                                                {formatPrId(po.purchase_request?.id)}
+                                            </Link>
+                                        </td>
+                                        <td style={{ textAlign: 'left' }}>
+                                            <span style={{ fontWeight: 600, color: C.textMain }}>
+                                                {po.purchase_request?.requester?.name ?? '—'}
+                                            </span>
+                                        </td>
+                                        <td style={{ textAlign: 'left', fontWeight: 600, color: C.textMain }}>
+                                            {formatCurrency(po.total_amount)}
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <StatusBadge status={po.status} />
+                                        </td>
+                                        <td style={{ textAlign: 'left', color: C.textMuted }}>
+                                            {formatDate(po.created_at)}
+                                        </td>
+                                        <td style={{ textAlign: 'left' }}>
+                                            {/* Stationary Action Row Frame */}
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: '90px' }}>
+                                                <div style={{ flexShrink: 0 }}>
+                                                    <ViewActionButton href={`/purchase-orders/${po.id}`} />
+                                                </div>
+                                                <div style={{ flexShrink: 0, minWidth: '50px' }}>
+                                                    {po.status === 'fully_received' ? (
+                                                        <DeleteButton id={po.id} />
+                                                    ) : (
+                                                        <span style={{ display: 'block', width: '50px' }} />
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
 
-            {/* Pagination Controls Footer Segment */}
+            {/* Pagination Controls */}
             {purchaseOrders.last_page > 1 && (
                 <div style={{ display: 'flex', gap: 6, marginTop: 24, justifyContent: 'flex-end' }}>
                     {purchaseOrders.links.map((link, i) => (

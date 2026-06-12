@@ -5,6 +5,7 @@ import { ViewActionButton } from '@/Components/ActionButtons'
 import { formatCurrency } from '@/hooks/useCurrency'
 import { router } from '@inertiajs/react';
 import confirmToast from '@/utils/confirmToast'
+import RecycleBinButton from '@/Components/RecycleBinButton'
 
 
 
@@ -73,14 +74,11 @@ function StatusBadge({ status }) {
 }
 
 
-
 function DeleteButton({ id }) {
-
-
     const handleDelete = async () => {
-        $confirmed = await confirmToast('Move this purchase request to the recycle bin?', "Don't show this warning again.");
+        const confirmed = await confirmToast('Move this purchase request to the recycle bin?', "Don't show this warning again.");
 
-        if ($confirmed) {
+        if (confirmed) {
             router.delete(route('purchase-requests.destroy', id));
         }
     };
@@ -229,29 +227,7 @@ export default function Index({ purchaseRequests, flash = "" }) {
 
                 {/* ✅ Wrap both buttons together */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <Link
-                        href={route('purchase-requests.recycle-bin.index')}
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 6,
-                            fontSize: 13,
-                            color: '#64748b',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: 8,
-                            padding: '8px 14px',
-                            textDecoration: 'none',
-                            background: '#fff',
-                        }}
-                    >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-                            <polyline points="3 6 5 6 21 6" />
-                            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                            <path d="M10 11v6M14 11v6" />
-                            <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
-                        </svg>
-                        Recycle Bin
-                    </Link>
+                    <RecycleBinButton endpoint={'purchase-requests.recycle-bin.index'} />
 
                     <Link href="/purchase-requests/create" className="pr-btn-primary">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

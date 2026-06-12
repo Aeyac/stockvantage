@@ -2,6 +2,7 @@ import React from 'react'
 import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { formatCurrency } from '@/hooks/useCurrency'
+import BackButton from '@/Components/BackButton'
 
 // ─── ICONS ────────────────────────────────────────────────────────────────
 const Icons = {
@@ -124,15 +125,6 @@ export default function Show({ purchaseOrder }) {
     const status = STATUS[statusKey] ?? STATUS.auto_approved
     const currency = purchaseOrder?.currency ?? 'PHP'
     const isSentEmail = purchaseOrder?.is_email_sent ?? false;
-    console.log(isSentEmail)
-
-
-
-    console.log(purchaseOrder)
-console.log({
-    is_email_sent: purchaseOrder?.is_email_sent,
-    is_sent_email: purchaseOrder?.is_sent_email,
-})
 
     // Detect if line items span multiple suppliers
     const uniqueSuppliers = [...new Set(lineItems.map(l => l.catalog_item?.supplier?.name).filter(Boolean))]
@@ -193,7 +185,14 @@ console.log({
             `}</style>
 
             <div className="po-page" style={{ background: '#f2f5f4', minHeight: 'calc(100vh - 56px)', padding: '36px 24px' }}>
+
+                {/* Centering wrapper container */}
                 <div style={{ maxWidth: 860, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+                    {/* FIXED POSITION: Placed inside the centered wrapper layout container */}
+                    <div style={{ marginBottom: 4 }}>
+                        <BackButton link={'/purchase-orders'} text={'Back to Purchase Orders'} />
+                    </div>
 
                     {/* ── Top Bar Controls ── */}
                     <div style={{ display: 'flex', gap: 8 }}>

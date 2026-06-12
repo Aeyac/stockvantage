@@ -196,12 +196,13 @@ class PurchaseRequestController extends Controller
 
     public function destroy(PurchaseRequest $purchaseRequest)
     {
-        if ($purchaseRequest->purchaseOrder()->with('status', 'open')) {
+        abort_if(!auth()->user()->isAdmin() && !auth()->user()->isManager(), 403, 'Unauthorized action.');
+
+        if ($purchaseRequest->purchaseOrder()->where('status', 'open')->exists()) {
             return redirect()->route('purchase-requests.index')
                 ->with('error', 'Purchase request has an existing open status purchase order.');
         }
 
-        abort_if(!auth()->user()->isAdmin() && !auth()->user()->isManager(), 403, 'Unauthorized action.');
         $purchaseRequest->delete();
 
         return redirect()->route('purchase-requests.index')

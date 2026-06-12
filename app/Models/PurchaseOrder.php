@@ -4,10 +4,11 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PurchaseOrder extends Model
 {
-    use BelongsToTenant;
+    use BelongsToTenant, SoftDeletes;
 
     protected $fillable = [
         'tenant_id',
@@ -23,6 +24,17 @@ class PurchaseOrder extends Model
         'is_email_sent' => 'boolean',
     ];
 
+
+    // -------------------------------------------------------
+    // Requested Data
+    // -------------------------------------------------------
+    public const RECYCLE_BIN_RELATIONS = [
+        'purchaseRequest:id,requested_by',
+        'purchaseRequest.requester:id,name',
+        'purchaseRequest.lineItems:id,pr_id,catalog_item_id',
+        'purchaseRequest.lineItems.catalogItem:id,supplier_id',
+        'purchaseRequest.lineItems.catalogItem.supplier:id,name',
+    ];
 
     // -------------------------------------------------------
     // Status constants

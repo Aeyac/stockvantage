@@ -5,7 +5,6 @@ import BackButton from '@/Components/BackButton';
 import FlashMessage from '@/Components/FlashMessage';
 
 export default function RecycleBin({ deletedRequests, flash }) {
-    const requested_by = deletedRequests.data[0].requester.name;
 
     const handleRestore = async (id) => {
         router.patch(route('purchase-requests.recycle-bin.restore', id));
@@ -283,8 +282,8 @@ export default function RecycleBin({ deletedRequests, flash }) {
 
                                             {/* User Information */}
                                             <td style={styles.td('left')}>
-                                                {requested_by ? (
-                                                    <span style={styles.userName}>{requested_by}</span>
+                                                {pr.requester?.name ? (
+                                                    <span style={styles.userName}>{pr.requester.name}</span>
                                                 ) : (
                                                     <span style={styles.userEmpty}>—</span>
                                                 )}
