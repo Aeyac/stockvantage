@@ -28,6 +28,38 @@ const baseActionStyle = {
     gap: '4px'
 };
 
+
+const createButtonStyle = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '7px',
+    background: '#00C488',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '8px',
+    padding: '9px 16px',
+    fontSize: '13px',
+    fontWeight: 500,
+    cursor: 'pointer',
+    textDecoration: 'none',
+    transition: 'background 0.15s',
+    fontFamily: 'inherit',
+};
+
+
+// GLOBAL CREATE BUTTON
+export const CreateActionButton = ({ href, label = "Add" }) => {
+    return (
+        <Link href={href} style={createButtonStyle}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            {label}
+        </Link>
+    )
+}
+
+
 // 1. GLOBAL VIEW LINK
 export const ViewActionButton = ({ href, label = "View" }) => {
     return (

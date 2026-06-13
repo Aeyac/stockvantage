@@ -1,7 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
-import { EditActionButton, DeleteActionButton } from '@/Components/ActionButtons'
+import { EditActionButton, DeleteActionButton, CreateActionButton } from '@/Components/ActionButtons'
 import confirmToast from '@/utils/confirmToast'
 
 // Soft, readable text colors with subtle background pills for light mode statuses
@@ -60,11 +60,33 @@ export default function Index({ warehouses, flash }) {
             router.delete(`/warehouses/${id}`)
         }
     }
+    
     return (
         <AuthenticatedLayout header="Warehouses">
             <Head title="Warehouses" />
 
             <style>{`
+                /* Container setup matching the button baseline to the meta text row */
+                .wh-header-sub-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end; /* ✅ Formats elements cleanly onto the exact same baseline */
+                    margin-bottom: 24px;
+                    gap: 16px;
+                }
+
+                .wh-meta-text {
+                    font-size: 13px;
+                    color: #64748b;
+                    margin: 0;
+                    font-weight: 500;
+                    line-height: 1.2;
+                }
+                
+                .wh-header-btn-wrap {
+                    flex-shrink: 0;
+                }
+
                 /* Primary Brand Button - Dashboard accent green */
                 .wh-btn-primary {
                     display: inline-flex;
@@ -89,14 +111,19 @@ export default function Index({ warehouses, flash }) {
                     background: #ffffff;
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
-                    overflow: hidden;
                     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+                    width: 100%;
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
                 }
+                
                 .wh-table {
                     width: 100%;
                     border-collapse: collapse;
                     font-size: 13.5px;
+                    min-width: 700px;
                 }
+                
                 .wh-table thead tr {
                     background: #f8fafc;
                     border-bottom: 1px solid #e2e8f0;
@@ -109,18 +136,27 @@ export default function Index({ warehouses, flash }) {
                     color: #64748b;
                     text-transform: uppercase;
                     letter-spacing: 0.05em;
+                    white-space: nowrap;
                 }
                 .wh-table td {
                     padding: 14px 18px;
                     color: #334155;
                     border-bottom: 1px solid #f1f5f9;
+                    white-space: nowrap;
+                    vertical-align: middle;
                 }
                 .wh-table tbody tr:last-child td { border-bottom: none; }
                 .wh-table tbody tr:hover td { background: #f8fafc; }
 
+                /* Pagination Blocks */
+                .wh-pagination-wrap {
+                    display: flex;
+                    gap: 6px;
+                    margin-top: 20px;
+                    justify-content: flex-end;
+                    flex-wrap: wrap;
+                }
                 
-
-                /* Clean Light Mode Pagination Blocks */
                 .wh-pagination-btn {
                     display: inline-flex;
                     align-items: center;
@@ -159,23 +195,39 @@ export default function Index({ warehouses, flash }) {
                     color: #64748b;
                     background: #ffffff;
                 }
+
+                /* Mobile Sizing Adapters */
+                @media (max-width: 640px) {
+                    .wh-header-sub-row {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 12px;
+                    }
+                    .wh-header-btn-wrap {
+                        width: 100%;
+                        display: flex;
+                        justify-content: flex-start;
+                    }
+                }
+                @media (max-width: 480px) {
+                    .wh-pagination-wrap {
+                        justify-content: center;
+                    }
+                }
             `}</style>
 
             <FlashMessage flash={flash} />
 
-            {/* Header row */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+            {/* Header sub-row containing metadata and button on the exact same row alignment */}
+            <div className="wh-header-sub-row">
                 <div>
-                    <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>
+                    <p className="wh-meta-text">
                         {warehouses.total} warehouse{warehouses.total !== 1 ? 's' : ''} registered
                     </p>
                 </div>
-                <Link href="/warehouses/create" className="wh-btn-primary">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    Add Warehouse
-                </Link>
+                <div className="wh-header-btn-wrap">
+                    <CreateActionButton href={"/warehouses/create"} label={"Add Warehouse"} />
+                </div>
             </div>
 
             {/* Table wrapper */}
@@ -194,10 +246,10 @@ export default function Index({ warehouses, flash }) {
                     <table className="wh-table">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Location</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th style={{ width: '30%' }}>Name</th>
+                                <th style={{ width: '40%' }}>Location</th>
+                                <th style={{ width: '15%' }}>Status</th>
+                                <th style={{ width: '15%' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -219,7 +271,7 @@ export default function Index({ warehouses, flash }) {
                                         <StatusBadge isActive={warehouse.is_active} />
                                     </td>
                                     <td>
-                                        <div style={{ display: 'flex', gap: 4 }}>
+                                        <div style={{ display: 'flex', gap: 6 }}>
                                             <EditActionButton href={`/warehouses/${warehouse.id}/edit`} />
                                             <DeleteActionButton onClick={() => handleDelete(warehouse.id)} />
                                         </div>
@@ -233,7 +285,7 @@ export default function Index({ warehouses, flash }) {
 
             {/* Pagination */}
             {warehouses.last_page > 1 && (
-                <div style={{ display: 'flex', gap: 6, marginTop: 20, justifyContent: 'flex-end' }}>
+                <div className="wh-pagination-wrap">
                     {warehouses.links.map((link, i) => (
                         <Link
                             key={i}

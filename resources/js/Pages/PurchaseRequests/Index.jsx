@@ -1,13 +1,12 @@
 import { Head, Link } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
-import { ViewActionButton } from '@/Components/ActionButtons'
+import { CreateActionButton, ViewActionButton } from '@/Components/ActionButtons'
 import { formatCurrency } from '@/hooks/useCurrency'
 import { router } from '@inertiajs/react';
 import confirmToast from '@/utils/confirmToast'
 import RecycleBinButton from '@/Components/RecycleBinButton'
-
-
+import { DeleteActionButton } from '@/Components/ActionButtons'
 
 // Soft, readable text colors with subtle background pills for light mode statuses
 const STATUS_CONFIG = {
@@ -73,23 +72,12 @@ function StatusBadge({ status }) {
     )
 }
 
-
-function DeleteButton({ id }) {
-    const handleDelete = async () => {
-        const confirmed = await confirmToast('Move this purchase request to the recycle bin?', "Don't show this warning again.");
-
-        if (confirmed) {
-            router.delete(route('purchase-requests.destroy', id));
-        }
-    };
-
-    return (
-        <button onClick={handleDelete} className="text-red-500 hover:text-red-700">
-            Delete
-        </button>
-    );
+async function handleDelete(id) {
+    const confirmed = await confirmToast("Are you sure you want to delete this purchase request?", "Do not show this warning again.");
+    if (confirmed) {
+        router.delete(route('purchase-requests.destroy', id));
+    }
 }
-
 
 function formatDate(dateStr) {
     return new Date(dateStr).toLocaleDateString('en-PH', {
@@ -101,7 +89,6 @@ function formatPrId(id) {
     return 'PR-' + String(id).padStart(4, '0')
 }
 
-
 export default function Index({ purchaseRequests, flash = "" }) {
 
     return (
@@ -109,6 +96,22 @@ export default function Index({ purchaseRequests, flash = "" }) {
             <Head title="Purchase Requests" />
 
             <style>{`
+                /* Fully fluid layout container that wraps under text headers on mobile screens */
+                .pr-header-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 24px;
+                    gap: 16px;
+                }
+
+                .pr-header-btn-wrap {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    flex-shrink: 0;
+                }
+
                 /* Primary Brand Button - Dashboard accent green */
                 .pr-btn-primary {
                     display: inline-flex;
@@ -129,19 +132,24 @@ export default function Index({ purchaseRequests, flash = "" }) {
                 }
                 .pr-btn-primary:hover { background: #00a873; }
 
-                /* Crisp Light Mode Table Container */
+                /* Crisp Light Mode Table Container with Horizontal Scrolling */
                 .pr-table-wrap {
                     background: #ffffff;
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
-                    overflow: hidden;
                     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+                    width: 100%;
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
                 }
+                
                 .pr-table {
                     width: 100%;
                     border-collapse: collapse;
                     font-size: 13.5px;
+                    min-width: 800px; /* Assures columns maintain proper sizing layouts when scaling down */
                 }
+                
                 .pr-table thead tr {
                     background: #f8fafc;
                     border-bottom: 1px solid #e2e8f0;
@@ -154,11 +162,14 @@ export default function Index({ purchaseRequests, flash = "" }) {
                     color: #64748b;
                     text-transform: uppercase;
                     letter-spacing: 0.05em;
+                    white-space: nowrap;
                 }
                 .pr-table td {
                     padding: 14px 18px;
                     color: #334155;
                     border-bottom: 1px solid #f1f5f9;
+                    white-space: nowrap;
+                    vertical-align: middle;
                 }
                 .pr-table tbody tr:last-child td { border-bottom: none; }
                 .pr-table tbody tr:hover td { background: #f8fafc; }
@@ -168,13 +179,19 @@ export default function Index({ purchaseRequests, flash = "" }) {
                     font-family: inherit;
                     font-size: 12px; 
                     font-weight: 700;
-                    padding: px 8px; 
-                    border-radius: 4px;
-                    display: inline-block;
+                    color: #0f172a;
                     letter-spacing: 0.02em;
                 }
                 
-                /* Clean Light Mode Pagination Blocks */
+                /* Responsive Pagination Wrappers */
+                .pr-pagination-wrap {
+                    display: flex;
+                    gap: 6px;
+                    margin-top: 20px;
+                    justify-content: flex-end;
+                    flex-wrap: wrap;
+                }
+
                 .pr-pagination-btn {
                     display: inline-flex;
                     align-items: center;
@@ -213,28 +230,39 @@ export default function Index({ purchaseRequests, flash = "" }) {
                     color: #64748b;
                     background: #ffffff;
                 }
+
+                /* Mobile Layout Media Queries */
+                @media (max-width: 640px) {
+                    .pr-header-row {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 12px;
+                    }
+                    .pr-header-btn-wrap {
+                        width: 100%;
+                        justify-content: flex-start;
+                    }
+                }
+                @media (max-width: 480px) {
+                    .pr-pagination-wrap {
+                        justify-content: center;
+                    }
+                }
             `}</style>
 
             <FlashMessage flash={flash} />
 
             {/* Header row */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+            <div className="pr-header-row">
                 <div>
-                    <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>
+                    <p style={{ fontSize: 13, color: '#64748b', margin: 0, fontWeight: 500 }}>
                         {purchaseRequests.total} purchase request{purchaseRequests.total !== 1 ? 's' : ''} registered
                     </p>
                 </div>
 
-                {/* ✅ Wrap both buttons together */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div className="pr-header-btn-wrap">
                     <RecycleBinButton endpoint={'purchase-requests.recycle-bin.index'} />
-
-                    <Link href="/purchase-requests/create" className="pr-btn-primary">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                        </svg>
-                        New Request
-                    </Link>
+                    <CreateActionButton href={'/purchase-requests/create'} label={'New Request'} />
                 </div>
             </div>
 
@@ -254,12 +282,12 @@ export default function Index({ purchaseRequests, flash = "" }) {
                     <table className="pr-table">
                         <thead>
                             <tr>
-                                <th>PR ID</th>
-                                <th>Requested By</th>
-                                <th>Total Amount</th>
-                                <th>Status</th>
-                                <th>Date Submitted</th>
-                                <th>Actions</th>
+                                <th style={{ width: '15%' }}>PR ID</th>
+                                <th style={{ width: '25%' }}>Requested By</th>
+                                <th style={{ width: '20%' }}>Total Amount</th>
+                                <th style={{ width: '15%' }}>Status</th>
+                                <th style={{ width: '15%' }}>Date Submitted</th>
+                                <th style={{ width: '10%' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -287,9 +315,11 @@ export default function Index({ purchaseRequests, flash = "" }) {
                                         {formatDate(pr.created_at)}
                                     </td>
                                     <td>
-                                        <div style={{ display: 'flex', gap: 4 }}>
+                                        <div style={{ display: 'flex', gap: 6 }}>
                                             <ViewActionButton href={`/purchase-requests/${pr.id}`} />
-                                            {pr.status !== 'awaiting_approval' && <DeleteButton id={pr.id} />}
+                                            {pr.status !== 'awaiting_approval' && (
+                                                <DeleteActionButton onClick={() => handleDelete(pr.id)} />
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
@@ -301,7 +331,7 @@ export default function Index({ purchaseRequests, flash = "" }) {
 
             {/* Pagination */}
             {purchaseRequests.last_page > 1 && (
-                <div style={{ display: 'flex', gap: 6, marginTop: 20, justifyContent: 'flex-end' }}>
+                <div className="pr-pagination-wrap">
                     {purchaseRequests.links.map((link, i) => (
                         <Link
                             key={i}

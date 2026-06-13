@@ -2,7 +2,7 @@ import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 import { useAuth } from '@/hooks/useAuth'
-import { EditActionButton, DeleteActionButton } from '@/Components/ActionButtons'
+import { EditActionButton, DeleteActionButton, CreateActionButton } from '@/Components/ActionButtons'
 import { formatCurrency } from '@/hooks/useCurrency'
 import confirmToast from '@/utils/confirmToast'
 
@@ -16,12 +16,24 @@ export default function Index({ catalogItems, flash }) {
         }
     }
 
-
     return (
         <AuthenticatedLayout header="Catalog Items">
             <Head title="Catalog Items" />
 
             <style>{`
+                /* Fixed Layout Header Actions Section */
+                .sv-header-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 24px;
+                    gap: 16px;
+                }
+                
+                .sv-header-btn-wrap {
+                    flex-shrink: 0; /* Prevents button from stretching or mutating width */
+                }
+
                 /* Primary Brand Button - Updated to match clean dashboard metrics */
                 .sv-btn-primary {
                     display: inline-flex;
@@ -41,19 +53,24 @@ export default function Index({ catalogItems, flash }) {
                 }
                 .sv-btn-primary:hover { background: #00a873; }
 
-                /* Crisp Light Mode Table Container */
+                /* Crisp Light Mode Table Container with Scroll Capability */
                 .sv-table-wrap {
                     background: #ffffff;
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
-                    overflow: hidden;
                     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+                    width: 100%;
+                    overflow-x: auto; /* Enables horizontal sliding */
+                    -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS */
                 }
+                
                 .sv-table {
                     width: 100%;
                     border-collapse: collapse;
                     font-size: 13.5px;
+                    min-width: 900px; /* Guarantees layout doesn't cramp up and forces scroll on mobile */
                 }
+                
                 .sv-table thead tr {
                     background: #f8fafc;
                     border-bottom: 1px solid #e2e8f0;
@@ -66,11 +83,14 @@ export default function Index({ catalogItems, flash }) {
                     color: #64748b;
                     text-transform: uppercase;
                     letter-spacing: 0.05em;
+                    white-space: nowrap;
                 }
                 .sv-table td {
                     padding: 14px 18px;
                     color: #334155;
                     border-bottom: 1px solid #f1f5f9;
+                    white-space: nowrap; /* Keeps items on a clean single line while sliding */
+                    vertical-align: middle;
                 }
                 .sv-table tbody tr:last-child td { border-bottom: none; }
                 .sv-table tbody tr:hover td { background: #f8fafc; }
@@ -96,15 +116,17 @@ export default function Index({ catalogItems, flash }) {
                     border: 1px solid #fee2e2;
                 }
 
-                /* Contextual Item Badges (SKU & Category styles structured like reference terms) */
+                /* Contextual Item Badges */
                 .sv-sku {
                     font-size: 12px;
                     font-weight: 700;
-                    padding: px 10px;
+                    padding: 3px 10px;
                     border-radius: 20px;
                     color: #0f172a;
+                    white-space: nowrap;
                 }
                 .sv-category {
+                    display: inline-block;
                     font-size: 11.5px;
                     font-weight: 600;
                     padding: 3px 10px;
@@ -112,15 +134,21 @@ export default function Index({ catalogItems, flash }) {
                     background: #eff6ff;
                     color: #2563eb;
                     border: 1px solid #dbeafe;
+                    white-space: nowrap;
                 }
                 .sv-stock-warn {
                     color: #dc2626;
                     font-weight: 600;
                 }
 
-                
-
                 /* Clean Light Mode Pagination Blocks */
+                .sv-pagination-wrap {
+                    display: flex;
+                    gap: 6px;
+                    margin-top: 20px;
+                    justify-content: flex-end;
+                    flex-wrap: wrap;
+                }
                 .sv-pagination-btn {
                     display: inline-flex;
                     align-items: center;
@@ -157,24 +185,27 @@ export default function Index({ catalogItems, flash }) {
                     color: #64748b;
                     background: #ffffff;
                 }
+
+                @media (max-width: 480px) {
+                    .sv-pagination-wrap {
+                        justify-content: center;
+                    }
+                }
             `}</style>
 
             <FlashMessage flash={flash} />
 
-            {/* Header row */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+            {/* Header row - Kept aligned and row-based everywhere */}
+            <div className="sv-header-row">
                 <div>
-                    <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>
+                    <p style={{ fontSize: 13, color: '#64748b', margin: 0, fontWeight: 500 }}>
                         {catalogItems.total} item{catalogItems.total !== 1 ? 's' : ''} in catalog
                     </p>
                 </div>
                 {isAdmin && (
-                    <Link href="/catalog-items/create" className="sv-btn-primary">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                        </svg>
-                        Add Item
-                    </Link>
+                    <div className="sv-header-btn-wrap">
+                        <CreateActionButton href={'/catalog-items/create'} label={'Add Item'} />
+                    </div>
                 )}
             </div>
 
@@ -196,14 +227,14 @@ export default function Index({ catalogItems, flash }) {
                     <table className="sv-table">
                         <thead>
                             <tr>
-                                <th>SKU</th>
-                                <th>Item</th>
-                                <th>Supplier</th>
-                                <th>Category</th>
-                                <th>Unit Cost</th>
-                                <th>Safety Stock</th>
-                                <th>Status</th>
-                                {isAdmin && <th>Actions</th>}
+                                <th style={{ width: '12%' }}>SKU</th>
+                                <th style={{ width: '23%' }}>Item</th>
+                                <th style={{ width: '20%' }}>Supplier</th>
+                                <th style={{ width: '15%' }}>Category</th>
+                                <th style={{ width: '10%' }}>Unit Cost</th>
+                                <th style={{ width: '10%' }}>Safety Stock</th>
+                                <th style={{ width: '10%' }}>Status</th>
+                                {isAdmin && <th style={{ width: '10%' }}>Actions</th>}
                             </tr>
                         </thead>
                         <tbody>
@@ -251,7 +282,7 @@ export default function Index({ catalogItems, flash }) {
                                     </td>
                                     {isAdmin && (
                                         <td>
-                                            <div style={{ display: 'flex', gap: 4 }}>
+                                            <div style={{ display: 'flex', gap: 6 }}>
                                                 <EditActionButton href={`/catalog-items/${item.id}/edit`} />
                                                 <DeleteActionButton onClick={() => handleDelete(item.id)} />
                                             </div>
@@ -266,7 +297,7 @@ export default function Index({ catalogItems, flash }) {
 
             {/* Pagination */}
             {catalogItems.last_page > 1 && (
-                <div style={{ display: 'flex', gap: 6, marginTop: 20, justifyContent: 'flex-end' }}>
+                <div className="sv-pagination-wrap">
                     {catalogItems.links.map((link, i) => (
                         <Link
                             key={i}
@@ -279,4 +310,4 @@ export default function Index({ catalogItems, flash }) {
             )}
         </AuthenticatedLayout>
     )
-} 
+}

@@ -1,7 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
-import { EditActionButton, DeleteActionButton } from '@/Components/ActionButtons'
+import { EditActionButton, DeleteActionButton, CreateActionButton } from '@/Components/ActionButtons'
 import confirmToast from '@/utils/confirmToast'
 
 export default function Index({ suppliers, flash }) {
@@ -26,38 +26,37 @@ export default function Index({ suppliers, flash }) {
             <Head title="Suppliers" />
 
             <style>{`
-                /* Primary Brand Button - Updated to your dashboard accent green */
-                .sv-btn-primary {
-                    display: inline-flex;
+                /* Fixed Layout Header Actions Section */
+                .sv-header-row {
+                    display: flex;
+                    justify-content: space-between;
                     align-items: center;
-                    gap: 7px;
-                    background: #00C488;
-                    color: #fff;
-                    border: none;
-                    border-radius: 8px;
-                    padding: 9px 16px;
-                    font-size: 13px;
-                    font-weight: 500;
-                    cursor: pointer;
-                    text-decoration: none;
-                    transition: background 0.15s;
-                    font-family: inherit;
+                    margin-bottom: 24px;
+                    gap: 16px;
                 }
-                .sv-btn-primary:hover { background: #00a873; }
+                
+                .sv-header-btn-wrap {
+                    flex-shrink: 0; /* Prevents button from shrinking or mutating width */
+                }
 
-                /* Crisp Light Mode Table Container */
+                /* Crisp Light Mode Table Container with Scroll Capability */
                 .sv-table-wrap {
                     background: #ffffff;
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
-                    overflow: hidden;
                     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+                    width: 100%;
+                    overflow-x: auto; /* Enables horizontal sliding */
+                    -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS */
                 }
+                
                 .sv-table {
                     width: 100%;
                     border-collapse: collapse;
                     font-size: 13.5px;
+                    min-width: 800px; /* Guarantees layout doesn't cramp up and forces scroll on mobile */
                 }
+                
                 .sv-table thead tr {
                     background: #f8fafc;
                     border-bottom: 1px solid #e2e8f0;
@@ -70,13 +69,17 @@ export default function Index({ suppliers, flash }) {
                     color: #64748b;
                     text-transform: uppercase;
                     letter-spacing: 0.05em;
+                    white-space: nowrap;
                 }
                 .sv-table td {
                     padding: 14px 18px;
                     color: #334155;
                     border-bottom: 1px solid #f1f5f9;
+                    white-space: nowrap; /* Keeps items on a clean single line while sliding */
+                    vertical-align: middle;
                 }
                 .sv-table tbody tr:last-child td { border-bottom: none; }
+                .sv-table tbody tr { transition: background 0.1s; }
                 .sv-table tbody tr:hover td { background: #f8fafc; }
 
                 /* Light Mode Status Badges */
@@ -102,6 +105,7 @@ export default function Index({ suppliers, flash }) {
                 
                 /* Payment Terms Pill base */
                 .sv-term {
+                    display: inline-block;
                     font-size: 11.5px;
                     font-weight: 600;
                     padding: 3px 10px;
@@ -130,6 +134,13 @@ export default function Index({ suppliers, flash }) {
                 }
 
                 /* Clean Light Mode Pagination Blocks */
+                .sv-pagination-wrap {
+                    display: flex;
+                    gap: 6px;
+                    margin-top: 20px;
+                    justify-content: flex-end;
+                    flex-wrap: wrap;
+                }
                 .sv-pagination-btn {
                     display: inline-flex;
                     align-items: center;
@@ -166,23 +177,26 @@ export default function Index({ suppliers, flash }) {
                     color: #64748b;
                     background: #ffffff;
                 }
+
+                @media (max-width: 480px) {
+                    .sv-pagination-wrap {
+                        justify-content: center;
+                    }
+                }
             `}</style>
 
             <FlashMessage flash={flash} />
 
-            {/* Header row */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+            {/* Header row - Kept aligned and row-based everywhere */}
+            <div className="sv-header-row">
                 <div>
-                    <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>
+                    <p style={{ fontSize: 13, color: '#64748b', margin: 0, fontWeight: 500 }}>
                         {suppliers.total} supplier{suppliers.total !== 1 ? 's' : ''} registered
                     </p>
                 </div>
-                <Link href="/suppliers/create" className="sv-btn-primary">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    Add Supplier
-                </Link>
+                <div className="sv-header-btn-wrap">
+                    <CreateActionButton href={"/suppliers/create"} label={'Add Supplier'} />
+                </div>
             </div>
 
             {/* Table wrapper */}
@@ -190,7 +204,7 @@ export default function Index({ suppliers, flash }) {
                 {suppliers.data.length === 0 ? (
                     <div className="empty-state">
                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-10.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5-13.5h16.5M6.75 6.75h.008v.008H6.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM11.25 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM15.75 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                            <path d="M2.25 21h19.5m-18-10.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5-13.5h16.5M6.75 6.75h.008v.008H6.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM11.25 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM15.75 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                         </svg>
                         <p style={{ fontSize: 14, fontWeight: 500, color: '#475569' }}>No suppliers yet</p>
                         <Link href="/suppliers/create" className="sv-btn-primary" style={{ marginTop: 4 }}>
@@ -201,35 +215,38 @@ export default function Index({ suppliers, flash }) {
                     <table className="sv-table">
                         <thead>
                             <tr>
-                                <th>Supplier</th>
-                                <th>Contact</th>
-                                <th>Payment Terms</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th style={{ width: '30%' }}>Supplier</th>
+                                <th style={{ width: '25%' }}>Contact</th>
+                                <th style={{ width: '15%' }}>Payment Terms</th>
+                                <th style={{ width: '15%' }}>Status</th>
+                                <th style={{ width: '15%' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {suppliers.data.map(supplier => {
-                                // Fallback mapping rules for terms styling
                                 const termStyle = termColor[supplier.payment_terms] ?? { text: '#475569', bg: '#f1f5f9', border: '#e2e8f0' };
 
                                 return (
                                     <tr key={supplier.id}>
                                         <td>
-                                            <div style={{ fontWeight: 600, color: '#0f172a' }}>{supplier.name}</div>
-                                            {supplier.entity_number && (
-                                                <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
-                                                    {supplier.entity_number}
-                                                </div>
-                                            )}
+                                            <div>
+                                                <div style={{ fontWeight: 600, color: '#0f172a' }}>{supplier.name}</div>
+                                                {supplier.entity_number && (
+                                                    <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+                                                        {supplier.entity_number}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </td>
                                         <td>
-                                            <div style={{ color: '#334155' }}>{supplier.contact_email}</div>
-                                            {supplier.phone && (
-                                                <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
-                                                    {supplier.phone}
-                                                </div>
-                                            )}
+                                            <div>
+                                                <div style={{ color: '#334155' }}>{supplier.contact_email}</div>
+                                                {supplier.phone && (
+                                                    <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+                                                        {supplier.phone}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </td>
                                         <td>
                                             <span
@@ -254,7 +271,7 @@ export default function Index({ suppliers, flash }) {
                                             </span>
                                         </td>
                                         <td>
-                                            <div style={{ display: 'flex', gap: 4 }}>
+                                            <div style={{ display: 'flex', gap: 6 }}>
                                                 <EditActionButton href={`/suppliers/${supplier.id}/edit`} />
                                                 <DeleteActionButton onClick={() => handleDelete(supplier.id)} />
                                             </div>
@@ -269,7 +286,7 @@ export default function Index({ suppliers, flash }) {
 
             {/* Pagination */}
             {suppliers.last_page > 1 && (
-                <div style={{ display: 'flex', gap: 6, marginTop: 20, justifyContent: 'flex-end' }}>
+                <div className="sv-pagination-wrap">
                     {suppliers.links.map((link, i) => (
                         <Link
                             key={i}

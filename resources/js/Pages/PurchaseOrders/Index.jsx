@@ -5,6 +5,7 @@ import { ViewActionButton } from '@/Components/ActionButtons'
 import { formatCurrency } from '@/hooks/useCurrency'
 import RecycleBinButton from '@/Components/RecycleBinButton'
 import confirmToast from '@/utils/confirmToast'
+import { DeleteActionButton } from '@/Components/ActionButtons'
 
 // Unified Light Mode Visual System Tokens
 const C = {
@@ -83,24 +84,13 @@ function formatPrId(id) {
     return 'PR-' + String(id).padStart(4, '0')
 }
 
-function DeleteButton({ id }) {
-    const handleDelete = async () => {
-        const confirmed = await confirmToast('Move this purchase order to the recycle bin?', "Don't show this warning again.");
-
-        if (confirmed) {
-            router.delete(route('purchase-orders.destroy', id));
-        }
-    };
-
-    return (
-        <button 
-            onClick={handleDelete} 
-            className="text-xs font-semibold text-red-600 hover:text-red-800 transition-colors px-2 py-1 rounded hover:bg-red-50"
-        >
-            Delete
-        </button>
-    );
+async function handleDelete(id) {
+    const confirmed = await confirmToast("Are you sure you want to delete this purchase request?", "Do not show this warning again.");
+    if (confirmed) {
+        router.delete(route('purchase-orders.destroy', id));
+    }
 }
+
 
 export default function Index({ purchaseOrders, flash }) {
     console.log(purchaseOrders);
@@ -265,7 +255,7 @@ export default function Index({ purchaseOrders, flash }) {
                                                 </div>
                                                 <div style={{ flexShrink: 0, minWidth: '50px' }}>
                                                     {po.status === 'fully_received' ? (
-                                                        <DeleteButton id={po.id} />
+                                                        <DeleteActionButton onClick={() => handleDelete(po.id)} />
                                                     ) : (
                                                         <span style={{ display: 'block', width: '50px' }} />
                                                     )}

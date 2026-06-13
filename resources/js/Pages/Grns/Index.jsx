@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
-import { ViewActionButton } from '@/Components/ActionButtons'
+import { CreateActionButton, ViewActionButton } from '@/Components/ActionButtons'
 
 const C = {
     bg: '#f8fafc', // Slate 50
@@ -39,6 +39,7 @@ function StatusBadge({ status }) {
             fontSize: '11.5px', fontWeight: 600, padding: '3px 10px',
             borderRadius: 20, background: config.bg, color: config.color,
             border: `1px solid ${config.border}`,
+            whiteSpace: 'nowrap',
         }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }} />
             {config.label}
@@ -58,6 +59,27 @@ export default function Index({ grns, flash }) {
             <Head title="GRN" />
 
             <style>{`
+                /* Fluid layout structure for the page meta row */
+                .grn-header-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 24px;
+                    gap: 16px;
+                    width: 100%;
+                }
+
+                .grn-header-meta {
+                    font-size: 13px;
+                    color: ${C.onSurfaceVar};
+                    fontWeight: 500;
+                    margin: 0;
+                }
+
+                .grn-header-action-wrap {
+                    flex-shrink: 0;
+                }
+
                 /* Primary Dashboard Button styling */
                 .grn-btn-primary {
                     display: inline-flex; align-items: center; gap: 7px;
@@ -68,23 +90,40 @@ export default function Index({ grns, flash }) {
                 }
                 .grn-btn-primary:hover { background: #00a873; }
                 
-                /* Clean Light Mode Table Container */
+                /* Clean Responsive Light Mode Table Container */
                 .grn-card {
-                    background: ${C.surface}; border: 1px solid ${C.outline};
-                    border-radius: 12px; overflow: hidden;
+                    background: ${C.surface}; 
+                    border: 1px solid ${C.outline};
+                    border-radius: 12px; 
+                    overflow: hidden;
                     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+                    width: 100%;
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
                 }
-                .grn-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+
+                .grn-table { 
+                    width: 100%; 
+                    border-collapse: collapse; 
+                    font-size: 13.5px; 
+                    min-width: 800px; /* Safeguards structural alignment across dynamic display bounds */
+                }
+
                 .grn-table thead tr { background: #f8fafc; }
+                
                 .grn-table th {
                     text-align: left; padding: 14px 18px;
                     font-size: 11px; font-weight: 600; color: ${C.onSurfaceVar};
                     text-transform: uppercase; letter-spacing: 0.05em;
                     border-bottom: 1px solid ${C.outline};
+                    white-space: nowrap;
                 }
+
                 .grn-table td {
                     padding: 14px 18px; color: #334155;
                     border-bottom: 1px solid #f1f5f9;
+                    white-space: nowrap;
+                    vertical-align: middle;
                 }
                 .grn-table tbody tr:last-child td { border-bottom: none; }
                 .grn-table tbody tr:hover td { background: ${C.surfaceHigh}; }
@@ -100,6 +139,14 @@ export default function Index({ grns, flash }) {
                 }
                 
                 /* Light Mode Pagination Elements */
+                .grn-pagination-wrap {
+                    display: flex; 
+                    gap: 6px; 
+                    margin-top: 20px; 
+                    justify-content: flex-end;
+                    flex-wrap: wrap;
+                }
+
                 .grn-pg-btn {
                     display: inline-flex; align-items: center; justify-content: center;
                     min-width: 32px; height: 32px; padding: 0 10px; border-radius: 6px;
@@ -110,37 +157,58 @@ export default function Index({ grns, flash }) {
                 .grn-pg-btn.active { background: ${C.primary}; color: ${C.onPrimary}; border-color: ${C.primary}; font-weight: 600; }
                 .grn-pg-btn.disabled { opacity: 0.4; pointer-events: none; background: #f1f5f9; }
                 
-                /* Table Row Badges and Plain Typography */
+                /* Empty Dataset Layout Views */
                 .grn-empty {
                     display: flex; flex-direction: column; align-items: center;
                     justify-content: center; padding: 64px 24px; gap: 12px; color: ${C.onSurfaceVar};
+                    text-align: center;
                 }
                 .grn-po-badge {
                     font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700;
                     color: #1e3a8a; background: #eff6ff;
                     border: 1px solid #bfdbfe; padding: 2px 7px; border-radius: 6px;
+                    white-space: nowrap;
                 }
                 .grn-id-badge {
-                     font-size: 11.5px; font-weight: 700;
+                    font-size: 11.5px; font-weight: 700;
                     color: ${C.textMain}; letter-spacing: 0.02em;
+                    white-space: nowrap;
+                }
+
+                /* Mobile Viewport Adapters */
+                @media (max-width: 640px) {
+                    .grn-header-row {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 12px;
+                    }
+                    .grn-header-action-wrap {
+                        width: 100%;
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    .grn-pagination-wrap {
+                        justify-content: center;
+                    }
                 }
             `}</style>
 
             <FlashMessage flash={flash} />
 
-            {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                <p style={{ fontSize: 13, color: C.onSurfaceVar, fontWeight: 500 }}>
-                    {grns.total} record{grns.total !== 1 ? 's' : ''} registered
-                </p>
-                <Link href="/grn/create" className="grn-btn-primary">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    Record GRN
-                </Link>
+            {/* Header Content Wrapper */}
+            <div className="grn-header-row">
+                <div>
+                    <p className="grn-header-meta">
+                        {grns.total} record{grns.total !== 1 ? 's' : ''} registered
+                    </p>
+                </div>
+                <div className="grn-header-action-wrap">
+                    <CreateActionButton href={"/grn/create"} label={'Record GRN'} />
+                </div>
             </div>
 
+            {/* Table Card wrapper */}
             <div className="grn-card">
                 {grns.data.length === 0 ? (
                     <div className="grn-empty">
@@ -148,8 +216,8 @@ export default function Index({ grns, flash }) {
                             <polyline points="9 11 12 14 22 4" />
                             <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
                         </svg>
-                        <p style={{ fontSize: 14, fontWeight: 500, color: '#475569' }}>No GRN records yet</p>
-                        <p style={{ fontSize: 13, color: C.onSurfaceVar, marginTop: -4 }}>Record a goods receipt against an open purchase order</p>
+                        <p style={{ fontSize: 14, fontWeight: 500, color: '#475569', margin: 0 }}>No GRN records yet</p>
+                        <p style={{ fontSize: 13, color: C.onSurfaceVar, margin: 0 }}>Record a goods receipt against an open purchase order</p>
                         <Link href="/grn/create" className="grn-btn-primary" style={{ marginTop: 4 }}>
                             Record first GRN
                         </Link>
@@ -158,12 +226,12 @@ export default function Index({ grns, flash }) {
                     <table className="grn-table">
                         <thead>
                             <tr>
-                                <th>GRN ID</th>
-                                <th>Purchase Order</th>
-                                <th>Status</th>
-                                <th>Notes</th>
-                                <th>Date Received</th>
-                                <th>Actions</th>
+                                <th style={{ width: '15%' }}>GRN ID</th>
+                                <th style={{ width: '18%' }}>Purchase Order</th>
+                                <th style={{ width: '15%' }}>Status</th>
+                                <th style={{ width: '25%' }}>Notes</th>
+                                <th style={{ width: '17%' }}>Date Received</th>
+                                <th style={{ width: '10%' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -179,12 +247,17 @@ export default function Index({ grns, flash }) {
                                             {grn.purchase_order?.po_number ?? '—'}
                                         </span>
                                     </td>
-                                    <td><StatusBadge status={grn.status} /></td>
                                     <td>
-                                        {grn.notes
-                                            ? <span style={{ fontSize: 13, color: '#334155' }}>{grn.notes.substring(0, 50)}{grn.notes.length > 50 ? '...' : ''}</span>
-                                            : <span style={{ opacity: 0.4 }}>—</span>
-                                        }
+                                        <StatusBadge status={grn.status} />
+                                    </td>
+                                    <td style={{ whiteSpace: 'normal', minWidth: '180px' }}>
+                                        {grn.notes ? (
+                                            <span style={{ fontSize: 13, color: '#334155' }}>
+                                                {grn.notes.length > 50 ? `${grn.notes.substring(0, 50)}...` : grn.notes}
+                                            </span>
+                                        ) : (
+                                            <span style={{ opacity: 0.4 }}>—</span>
+                                        )}
                                     </td>
                                     <td style={{ color: C.onSurfaceVar }}>
                                         {formatDate(grn.created_at)}
@@ -201,8 +274,9 @@ export default function Index({ grns, flash }) {
                 )}
             </div>
 
+            {/* Pagination Controls */}
             {grns.last_page > 1 && (
-                <div style={{ display: 'flex', gap: 6, marginTop: 20, justifyContent: 'flex-end' }}>
+                <div className="grn-pagination-wrap">
                     {grns.links.map((link, i) => (
                         <Link
                             key={i}
