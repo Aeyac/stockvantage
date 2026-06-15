@@ -5,7 +5,6 @@ import { EditActionButton, DeleteActionButton, CreateActionButton } from '@/Comp
 import confirmToast from '@/utils/confirmToast'
 
 export default function Index({ suppliers, flash }) {
-
     async function handleDelete(id) {
         const confirmed = await confirmToast("Are you sure you want to delete this purchase request?", "Do not show this warning again.");
         if (confirmed) {

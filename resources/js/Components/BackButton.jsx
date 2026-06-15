@@ -21,8 +21,8 @@ export default function BackButton({ link, text }) {
     };
 
     return (
-        <Link 
-            href={link} 
+        <Link
+            href={link}
             style={styles}
             onMouseEnter={(e) => {
                 e.currentTarget.style.color = '#0f172a'; // C.textMain

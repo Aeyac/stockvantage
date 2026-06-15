@@ -141,6 +141,8 @@ export default function Dashboard({ metrics, recentRequests, spendChart }) {
     const { auth } = usePage().props
     const { isAdmin, hasRole } = useAuth()
 
+    console.log(recentRequests)
+
     // const greeting = () => {
     //     const h = new Date().getHours()
     //     if (h < 12) return 'Good morning'

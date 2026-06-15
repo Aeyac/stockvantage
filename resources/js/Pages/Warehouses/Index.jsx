@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 import { EditActionButton, DeleteActionButton, CreateActionButton } from '@/Components/ActionButtons'
 import confirmToast from '@/utils/confirmToast'
+import RecycleBinButton from '@/Components/RecycleBinButton'
 
 // Soft, readable text colors with subtle background pills for light mode statuses
 const STATUS_CONFIG = {
@@ -60,7 +61,7 @@ export default function Index({ warehouses, flash }) {
             router.delete(`/warehouses/${id}`)
         }
     }
-    
+
     return (
         <AuthenticatedLayout header="Warehouses">
             <Head title="Warehouses" />
@@ -70,7 +71,7 @@ export default function Index({ warehouses, flash }) {
                 .wh-header-sub-row {
                     display: flex;
                     justify-content: space-between;
-                    align-items: flex-end; /* ✅ Formats elements cleanly onto the exact same baseline */
+                    align-items: flex-end; /* Formats elements cleanly onto the exact same baseline */
                     margin-bottom: 24px;
                     gap: 16px;
                 }
@@ -83,7 +84,11 @@ export default function Index({ warehouses, flash }) {
                     line-height: 1.2;
                 }
                 
+                /* ✅ FIXED: Added flex layout to cleanly group and gap the header buttons */
                 .wh-header-btn-wrap {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px; 
                     flex-shrink: 0;
                 }
 
@@ -203,10 +208,12 @@ export default function Index({ warehouses, flash }) {
                         align-items: flex-start;
                         gap: 12px;
                     }
+                    /* ✅ FIXED: Ensures elements keep full layout structure on mobile view */
                     .wh-header-btn-wrap {
                         width: 100%;
                         display: flex;
                         justify-content: flex-start;
+                        flex-wrap: wrap;
                     }
                 }
                 @media (max-width: 480px) {
@@ -226,6 +233,7 @@ export default function Index({ warehouses, flash }) {
                     </p>
                 </div>
                 <div className="wh-header-btn-wrap">
+                    <RecycleBinButton endpoint={'warehouses.recycle-bin.index'} />
                     <CreateActionButton href={"/warehouses/create"} label={"Add Warehouse"} />
                 </div>
             </div>

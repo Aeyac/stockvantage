@@ -13,6 +13,7 @@ use App\Http\Controllers\StockLedgerController;
 use App\Http\Controllers\TenantSettingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\WarehouseRecycleBinController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ProfileController;
@@ -106,6 +107,17 @@ Route::middleware(['auth'])->group(function () {
     // Warehouse Staff + Admin — inventory and GRN
     // -------------------------------------------------------
     Route::middleware(['role:tenant_admin,warehouse_staff'])->group(function () {
+
+        Route::prefix('warehouses/recycle-bin')
+            ->name('warehouses.recycle-bin')
+            ->controller(WarehouseRecycleBinController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('.index');
+                Route::patch('/{id}/restore', 'restore')->name('.restore');
+                Route::delete('/{id}/force-delete', 'forceDelete')->name('.force-delete');
+            });
+
+
         Route::resource('/warehouses', WarehouseController::class);
 
         Route::get('/inventory', [InventoryController::class, 'index'])

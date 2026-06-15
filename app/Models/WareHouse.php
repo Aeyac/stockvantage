@@ -4,11 +4,12 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Warehouse extends Model
 {
-    use BelongsToTenant;
-    
+    use BelongsToTenant, SoftDeletes;
+
     protected $fillable = [
         'tenant_id',
         'name',
