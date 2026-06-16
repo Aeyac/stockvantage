@@ -1,0 +1,208 @@
+:root {
+    --font-head: 'DM Sans', sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+}
+
+.dash-ui {
+    background: #F2F5F4;
+    display: grid;
+    grid-template-rows: 52px 1fr;
+    height: 100vh;
+    font-family: 'DM Sans', sans-serif;
+    color: #0A0C0B;
+    overflow: hidden;
+}
+
+.dash-topbar {
+    background: #FFFFFF; 
+    border-bottom: 1px solid #E2E8E6;
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    padding: 0 24px; 
+    font-size: 13px;
+}
+
+.dash-topbar-left { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    color: #5A6E67; 
+}
+
+.dash-topbar-right { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+}
+
+.dash-body { 
+    display: flex; 
+    flex: 1; 
+    overflow: hidden;
+}
+
+/* Base Sidebar Styles (Expanded State) */
+.dash-sidebar {
+    background: #FFFFFF; 
+    width: 200px; 
+    flex-shrink: 0;
+    border-right: 1px solid #E2E8E6;
+    padding: 16px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother transition curve */
+    height: 100%; 
+    overflow-x: hidden; /* Prevent horizontal scrollbars during animations */
+    overflow-y: auto; 
+}
+
+/* Sidebar Collapsed State */
+.dash-sidebar.collapsed {
+    width: 60px;
+}
+
+.dash-sidebar-logo {
+    display: flex; 
+    align-items: center; 
+    gap: 12px; /* Standardized spacing */
+    padding: 0 18px 16px; /* Adjusted to keep icon centered when collapsed */
+    margin-bottom: 8px;
+    border-bottom: 1px solid #E2E8E6; 
+    font-family: var(--font-head);
+    font-weight: 700; 
+    font-size: 14px; 
+    color: #0A0C0B;
+    white-space: nowrap;
+}
+
+.dash-sidebar-logo .sm { 
+    width: 24px; /* Slightly upscaled to match nav icon positioning */
+    height: 24px; 
+    border-radius: 4px; 
+    background: #00C488; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dash-nav-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.dash-nav-item {
+    display: flex; 
+    align-items: center; 
+    gap: 12px; /* Standardized spacing */
+    padding: 10px 20px; /* Kept icons geometrically centered at 60px sidebar width */
+    font-size: 13px; 
+    color: #5A6E67;
+    cursor: pointer; 
+    transition: background 0.15s, color 0.15s;
+    border-radius: 0;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.dash-nav-item:hover { 
+    background: #F2F5F4; 
+    color: #0A0C0B; 
+}
+
+.dash-nav-item.active { 
+    background: #E8F7F2; 
+    color: #007A55; 
+    font-weight: 500; 
+}
+
+.dash-nav-item svg { 
+    width: 18px; 
+    height: 18px; 
+    flex-shrink: 0; 
+}
+
+.topbar-avatar {
+    width: 28px; 
+    height: 28px; 
+    border-radius: 50%;
+    background: #00C488; 
+    color: #0A0C0B;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-size: 11px; 
+    font-weight: 600; 
+    font-family: var(--font-mono);
+}
+
+.dash-main { 
+    flex: 1; 
+    padding: 20px; 
+    overflow-y: auto;
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #5A6E67;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+.toggle-btn:hover {
+    color: #0A0C0B;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: #A34747;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    border-top: 1px solid #E2E8E6;
+    margin-top: auto;
+    white-space: nowrap;
+}
+
+.logout-btn:hover {
+    background: #FCE8E8;
+    color: #7A1F1F;
+}
+
+/* NEW: Smooth text transition wrapper classes */
+.dash-sidebar span {
+    opacity: 1;
+    max-width: 150px;
+    transition: opacity 0.15s ease, max-width 0.2s ease, margin 0.2s ease;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+/* Smoothly collapses and hides all structural label spans inside the sidebar */
+.dash-sidebar.collapsed span {
+    opacity: 0;
+    max-width: 0;
+    margin: 0;
+    pointer-events: none; /* Block interactions when hidden */
+}

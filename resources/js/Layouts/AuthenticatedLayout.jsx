@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link, usePage } from '@inertiajs/react'
 import { Toaster } from 'react-hot-toast'
-
+    
 const NAV_ITEMS = [
     {
         label: 'Dashboard',
@@ -133,8 +133,19 @@ const NAV_ITEMS = [
     },
 ]
 
+function UserAvatar({ name }) {
+    return (
+        <div className="topbar-avatar">
+            {name.charAt(0).toUpperCase()}
+        </div>
+    )
+}
+
 export default function AuthenticatedLayout({ children, header }) {
     const { auth } = usePage().props
+    const { url } = usePage();
+    const currentPath = url.split('?')[0];
+
     const user = auth.user
 
     const [collapsed, setCollapsed] = useState(() => {
@@ -146,8 +157,6 @@ export default function AuthenticatedLayout({ children, header }) {
         localStorage.setItem('sidebar-collapsed', JSON.stringify(collapsed))
     }, [collapsed])
 
-    const currentPath = window.location.pathname
-
     const visibleNavItems = useMemo(
         () => NAV_ITEMS.filter(item => item.roles.includes(user.role)),
         [user.role]
@@ -155,173 +164,6 @@ export default function AuthenticatedLayout({ children, header }) {
 
     return (
         <div className="dash-ui">
-            {/* Dashboard Reference Styles */}
-            <style>{`
-                :root {
-                    --font-head: 'DM Sans', sans-serif;
-                    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-                }
-
-                * { box-sizing: border-box; margin: 0; padding: 0; }
-
-                .dash-ui {
-                    background: #F2F5F4;
-                    display: grid;
-                    grid-template-rows: 52px 1fr;
-                    height: 100vh;
-                    font-family: 'DM Sans', sans-serif;
-                    color: #0A0C0B;
-                    overflow: hidden;
-                }
-                .dash-topbar {
-                    background: #FFFFFF; 
-                    border-bottom: 1px solid #E2E8E6;
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: space-between;
-                    padding: 0 24px; 
-                    font-size: 13px;
-                }
-                .dash-topbar-left { 
-                    display: flex; 
-                    align-items: center; 
-                    gap: 12px; 
-                    color: #5A6E67; 
-                }
-                .dash-topbar-right { 
-                    display: flex; 
-                    align-items: center; 
-                    gap: 12px; 
-                }
-                .dash-body { 
-                    display: flex; 
-                    flex: 1; 
-                    overflow: hidden;
-                }
-                .dash-sidebar {
-                    background: #FFFFFF; 
-                    width: ${collapsed ? '60px' : '200px'}; 
-                    flex-shrink: 0;
-                    border-right: 1px solid #E2E8E6;
-                    padding: 16px 0;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-between;
-                    transition: width 0.15s ease;
-                    height: 100%; 
-                    overflow-y: auto; 
-                }
-                .dash-sidebar-logo {
-                    display: flex; 
-                    align-items: center; 
-                    gap: 8px;
-                    padding: 0 16px 16px; 
-                    margin-bottom: 8px;
-                    border-bottom: 1px solid #E2E8E6; 
-                    font-family: var(--font-head);
-                    font-weight: 700; 
-                    font-size: 14px; 
-                    color: #0A0C0B;
-                    overflow: hidden;
-                    white-space: nowrap;
-                }
-                .dash-sidebar-logo .sm { 
-                    width: 20px; 
-                    height: 20px; 
-                    border-radius: 4px; 
-                    background: #00C488; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center;
-                    flex-shrink: 0;
-                }
-                .dash-nav-container {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 2px;
-                    flex: 1;
-                }
-                .dash-nav-item {
-                    display: flex; 
-                    align-items: center; 
-                    gap: 9px;
-                    padding: 8px 16px; 
-                    font-size: 13px; 
-                    color: #5A6E67;
-                    cursor: pointer; 
-                    transition: background 0.15s, color 0.15s;
-                    border-radius: 0;
-                    text-decoration: none;
-                    overflow: hidden;
-                    white-space: nowrap;
-                }
-                .dash-nav-item:hover { 
-                    background: #F2F5F4; 
-                    color: #0A0C0B; 
-                }
-                .dash-nav-item.active { 
-                    background: #E8F7F2; 
-                    color: #007A55; 
-                    font-weight: 500; 
-                }
-                .dash-nav-item svg { 
-                    width: 15px; 
-                    height: 15px; 
-                    flex-shrink: 0; 
-                }
-                .topbar-avatar {
-                    width: 28px; 
-                    height: 28px; 
-                    border-radius: 50%;
-                    background: #00C488; 
-                    color: #0A0C0B;
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center;
-                    font-size: 11px; 
-                    font-weight: 600; 
-                    font-family: var(--font-mono);
-                }
-                .dash-main { 
-                    flex: 1; 
-                    padding: 20px; 
-                    overflow-y: auto;
-                }
-                .toggle-btn {
-                    background: none;
-                    border: none;
-                    cursor: pointer;
-                    color: #5A6E67;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 4px;
-                }
-                .toggle-btn:hover {
-                    color: #0A0C0B;
-                }
-                .logout-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 9px;
-                    padding: 8px 16px;
-                    font-size: 13px;
-                    color: #A34747;
-                    background: none;
-                    border: none;
-                    width: 100%;
-                    text-align: left;
-                    cursor: pointer;
-                    border-top: 1px solid #E2E8E6;
-                    margin-top: auto;
-                    padding-top: 12px;
-                }
-                .logout-btn:hover {
-                    background: #FCE8E8;
-                    color: #7A1F1F;
-                }
-            `}</style>
-
             {/* Topbar Row */}
             <header className="dash-topbar">
                 <div className="dash-topbar-left">
@@ -337,20 +179,18 @@ export default function AuthenticatedLayout({ children, header }) {
                     <span style={{ color: '#5A6E67', textTransform: 'lowercase', fontFamily: 'var(--font-mono)' }}>
                         ({user.role.replace(/_/g, ' ')})
                     </span>
-                    <div className="topbar-avatar">
-                        {user.name.charAt(0).toUpperCase()}
-                    </div>
+                    <UserAvatar name={user.name} />
                 </div>
             </header>
 
             {/* Layout Wrapper */}
             <div className="dash-body">
                 {/* Sidebar Component */}
-                <aside className="dash-sidebar">
+                <aside className={`dash-sidebar ${collapsed ? 'collapsed' : ''}`}>
                     <div className="dash-nav-container">
                         <div className="dash-sidebar-logo">
                             <div className="sm"></div>
-                            {!collapsed && <span>StockVantage</span>}
+                            <span>StockVantage</span>
                         </div>
 
                         {/* Custom Navigation Routing Map */}
@@ -365,7 +205,7 @@ export default function AuthenticatedLayout({ children, header }) {
                                     prefetch
                                 >
                                     {item.icon}
-                                    {!collapsed && <span>{item.label}</span>}
+                                    <span>{item.label}</span>
                                 </Link>
                             )
                         })}
@@ -383,7 +223,7 @@ export default function AuthenticatedLayout({ children, header }) {
                         <svg viewBox="0 0 15 15" fill="none" style={{ width: 15, height: 15, flexShrink: 0 }}>
                             <path d="M10.5 2.5H12.5V12.5H10.5M2.5 7.5H9.5M2.5 7.5L5.5 4.5M2.5 7.5L5.5 10.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
-                        {!collapsed && <span>Logout</span>}
+                        <span>Logout</span>
                     </Link>
                 </aside>
 

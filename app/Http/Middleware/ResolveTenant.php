@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ResolveTenant
 {
     // these routes don't need tenant resolution
-    protected array $except = [         
+    protected array $except = [
         'login',
         'logout',
         'register',

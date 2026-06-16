@@ -1,4 +1,5 @@
 import '../css/app.css';
+import '../css/layout.css';
 import './bootstrap';
 import '../js/styles/global.css';
 

@@ -31,7 +31,7 @@ class PurchaseRequestRecycleBinController extends Controller
 
         $pr->restore();
 
-        return redirect()->route('purchase-requests.recycle-bin')
+        return redirect()->route('purchase-requests.recycle-bin.index')
             ->with('success', 'Purchase request restored.');
     }
 
