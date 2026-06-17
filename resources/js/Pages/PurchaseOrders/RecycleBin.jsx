@@ -4,8 +4,8 @@ import confirmToast from '@/utils/confirmToast';
 import BackButton from '@/Components/BackButton';
 import FlashMessage from '@/Components/FlashMessage';
 
-export default function RecycleBin({ deletedOrders, flash }) {
-    console.log(deletedOrders.data)
+export default function RecycleBin({ deletedItems, flash }) {
+    console.log(deletedItems.data)
     const handleRestore = async (id) => {
         router.patch(route('purchase-orders.recycle-bin.restore', id));
     };
@@ -237,7 +237,7 @@ export default function RecycleBin({ deletedOrders, flash }) {
                 </div>
 
                 {/* Main Data Content Grid */}
-                {deletedOrders.data.length === 0 ? (
+                {deletedItems.data.length === 0 ? (
                     <div style={styles.emptyCard}>
                         <div style={styles.emptyIconCircle}>
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -267,7 +267,7 @@ export default function RecycleBin({ deletedOrders, flash }) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {deletedOrders.data.map((po) => (
+                                    {deletedItems.data.map((po) => (
                                         <tr
                                             key={po.id}
                                             style={styles.tr}
@@ -285,7 +285,7 @@ export default function RecycleBin({ deletedOrders, flash }) {
                                             <td style={styles.td('left')}>
                                                 <span style={styles.textMain}>
                                                     {po.supplier_names ?? <span style={styles.textMuted}>—</span>}
-                                                </span> 
+                                                </span>
                                             </td>
 
                                             {/* Safe Requester Lookup Assignment */}
@@ -355,9 +355,9 @@ export default function RecycleBin({ deletedOrders, flash }) {
                         </div>
 
                         {/* Pagination Interface Infrastructure */}
-                        {deletedOrders.links && deletedOrders.links.length > 3 && (
+                        {deletedItems.links && deletedItems.links.length > 3 && (
                             <div style={styles.paginationFooter}>
-                                {deletedOrders.links.map((link, i) => (
+                                {deletedItems.links.map((link, i) => (
                                     <Link
                                         key={i}
                                         href={link.url ?? '#'}

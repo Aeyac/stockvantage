@@ -4,7 +4,8 @@ import confirmToast from '@/utils/confirmToast';
 import BackButton from '@/Components/BackButton';
 import FlashMessage from '@/Components/FlashMessage';
 
-export default function RecycleBin({ deletedRequests, flash }) {
+export default function RecycleBin({ deletedItems, flash }) {
+    console.log(deletedItems)
 
     const handleRestore = async (id) => {
         router.patch(route('purchase-requests.recycle-bin.restore', id));
@@ -237,7 +238,7 @@ export default function RecycleBin({ deletedRequests, flash }) {
                 </div>
 
                 {/* Table Data Card Component */}
-                {deletedRequests.data.length === 0 ? (
+                {deletedItems.data.length === 0 ? (
                     <div style={styles.emptyCard}>
                         <div style={styles.emptyIconCircle}>
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -266,7 +267,7 @@ export default function RecycleBin({ deletedRequests, flash }) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {deletedRequests.data.map((pr) => (
+                                    {deletedItems.data.map((pr) => (
                                         <tr
                                             key={pr.id}
                                             style={styles.tr}
@@ -282,8 +283,8 @@ export default function RecycleBin({ deletedRequests, flash }) {
 
                                             {/* User Information */}
                                             <td style={styles.td('left')}>
-                                                {pr.requester?.name ? (
-                                                    <span style={styles.userName}>{pr.requester.name}</span>
+                                                {pr?.requester_name ? (
+                                                    <span style={styles.userName}>{pr.requester_name}</span>
                                                 ) : (
                                                     <span style={styles.userEmpty}>—</span>
                                                 )}
@@ -347,9 +348,9 @@ export default function RecycleBin({ deletedRequests, flash }) {
                         </div>
 
                         {/* Footer / Pagination Link Arrays */}
-                        {deletedRequests.links && deletedRequests.links.length > 3 && (
+                        {deletedItems.links && deletedItems.links.length > 3 && (
                             <div style={styles.paginationFooter}>
-                                {deletedRequests.links.map((link, i) => (
+                                {deletedItems.links.map((link, i) => (
                                     <Link
                                         key={i}
                                         href={link.url ?? '#'}

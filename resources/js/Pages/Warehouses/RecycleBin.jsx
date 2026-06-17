@@ -22,6 +22,23 @@ export default function WarehouseRecycleBin({ deletedItems, flash }) {
         }
     };
 
+    // Formats backend timestamps into a clean, readable display layout
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } catch (e) {
+            return dateString;
+        }
+    };
+
     // Premium styling architecture matching your workspace design guidelines
     const styles = {
         container: {
@@ -127,22 +144,13 @@ export default function WarehouseRecycleBin({ deletedItems, flash }) {
             whiteSpace: 'nowrap',
             verticalAlign: 'middle'
         }),
-        itemBadge: {
-            fontFamily: 'monospace',
-            fontSize: '12px',
-            fontWeight: '700',
-            backgroundColor: '#F1F5F9',
-            color: '#334155',
-            padding: '4px 8px',
-            borderRadius: '6px',
-            border: '1px solid rgba(226, 232, 240, 0.4)'
-        },
         textMain: {
             color: '#334155',
             fontWeight: '500'
         },
         textMuted: {
-            color: '#94A3B8'
+            color: '#64748B',
+            fontSize: '13px'
         },
         locationBadge: {
             display: 'inline-flex',
@@ -154,10 +162,6 @@ export default function WarehouseRecycleBin({ deletedItems, flash }) {
             backgroundColor: '#E0F2FE',
             color: '#0369A1',
             border: '1px solid rgba(186, 230, 253, 0.5)'
-        },
-        dateText: {
-            color: '#64748B',
-            fontSize: '12px'
         },
         actionContainer: {
             display: 'flex',
@@ -223,7 +227,7 @@ export default function WarehouseRecycleBin({ deletedItems, flash }) {
             <div style={styles.container}>
                 <FlashMessage flash={flash} />
 
-                {/* Header & Navigation Contextual Triggers */}
+                {/* Header & Navigation */}
                 <div style={styles.headerWrapper}>
                     <BackButton link={'/warehouses'} text={'Back to Inventory Control'} />
 
@@ -259,12 +263,9 @@ export default function WarehouseRecycleBin({ deletedItems, flash }) {
                             <table style={styles.table}>
                                 <thead style={styles.thead}>
                                     <tr>
-                                        <th style={styles.th('left')}>Item Code / SKU</th>
                                         <th style={styles.th('left')}>Item Name</th>
-                                        <th style={styles.th('left')}>Category</th>
-                                        <th style={styles.th('center')}>Stock Level</th>
-                                        <th style={styles.th('center')}>Zone / Loc</th>
-                                        <th style={styles.th('left')}>Archived Date</th>
+                                        <th style={styles.th('center')}>Location</th>
+                                        <th style={styles.th('center')}>Deleted At</th>
                                         <th style={styles.th('right')}>Actions</th>
                                     </tr>
                                 </thead>
@@ -276,13 +277,6 @@ export default function WarehouseRecycleBin({ deletedItems, flash }) {
                                             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F8FAFC'}
                                             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                         >
-                                            {/* SKU / Item Identification Code */}
-                                            <td style={styles.td('left')}>
-                                                <span style={styles.itemBadge}>
-                                                    {item.item_code}
-                                                </span>
-                                            </td>
-
                                             {/* Item Functional Label Name */}
                                             <td style={styles.td('left')}>
                                                 <span style={styles.textMain}>
@@ -290,37 +284,17 @@ export default function WarehouseRecycleBin({ deletedItems, flash }) {
                                                 </span>
                                             </td>
 
-                                            {/* Material Classification Category */}
-                                            <td style={styles.td('left')}>
-                                                <span style={styles.textMain}>
-                                                    {item.category ?? <span style={styles.textMuted}>Unassigned</span>}
-                                                </span>
-                                            </td>
-
-                                            {/* Quantity Profile Status at Deletion */}
-                                            <td style={styles.td('center')}>
-                                                <span style={{ fontWeight: '600', color: item.stock_level <= 0 ? '#DC2626' : '#334155' }}>
-                                                    {item.stock_level} Units
-                                                </span>
-                                            </td>
-
                                             {/* Target Placement Storage Bin Area */}
                                             <td style={styles.td('center')}>
                                                 <span style={styles.locationBadge}>
-                                                    {item.warehouse_location ?? 'N/A'}
+                                                    {item.location ?? 'N/A'}
                                                 </span>
                                             </td>
 
-                                            {/* Soft-Delete Datetime Mapping */}
-                                            <td style={styles.td('left')}>
-                                                <span style={styles.dateText}>
-                                                    {item.deleted_at
-                                                        ? new Date(item.deleted_at).toLocaleString('en-US', {
-                                                            dateStyle: 'short',
-                                                            timeStyle: 'short'
-                                                        })
-                                                        : '—'
-                                                    }
+                                            {/* Soft Delete Timestamp Tracking Node */}
+                                            <td style={styles.td('center')}>
+                                                <span style={styles.textMuted}>
+                                                    {formatDate(item.deleted_at)}
                                                 </span>
                                             </td>
 

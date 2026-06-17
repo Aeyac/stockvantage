@@ -25,6 +25,12 @@ class PurchaseRequest extends Model
         'approved_at' => 'datetime',
     ];
 
+
+    public const RECYCLE_BIN_RELATIONS = [
+        'requester:id,name',
+    ];
+
+
     // -------------------------------------------------------
     // Status constants — never hardcode strings in controllers
     // -------------------------------------------------------

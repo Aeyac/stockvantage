@@ -2,53 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Abstracts\RecycleBinController;
+use App\Http\Resources\PurchaseOrderRecycleResource;
+use App\Http\Resources\PurchaseRequestRecycleResource;
 use App\Models\PurchaseRequest;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 
-class PurchaseRequestRecycleBinController extends Controller
+
+class PurchaseRequestRecycleBinController extends RecycleBinController
 {
-    public function index()
+    protected function resource(): string
     {
-        $deleted = PurchaseRequest::onlyTrashed()
-            ->where('tenant_id', auth()->user()->tenant_id)
-            ->with(
-                'requester',
-            )
-            ->latest('deleted_at')
-            ->paginate(20);
-
-        return Inertia::render('PurchaseRequests/RecycleBin', [
-            'deletedRequests' => $deleted,
-        ]);
+        return PurchaseRequestRecycleResource::class;
     }
 
-    public function restore($id)
+    protected function baseQuery()
     {
-        $pr = PurchaseRequest::onlyTrashed()
-            ->where('tenant_id', auth()->user()->tenant_id)
-            ->findOrFail($id);
-
-        $pr->restore();
-
-        return redirect()->route('purchase-requests.recycle-bin.index')
-            ->with('success', 'Purchase request restored.');
+        return parent::baseQuery()
+            ->select([
+                'id',
+                'pr_number',
+                'requested_by',
+                'status',
+                'deleted_at',
+                'tenant_id'
+            ])
+            ->with(PurchaseRequest::RECYCLE_BIN_RELATIONS);
     }
-
-    public function forceDelete($id)
+    protected function model(): string
     {
-        $pr = PurchaseRequest::onlyTrashed()
-            ->where('tenant_id', auth()->user()->tenant_id)
-            ->findOrFail($id);
-
-        if ($pr->purchaseOrder()) {
-            return redirect()->route('purchase-requests.recycle-bin.index')
-                ->with('error', 'Purchase request currently have an active purchase order.');
-        }
-
-        $pr->forceDelete();
-
-        return redirect()->route('purchase-requests.recycle-bin')
-            ->with('success', 'Purchase request permanently deleted.');
+        return PurchaseRequest::class;
+    }
+    protected function routeName(): string
+    {
+        return 'purchase-requests.recycle-bin.index';
+    }
+    protected function viewName(): string
+    {
+        return 'PurchaseRequests/RecycleBin';
+    }
+    protected function itemName(): string
+    {
+        return 'Purchase Request';
     }
 }

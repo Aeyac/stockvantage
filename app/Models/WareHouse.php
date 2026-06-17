@@ -21,6 +21,10 @@ class Warehouse extends Model
         'is_active' => 'boolean',
     ];
 
+    public const RECYCLE_BIN_RELATIONS = [
+        '',
+    ];
+
     // -------------------------------------------------------
     // Relationships
     // -------------------------------------------------------
