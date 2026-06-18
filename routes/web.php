@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CatalogItemController;
+use App\Http\Controllers\CatalogItemRecycleBinController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GrnController;
 use App\Http\Controllers\InventoryController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\PurchaseOrderRecycleBinController;
 use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\PurchaseRequestRecycleBinController;
 use App\Http\Controllers\StockLedgerController;
+use App\Http\Controllers\SupplierRecycleBinController;
 use App\Http\Controllers\TenantSettingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
@@ -132,10 +134,30 @@ Route::middleware(['auth'])->group(function () {
     // -------------------------------------------------------
     Route::middleware(['role:tenant_admin'])->group(function () {
         Route::resource('/users', UserController::class)->except(['show']);
+
+        Route::prefix('suppliers/recycle-bin')
+            ->name('suppliers.recycle-bin')
+            ->controller(SupplierRecycleBinController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('.index');
+                Route::patch('/{id}/restore', 'restore')->name('.restore');
+                Route::delete('/{id}/force-delete', 'forceDelete')->name('.force-delete');
+            });
+
+
         Route::resource('/suppliers', SupplierController::class);
 
-        // admin gets full catalog CRUD — index is already registered above
-        // so we skip it here to avoid duplicate route conflict
+        Route::prefix('catalog-items/recycle-bin')
+            ->name('catalog-items.recycle-bin')
+            ->controller(CatalogItemRecycleBinController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('.index');
+                Route::patch('/{id}/restore', 'restore')->name('.restore');
+                Route::delete('/{id}/force-delete', 'forceDelete')->name('.force-delete');
+            });
+
+
+
         Route::resource('/catalog-items', CatalogItemController::class)
             ->except(['index']);
 

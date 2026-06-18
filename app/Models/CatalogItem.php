@@ -4,10 +4,11 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CatalogItem extends Model
 {
-    use BelongsToTenant;
+    use BelongsToTenant, SoftDeletes;
 
     protected $fillable = [
         'tenant_id',
@@ -28,6 +29,10 @@ class CatalogItem extends Model
     // -------------------------------------------------------
     // Relationships
     // -------------------------------------------------------
+
+    public const RECYCLE_BIN_RELATIONS = [
+        'supplier: id, name',
+    ];
 
     public function tenant()
     {

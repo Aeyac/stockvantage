@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import FlashMessage from '@/Components/FlashMessage'
 import { EditActionButton, DeleteActionButton, CreateActionButton } from '@/Components/ActionButtons'
 import confirmToast from '@/utils/confirmToast'
+import RecycleBinButton from '@/Components/RecycleBinButton'
 
 export default function Index({ suppliers, flash }) {
     async function handleDelete(id) {
@@ -36,6 +37,9 @@ export default function Index({ suppliers, flash }) {
                 
                 .sv-header-btn-wrap {
                     flex-shrink: 0; /* Prevents button from shrinking or mutating width */
+                    display: flex;
+                    align-items: center;
+                    gap: 8px; /* Perfectly positions buttons side-by-side with semantic gap spacing */
                 }
 
                 /* Crisp Light Mode Table Container with Scroll Capability */
@@ -194,6 +198,7 @@ export default function Index({ suppliers, flash }) {
                     </p>
                 </div>
                 <div className="sv-header-btn-wrap">
+                    <RecycleBinButton endpoint={'suppliers.recycle-bin.index'} />
                     <CreateActionButton href={"/suppliers/create"} label={'Add Supplier'} />
                 </div>
             </div>

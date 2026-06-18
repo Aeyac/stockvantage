@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { EditActionButton, DeleteActionButton, CreateActionButton } from '@/Components/ActionButtons'
 import { formatCurrency } from '@/hooks/useCurrency'
 import confirmToast from '@/utils/confirmToast'
+import RecycleBinButton from '@/Components/RecycleBinButton'
 
 export default function Index({ catalogItems, flash }) {
     const { isAdmin } = useAuth();
@@ -32,6 +33,9 @@ export default function Index({ catalogItems, flash }) {
                 
                 .sv-header-btn-wrap {
                     flex-shrink: 0; /* Prevents button from stretching or mutating width */
+                    display: flex;
+                    align-items: center;
+                    gap: 8px; /* Perfectly aligns buttons side-by-side with semantic spacing */
                 }
 
                 /* Primary Brand Button - Updated to match clean dashboard metrics */
@@ -93,6 +97,7 @@ export default function Index({ catalogItems, flash }) {
                     vertical-align: middle;
                 }
                 .sv-table tbody tr:last-child td { border-bottom: none; }
+                .sv-table tbody tr { transition: background 0.1s; }
                 .sv-table tbody tr:hover td { background: #f8fafc; }
 
                 /* Light Mode Status Badges */
@@ -204,6 +209,7 @@ export default function Index({ catalogItems, flash }) {
                 </div>
                 {isAdmin && (
                     <div className="sv-header-btn-wrap">
+                        <RecycleBinButton endpoint={'catalog-items.recycle-bin.index'} />
                         <CreateActionButton href={'/catalog-items/create'} label={'Add Item'} />
                     </div>
                 )}
