@@ -19,6 +19,7 @@ use App\Http\Controllers\WarehouseRecycleBinController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserRecycleBinController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -102,7 +103,6 @@ Route::middleware(['auth'])->group(function () {
                 '/purchase-orders/{purchaseOrder}/delete',
                 [PurchaseOrderController::class, 'destroy']
             )->name('purchase-orders.destroy');
-
         });
 
     // -------------------------------------------------------
@@ -133,6 +133,17 @@ Route::middleware(['auth'])->group(function () {
     // Admin only — full system control
     // -------------------------------------------------------
     Route::middleware(['role:tenant_admin'])->group(function () {
+
+        Route::prefix('users/recycle-bin')
+            ->name('users.recycle-bin')
+            ->controller(UserRecycleBinController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('.index');
+                Route::patch('/{id}/restore', 'restore')->name('.restore');
+                Route::delete('/{id}/force-delete', 'forceDelete')->name('.force-delete');
+            });
+
+
         Route::resource('/users', UserController::class)->except(['show']);
 
         Route::prefix('suppliers/recycle-bin')
@@ -165,9 +176,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/settings', [TenantSettingController::class, 'update'])->name('settings.update');
 
         Route::get('/stock-ledger', [StockLedgerController::class, 'index'])->name('stock-ledger.index');
-
     });
-
 });
 
 require __DIR__ . '/auth.php';

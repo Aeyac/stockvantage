@@ -30,7 +30,11 @@ class ResolveTenant
         $subdomain = explode('.', $host)[0];
 
         // local development fallback
-        if (app()->environment('local') && $subdomain === 'localhost') {
+        // if (app()->environment('local') && $subdomain === 'localhost') {
+        //     $subdomain = 'tenant1';
+        // }
+
+        if (app()->environment('local')) {
             $subdomain = 'tenant1';
         }
 

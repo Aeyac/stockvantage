@@ -1,72 +1,87 @@
-import { Head, Link, router, usePage } from '@inertiajs/react'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import FlashMessage from '@/Components/FlashMessage'
-import { EditActionButton, DeleteActionButton, CreateActionButton } from '@/Components/ActionButtons'
+import { Head, Link, router, usePage } from "@inertiajs/react";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import FlashMessage from "@/Components/FlashMessage";
+import {
+    EditActionButton,
+    DeleteActionButton,
+    CreateActionButton,
+} from "@/Components/ActionButtons";
+import RecycleBinButton from "@/Components/RecycleBinButton";
 
 const C = {
-    bg: '#F4F5F8',
-    surface: '#FFFFFF',
-    surfaceLow: '#F8F9FC',
-    surfaceHigh: '#E9EBF0',
-    outline: '#DDE2E5',
-    primary: '#00C488',       // Richer green for crisp contrast on light backgrounds
-    secondary: '#6554C0',     // Deep Indigo
-    tertiary: '#B65C00',      // Warm Amber
-    onSurface: '#1A1C1E',     // Charcoal dark text
-    onSurfaceVar: '#5D6166',  // Medium gray for subtext/labels
-    onPrimary: '#FFFFFF',
-    error: '#DE350B',         // High-contrast red
-}
+    bg: "#F4F5F8",
+    surface: "#FFFFFF",
+    surfaceLow: "#F8F9FC",
+    surfaceHigh: "#E9EBF0",
+    outline: "#DDE2E5",
+    primary: "#00C488", // Richer green for crisp contrast on light backgrounds
+    secondary: "#6554C0", // Deep Indigo
+    tertiary: "#B65C00", // Warm Amber
+    onSurface: "#1A1C1E", // Charcoal dark text
+    onSurfaceVar: "#5D6166", // Medium gray for subtext/labels
+    onPrimary: "#FFFFFF",
+    error: "#DE350B", // High-contrast red
+};
 
 const ROLE_CONFIG = {
     tenant_admin: {
-        label: 'Admin',
-        color: '#5B41B0',     // Deepened for text readability
-        bg: '#6554C00D',
-        border: '#6554C025',
+        label: "Admin",
+        color: "#5B41B0", // Deepened for text readability
+        bg: "#6554C00D",
+        border: "#6554C025",
     },
     department_manager: {
-        label: 'Manager',
-        color: '#1D63B8',     // Richer corporate blue
-        bg: '#1D63B80D',
-        border: '#1D63B820',
+        label: "Manager",
+        color: "#1D63B8", // Richer corporate blue
+        bg: "#1D63B80D",
+        border: "#1D63B820",
     },
     warehouse_staff: {
-        label: 'Warehouse',
-        color: '#A04E00',     // Deep amber
-        bg: '#B65C000A',
-        border: '#B65C0020',
+        label: "Warehouse",
+        color: "#A04E00", // Deep amber
+        bg: "#B65C000A",
+        border: "#B65C0020",
     },
     employee: {
-        label: 'Employee',
+        label: "Employee",
         color: C.onSurfaceVar,
         bg: C.surfaceLow,
         border: C.outline,
     },
-}
+};
 
 function RoleBadge({ role }) {
-    const config = ROLE_CONFIG[role] ?? ROLE_CONFIG.employee
+    const config = ROLE_CONFIG[role] ?? ROLE_CONFIG.employee;
     return (
-        <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            fontSize: 11, fontWeight: 700, padding: '3px 10px',
-            borderRadius: 20, textTransform: 'uppercase', letterSpacing: '0.05em',
-            background: config.bg, color: config.color, border: `1px solid ${config.border}`,
-            whiteSpace: 'nowrap'
-        }}>
+        <span
+            style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                fontSize: 11,
+                fontWeight: 700,
+                padding: "3px 10px",
+                borderRadius: 20,
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                background: config.bg,
+                color: config.color,
+                border: `1px solid ${config.border}`,
+                whiteSpace: "nowrap",
+            }}
+        >
             {config.label}
         </span>
-    )
+    );
 }
 
 export default function Index({ users, flash }) {
-    const { auth } = usePage().props
-    const currentUserId = auth.user.id
+    const { auth } = usePage().props;
+    const currentUserId = auth.user.id;
 
     function handleDelete(id) {
-        if (confirm('Are you sure you want to delete this user?')) {
-            router.delete(`/users/${id}`)
+        if (confirm("Are you sure you want to delete this user?")) {
+            router.delete(`/users/${id}`);
         }
     }
 
@@ -221,41 +236,76 @@ export default function Index({ users, flash }) {
 
             <FlashMessage flash={flash} />
 
-            {/* Structured Header Row */}
-            {/* Header */}
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center', /* Forces perfect vertical centering */
-                marginBottom: 24,
-                width: '100%',
-                gap: 16
-            }}>
-                <p style={{
-                    fontSize: 14,
-                    color: C.onSurfaceVar,
-                    margin: 0,
-                    padding: 0,
-                    lineHeight: '38px', /* Matches the typical height of dashboard action buttons */
-                    display: 'inline-block'
-                }}>
-                    {users.total} user{users.total !== 1 ? 's' : ''}
+            {/* Header Layout Control Block */}
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 24,
+                    width: "100%",
+                    gap: 16,
+                }}
+            >
+                <p
+                    style={{
+                        fontSize: 14,
+                        color: C.onSurfaceVar,
+                        margin: 0,
+                        padding: 0,
+                        lineHeight: "38px",
+                        display: "inline-block",
+                    }}
+                >
+                    {users.total} user{users.total !== 1 ? "s" : ""}
                 </p>
-                <div style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
-                    <CreateActionButton href={"/users/create"} label={'Add User'} />
+                <div
+                    style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 8,
+                        flexShrink: 0,
+                    }}
+                >
+                    <RecycleBinButton endpoint={"users.recycle-bin.index"} />
+                    <CreateActionButton
+                        href={"/users/create"}
+                        label={"Add User"}
+                    />
                 </div>
             </div>
 
             <div className="usr-card">
                 {users.data.length === 0 ? (
                     <div className="usr-empty">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" opacity="0.4">
+                        <svg
+                            width="40"
+                            height="40"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.25"
+                            opacity="0.4"
+                        >
                             <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
                             <circle cx="9" cy="7" r="4" />
                             <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
                         </svg>
-                        <p style={{ fontSize: 15, fontWeight: 500, color: C.onSurface, margin: 0 }}>No users yet</p>
-                        <Link href="/users/create" className="usr-btn-primary" style={{ marginTop: 4 }}>
+                        <p
+                            style={{
+                                fontSize: 15,
+                                fontWeight: 500,
+                                color: C.onSurface,
+                                margin: 0,
+                            }}
+                        >
+                            No users yet
+                        </p>
+                        <Link
+                            href="/users/create"
+                            className="usr-btn-primary"
+                            style={{ marginTop: 4 }}
+                        >
                             Add first user
                         </Link>
                     </div>
@@ -263,51 +313,99 @@ export default function Index({ users, flash }) {
                     <table className="usr-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '25%' }}>User</th>
-                                <th style={{ width: '30%' }}>Email</th>
-                                <th style={{ width: '20%' }}>Role</th>
-                                <th style={{ width: '15%' }}>Status</th>
-                                <th style={{ width: '10%' }}>Actions</th>
+                                <th style={{ width: "25%" }}>User</th>
+                                <th style={{ width: "30%" }}>Email</th>
+                                <th style={{ width: "20%" }}>Role</th>
+                                <th style={{ width: "15%" }}>Status</th>
+                                <th style={{ width: "10%" }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {users.data.map(user => (
+                            {users.data.map((user) => (
                                 <tr key={user.id}>
                                     <td>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 10,
+                                            }}
+                                        >
                                             <div className="usr-avatar">
-                                                {user.name.charAt(0).toUpperCase()}
+                                                {user.name
+                                                    .charAt(0)
+                                                    .toUpperCase()}
                                             </div>
                                             <div>
-                                                <div style={{ fontWeight: 600, color: C.onSurface, display: 'flex', alignItems: 'center' }}>
+                                                <div
+                                                    style={{
+                                                        fontWeight: 600,
+                                                        color: C.onSurface,
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                    }}
+                                                >
                                                     {user.name}
-                                                    {user.id === currentUserId && (
-                                                        <span className="usr-you-badge">You</span>
+                                                    {user.id ===
+                                                        currentUserId && (
+                                                        <span className="usr-you-badge">
+                                                            You
+                                                        </span>
                                                     )}
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td style={{ color: C.onSurface }}>{user.email}</td>
-                                    <td><RoleBadge role={user.role} /></td>
+                                    <td style={{ color: C.onSurface }}>
+                                        {user.email}
+                                    </td>
+                                    <td>
+                                        <RoleBadge role={user.role} />
+                                    </td>
                                     <td>
                                         {user.is_active ? (
                                             <span className="usr-status-active">
-                                                <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }} />
+                                                <span
+                                                    style={{
+                                                        width: 5,
+                                                        height: 5,
+                                                        borderRadius: "50%",
+                                                        background:
+                                                            "currentColor",
+                                                        display: "inline-block",
+                                                    }}
+                                                />
                                                 Active
                                             </span>
                                         ) : (
                                             <span className="usr-status-inactive">
-                                                <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }} />
+                                                <span
+                                                    style={{
+                                                        width: 5,
+                                                        height: 5,
+                                                        borderRadius: "50%",
+                                                        background:
+                                                            "currentColor",
+                                                        display: "inline-block",
+                                                    }}
+                                                />
                                                 Inactive
                                             </span>
                                         )}
                                     </td>
                                     <td>
-                                        <div style={{ display: 'flex', gap: 4 }}>
-                                            <EditActionButton href={`/users/${user.id}/edit`} />
+                                        <div
+                                            style={{ display: "flex", gap: 4 }}
+                                        >
+                                            <EditActionButton
+                                                href={`/users/${user.id}/edit`}
+                                            />
                                             {user.id !== currentUserId && (
-                                                <DeleteActionButton onClick={() => handleDelete(user.id)} />
+                                                <DeleteActionButton
+                                                    onClick={() =>
+                                                        handleDelete(user.id)
+                                                    }
+                                                />
                                             )}
                                         </div>
                                     </td>
@@ -323,13 +421,13 @@ export default function Index({ users, flash }) {
                     {users.links.map((link, i) => (
                         <Link
                             key={i}
-                            href={link.url ?? '#'}
-                            className={`usr-pg-btn ${link.active ? 'active' : ''} ${!link.url ? 'disabled' : ''}`}
+                            href={link.url ?? "#"}
+                            className={`usr-pg-btn ${link.active ? "active" : ""} ${!link.url ? "disabled" : ""}`}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                         />
                     ))}
                 </div>
             )}
         </AuthenticatedLayout>
-    )
+    );
 }

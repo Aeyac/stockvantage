@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Abstracts;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
@@ -76,7 +77,18 @@ abstract class RecycleBinController extends Controller
             ->where('tenant_id', auth()->user()->tenant_id)
             ->findOrFail($id);
 
-        $item->forceDelete();
+
+
+        try {
+            $item->forceDelete();
+        } catch (QueryException $e) {
+            if ($e->getCode() === '23000') {
+                return redirect()
+                    ->route($this->routeName())
+                    ->with('error', "{$this->itemName()} cannot be permanently deleted because related records still reference it.");
+            }
+            throw $e;
+        }
 
         return redirect()
             ->route($this->routeName())
