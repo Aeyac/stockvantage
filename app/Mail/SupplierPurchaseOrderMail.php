@@ -25,7 +25,7 @@ class SupplierPurchaseOrderMail extends Mailable implements ShouldQueue
     {
         $this->purchaseOrder = $purchaseOrder;
 
-        $this->companyName = TenantSetting::where('id', session('tenant_id'))->value('company_name')
+        $this->companyName = TenantSetting::where('id', auth()->user()->tenant_id)->value('company_name')
             ?? config('app.name', 'StockVantage');
     }
 

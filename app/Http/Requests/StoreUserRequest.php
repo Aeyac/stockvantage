@@ -21,7 +21,7 @@ class StoreUserRequest extends FormRequest
                 'required',
                 'email',
                 'max:255',
-                Rule::unique('users', 'email')->where('tenant_id', session('tenant_id'))
+                Rule::unique('users', 'email')->where('tenant_id', auth()->user()->tenant_id)
             ],
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|in:tenant_admin,department_manager,warehouse_staff,employee',

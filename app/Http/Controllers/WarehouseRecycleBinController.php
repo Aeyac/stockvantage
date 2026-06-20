@@ -12,6 +12,11 @@ use Inertia\Response;
 class WarehouseRecycleBinController extends RecycleBinController
 {
 
+    protected function allowedRoles(): array
+    {
+        return ['tenant_admin', 'department_manager', 'warehouse_staff'];
+    }
+
     protected function resource(): string
     {
         return WarehouseRecycleResource::class;

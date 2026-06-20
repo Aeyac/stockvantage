@@ -11,7 +11,7 @@ trait BelongsToTenant
     {
         // AUTO-FILTER — every query on this model gets tenant_id appended
         static::addGlobalScope('tenant', function (Builder $query) {
-            $tenantId = session('tenant_id');
+            $tenantId = auth()->user()->tenant_id;
 
             if ($tenantId) {
                 $query->where(
@@ -24,7 +24,7 @@ trait BelongsToTenant
         // AUTO-ASSIGN — every new record gets tenant_id automatically
         static::creating(function ($model) {
             if (empty($model->tenant_id)) {
-                $model->tenant_id = session('tenant_id');
+                $model->tenant_id = auth()->user()->tenant_id;
             }
         });
     }

@@ -14,11 +14,11 @@ class TenantSettingController extends Controller
     {
         abort_if(!auth()->user()->isAdmin(), 403, 'Unauthorized access.');
 
-        $tenantId = session('tenant_id'); // ← was auth()->id()
+        $tenantId = auth()->user()->tenant_id; // ← was auth()->id()
 
         $settings = TenantSetting::firstOrCreate(
-            ['tenant_id' => $tenantId],
             [
+                'tenant_id' => $tenantId,
                 'company_name' => 'My Company',
                 'currency' => 'PHP',
                 'approval_threshold' => 500.00,
@@ -42,7 +42,7 @@ class TenantSettingController extends Controller
 
     public function update(UpdateTenantSettingRequest $request): RedirectResponse
     {
-        $tenantId = session('tenant_id'); // ← was auth()->id()
+        $tenantId = auth()->user()->tenant_id; // ← was auth()->id()
 
         $settings = TenantSetting::where('tenant_id', $tenantId)->firstOrFail();
 

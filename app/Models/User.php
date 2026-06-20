@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, BelongsToTenant, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'tenant_id',

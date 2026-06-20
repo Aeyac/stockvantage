@@ -18,6 +18,11 @@ abstract class RecycleBinController extends Controller
 
 
 
+    protected function allowedRoles(): array
+    {
+        return ['tenant_admin', 'department_manager'];
+    }
+
     protected function resource(): ?string
     {
         return null; // subclasses can override
@@ -66,6 +71,8 @@ abstract class RecycleBinController extends Controller
 
     public function forceDelete($id): RedirectResponse
     {
+        $this->abortUnlessRole($this->allowedRoles());
+
         abort_if(
             !auth()->user()->isAdmin() && !auth()->user()->isManager(),
             403
@@ -94,4 +101,6 @@ abstract class RecycleBinController extends Controller
             ->route($this->routeName())
             ->with('success', "{$this->itemName()} permanently deleted.");
     }
+
+
 }

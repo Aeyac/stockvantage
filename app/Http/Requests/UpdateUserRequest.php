@@ -21,7 +21,7 @@ class UpdateUserRequest extends FormRequest
                 'required',
                 'email',
                 'max:255',
-                Rule::unique('users', 'email')->where('tenant_id', session('tenant_id'))->ignore($this->user->id)
+                Rule::unique('users', 'email')->where('tenant_id', auth()->user()->tenant_id)->ignore($this->user->id)
             ],
             'role' => 'required|in:tenant_admin,department_manager,warehouse_staff,employee',
             'is_active' => 'required|boolean',

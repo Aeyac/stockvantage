@@ -11,7 +11,11 @@ use Override;
 class UserRecycleBinController extends RecycleBinController
 {
 
-    #[Override]
+    protected function allowedRoles(): array
+    {
+        return ['tenant_admin'];
+    }
+
     public function baseQuery()
     {
         return parent::baseQuery()->select([
@@ -45,10 +49,6 @@ class UserRecycleBinController extends RecycleBinController
 
     public function forceDelete($id): RedirectResponse
     {
-        abort_if(
-            !auth()->user()->isAdmin() && !auth()->user()->isManager(),
-            403
-        );
 
         $model = $this->model();
 

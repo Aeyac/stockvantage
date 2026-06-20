@@ -14,7 +14,6 @@ class SupplierRecycleBinController extends RecycleBinController
     //     return Supplier::class;
     // }
 
-
     protected function baseQuery()
     {
         return parent::baseQuery()

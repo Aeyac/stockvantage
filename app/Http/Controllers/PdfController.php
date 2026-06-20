@@ -19,7 +19,7 @@ class PdfController extends Controller
             'purchaseRequest.requester',
         );
 
-        $companyName = TenantSetting::where('id', session('tenant_id'))->value('company_name');
+        $companyName = TenantSetting::where('id', auth()->user()->tenant_id)->value('company_name');
 
         $pdf = Pdf::loadView('pdf.purchase-order', [
             'purchaseOrder' => $purchaseOrder,
