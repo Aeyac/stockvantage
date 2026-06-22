@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\SupplierPurchaseOrderMail;
 use App\Models\PurchaseOrder;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
@@ -38,18 +39,26 @@ class PurchaseOrderController extends Controller
 
     public function sendEmail(PurchaseOrder $purchaseOrder): RedirectResponse
     {
-        abort_if(!auth()->user()->isAdmin() && !auth()->user()->isManager(), 403, 'Unauthorized action.');
+        $this->abortUnlessRole(['tenant_admin', 'department_manager']);
 
-        $firstItem = $purchaseOrder->purchaseRequest->lineItems()->first();
-        $supplierEmail = $firstItem?->catalogItem?->supplier?->contact_email;
+        try {
+            $firstItem = $purchaseOrder->purchaseRequest->lineItems()->first();
+            $supplierEmail = $firstItem?->catalogItem?->supplier?->contact_email;
 
-        if ($supplierEmail) {
-            Mail::to($supplierEmail)->send(new SupplierPurchaseOrderMail($purchaseOrder));
+            if ($supplierEmail) {
+                Mail::to($supplierEmail)->send(new SupplierPurchaseOrderMail($purchaseOrder));
+            }
+
+            $purchaseOrder->update([
+                'is_email_sent' => true,
+            ]);
+        } catch (Exception $e) {
+            logger()->error('PO Email Failed: ' . $e->getMessage());
+
+            return redirect()
+                ->route('purchase-orders.index')
+                ->with('error', 'Failed to send email: ' . $e->getMessage());
         }
-
-        $purchaseOrder->update([
-            'is_email_sent' => true,
-        ]);
 
         return redirect()
             ->route('purchase-orders.index')
@@ -59,7 +68,7 @@ class PurchaseOrderController extends Controller
 
     public function destroy(PurchaseOrder $purchaseOrder)
     {
-        abort_if(!auth()->user()->isAdmin() && !auth()->user()->isManager(), 403, 'Unauthorized action.');
+        $this->abortUnlessRole(['tenant_admin', 'department_manager']);
 
         if ($purchaseOrder->status === 'open') {
             return redirect()->route('purchase-orders.index')

@@ -8,6 +8,6 @@ abstract class Controller
 {
     protected function abortUnlessRole(array $roles): void
     {
-        abort_if(403, !in_array(auth()->user()->role, $roles), 'Unauthorized Action!');
+        abort_if(!in_array(auth()->user()->role, $roles), 403, 'Unauthorized Action!');
     }
 }
