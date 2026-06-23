@@ -17,8 +17,8 @@ class TenantSettingController extends Controller
         $tenantId = auth()->user()->tenant_id; // ← was auth()->id()
 
         $settings = TenantSetting::firstOrCreate(
-            [
-                'tenant_id' => $tenantId,
+            ['tenant_id' => $tenantId],          // ← find by this alone
+            [                                     // ← only used when creating
                 'company_name' => 'My Company',
                 'currency' => 'PHP',
                 'approval_threshold' => 500.00,
@@ -31,8 +31,8 @@ class TenantSettingController extends Controller
             'settings' => [
                 'company_name' => $settings->company_name,
                 'currency' => $settings->currency,
-                'approval_threshold' => $settings->approval_threshold,
-                'auto_send_email' => $settings->auto_send_email,
+                'approval_threshold' => (float) $settings->approval_threshold,
+                'auto_send_email' => (bool) $settings->auto_send_email,
                 'logo_url' => $settings->logo_path
                     ? Storage::disk('public')->url($settings->logo_path)
                     : null,

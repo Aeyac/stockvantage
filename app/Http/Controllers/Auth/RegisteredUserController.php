@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
+use App\Models\TenantSetting;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -43,6 +44,7 @@ class RegisteredUserController extends Controller
                 'subdomain' => $validated['subdomain'],
                 'plan' => $validated['plan'],
             ]);
+
 
             return User::create([
                 'tenant_id' => $tenant->id,
