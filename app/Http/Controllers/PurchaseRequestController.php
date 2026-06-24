@@ -66,12 +66,16 @@ class PurchaseRequestController extends Controller
                 }
 
                 // // 2. determine status
-                $status = $total < session('tenant_threshold')
+                $threshold = TenantSetting::where('tenant_id', auth()->user()->tenant_id)
+                    ->value('approval_threshold');
+
+                $status = $total < $threshold
                     ? PurchaseRequest::STATUS_AUTO_APPROVED
                     : PurchaseRequest::STATUS_AWAITING_APPROVAL;
 
                 // 3. create the PR
                 $pr = PurchaseRequest::create([
+                    'tenant_id' => auth()->user()->tenant_id,
                     'pr_number' => 'PR-' . str_pad(
                         PurchaseRequest::withTrashed()->where('tenant_id', auth()->user()->tenant_id)->count() + 1,
                         4,
@@ -162,7 +166,10 @@ class PurchaseRequestController extends Controller
 
         $this->generatePurchaseOrder($purchaseRequest);
 
-        $toastMessage = session('auto_send_email')
+        $isAutoSendEmail = TenantSetting::where('tenant_id', auth()->user()->tenant_id)
+            ->value('auto_send_email');
+
+        $toastMessage = $isAutoSendEmail
             ? 'Purchase request approved and purchase order is transmitted to the supplier.'
             : 'Purchase request approved.';
 

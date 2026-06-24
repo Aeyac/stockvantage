@@ -174,8 +174,11 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/settings', [TenantSettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [TenantSettingController::class, 'update'])->name('settings.update');
-
         Route::get('/stock-ledger', [StockLedgerController::class, 'index'])->name('stock-ledger.index');
+        Route::delete('/settings/destroy-procurement-data', [TenantSettingController::class, 'destroyProcurementData'])
+            ->name('settings.destroy-procurement-data');
+        Route::delete('/settings/reset-organization', [TenantSettingController::class, 'resetOrganization'])
+            ->name('settings.reset-organization');
     });
 });
 
