@@ -28,7 +28,7 @@ class PurchaseRequestController extends Controller
 
         // employees only see their own PRs
         if (auth()->user()->isEmployee() || auth()->user()->isWarehouseStaff()) {
-            $query->where('requested_by', auth()->id());
+            $query->where('requested_by', auth()->user()->id);
         }
 
         return Inertia::render('PurchaseRequests/Index', [
@@ -110,7 +110,11 @@ class PurchaseRequestController extends Controller
 
     private function generatePurchaseOrder(PurchaseRequest $pr): void
     {
-        $count = PurchaseOrder::whereYear('created_at', now()->year)->count() + 1;
+        $count = PurchaseOrder::
+            whereYear('created_at', now()->year)
+            ->withTrashed()
+            ->count() + 1;
+
         $poNumber = 'PO-' . now()->year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
         $purchaseOrder = PurchaseOrder::create([
@@ -120,7 +124,8 @@ class PurchaseRequestController extends Controller
             'total_amount' => $pr->total_amount,
         ]);
 
-        $isAutoSendEmail = TenantSetting::where('id', auth()->user()->tenant_id)->value('auto_send_email');
+        $isAutoSendEmail = TenantSetting::where('tenant_id', $pr->tenant_id)
+            ->value('auto_send_email');
 
         if ($isAutoSendEmail) {
             $firstItem = $purchaseOrder->purchaseRequest->lineItems()->first();
@@ -130,7 +135,6 @@ class PurchaseRequestController extends Controller
                 Mail::to($supplierEmail)->send(new SupplierPurchaseOrderMail($purchaseOrder));
             }
         }
-
     }
 
 

@@ -85,12 +85,12 @@ function formatDate(dateStr) {
     })
 }
 
-function formatPrId(id) {
-    return 'PR-' + String(id).padStart(4, '0')
-}
+// function formatPrId(id) {
+//     return 'PR-' + String(id).padStart(4, '0')
+// }
 
 export default function Index({ purchaseRequests, flash = "" }) {
-
+   
     return (
         <AuthenticatedLayout header="Purchase Requests">
             <Head title="Purchase Requests" />
@@ -295,7 +295,7 @@ export default function Index({ purchaseRequests, flash = "" }) {
                                 <tr key={pr.id}>
                                     <td>
                                         <span className="pr-id-badge">
-                                            {formatPrId(pr.id)}
+                                            {pr.pr_number}
                                         </span>
                                     </td>
                                     <td>

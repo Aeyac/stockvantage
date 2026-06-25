@@ -230,7 +230,8 @@ export default function Index({ purchaseOrders, flash }) {
                                                 href={`/purchase-requests/${po.purchase_request?.id}`}
                                                 className="po-pr-link"
                                             >
-                                                {formatPrId(po.purchase_request?.id)}
+                                                {/* {formatPrId(po.purchase_request?.id)} */}
+                                                {po.purchase_request?.pr_number}
                                             </Link>
                                         </td>
                                         <td style={{ textAlign: 'left' }}>

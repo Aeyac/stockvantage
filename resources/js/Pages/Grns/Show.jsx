@@ -159,11 +159,11 @@ export default function Show({ grn }) {
                                     <Link
                                         href={`/purchase-orders/${po?.id}`}
                                         style={{
-                                            fontFamily: 'Courier New, monospace',
-                                            color: '#1e3a8a', background: '#eff6ff',
-                                            border: '1px solid #bfdbfe', padding: '2px 6px',
-                                            borderRadius: 4, textDecoration: 'none',
-                                            fontWeight: 700, fontSize: 11.5
+                                            // fontFamily: 'Courier New, monospace',
+                                            color: '#4a5566',
+                                            // border: '1px solid #bfdbfe', padding: '2px 6px',
+                                            // borderRadius: 4, textDecoration: 'none',
+                                            fontWeight: 900, fontSize: 11.5
                                         }}
                                     >
                                         {po?.po_number}

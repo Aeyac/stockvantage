@@ -96,7 +96,7 @@ export default function Show({ purchaseRequest }) {
     }
 
     return (
-        <AuthenticatedLayout header={formatPrId(purchaseRequest.id)}>
+        <AuthenticatedLayout header={purchaseRequest.pr_number}>
             <Head title={`Purchase Request ${formatPrId(purchaseRequest.id)}`} />
 
             <style>{`
@@ -208,7 +208,7 @@ export default function Show({ purchaseRequest }) {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
                             <div>
                                 <div style={{ fontFamily: "'Courier New', monospace", fontSize: 13, fontWeight: 700, color: C.secondary, marginBottom: 4 }}>
-                                    {formatPrId(purchaseRequest.id)}
+                                    {purchaseRequest.pr_number}
                                 </div>
                                 <div style={{ fontSize: 22, fontWeight: 700, color: C.textMain }}>
                                     {formatCurrency(purchaseRequest.total_amount)}
