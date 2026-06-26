@@ -122,6 +122,7 @@ export default function Index({ settings }) {
         setThemeMode(mode);
         localStorage.setItem("sv_interface_theme", mode);
     };
+    
 
     return (
         <AuthenticatedLayout header="System Configurations">
@@ -212,6 +213,7 @@ export default function Index({ settings }) {
                     post={post}
                     processing={processing}
                     setLogoPreview={setLogoPreview}
+                    settings={settings.logo_url}
                 />
             </div>
         </AuthenticatedLayout>

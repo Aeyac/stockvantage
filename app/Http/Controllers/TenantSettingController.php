@@ -92,13 +92,28 @@ class TenantSettingController extends Controller
                 PurchaseOrder::where('tenant_id', $tenantId)->delete();
                 PurchaseRequest::where('tenant_id', $tenantId)->delete();
 
-     
+
             });
         } catch (Throwable $e) {
             return redirect()
                 ->route('settings.index')
                 ->with('error', 'Deletion failed: ' . $e->getMessage());
         }
+
+        return redirect()
+            ->route('settings.index')
+            ->with('success', 'All procurement data has been cleared.');
+    }
+
+    public function resetDefaults(): RedirectResponse
+    {
+        $this->abortUnlessRole(['tenant_admin']);
+
+        TenantSetting::where('tenant_id', auth()->user()->tenant_id)
+            ->update(TenantSetting::DEFAULTS);
+
+            
+
 
         return redirect()
             ->route('settings.index')

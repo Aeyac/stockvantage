@@ -23,6 +23,14 @@ class TenantSetting extends Model
         'auto_send_email' => 'boolean',
     ];
 
+    const DEFAULTS = [
+        'company_name' => 'My Company',
+        'currency' => 'PHP',
+        'approval_threshold' => 500.00,
+        'auto_send_email' => false,
+        'logo_path' => null,
+    ];
+
 
 
     public function tenant(): BelongsTo

@@ -179,6 +179,9 @@ Route::middleware(['auth'])->group(function () {
             ->name('settings.destroy-procurement-data');
         Route::delete('/settings/reset-organization', [TenantSettingController::class, 'resetOrganization'])
             ->name('settings.reset-organization');
+
+        Route::post('/settings/reset-defaults', [TenantSettingController::class, 'resetDefaults'])
+            ->name('settings.reset-defaults');
     });
 });
 

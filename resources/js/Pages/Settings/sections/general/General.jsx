@@ -23,7 +23,6 @@ export default function General({ C, data, errors, patch, handleLogoChange, hand
         return localStorage.getItem('sv_interface_theme') || 'light';
     });
 
-    console.log(data)
 
     return (
         <>
