@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::table('purchase_requests', function (Blueprint $table) {
             $table->unique(['tenant_id', 'pr_number']);
-        });e
+        });
     }
 
     public function down(): void
