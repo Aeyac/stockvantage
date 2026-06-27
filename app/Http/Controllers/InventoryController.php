@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CatalogItem;
 use App\Models\StockLedger;
-use App\Models\WareHouse;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -14,7 +14,7 @@ class InventoryController extends Controller
 
     public function index(): Response
     {
-        $warehouses = WareHouse::where('is_active', true)->get();
+        $warehouses = Warehouse::where('is_active', true)->get();
 
         $catalogItems = CatalogItem::with('supplier')
             ->where('is_active', true)
