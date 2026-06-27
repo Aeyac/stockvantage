@@ -1,49 +1,52 @@
-import { Head, Link } from '@inertiajs/react'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import FlashMessage from '@/Components/FlashMessage'
-import { CreateActionButton, ViewActionButton } from '@/Components/ActionButtons'
-import { formatCurrency } from '@/hooks/useCurrency'
-import { router } from '@inertiajs/react';
-import confirmToast from '@/utils/confirmToast'
-import RecycleBinButton from '@/Components/RecycleBinButton'
-import { DeleteActionButton } from '@/Components/ActionButtons'
+import { Head, Link } from "@inertiajs/react";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import FlashMessage from "@/Components/FlashMessage";
+import {
+    CreateActionButton,
+    ViewActionButton,
+} from "@/Components/ActionButtons";
+import { formatCurrency } from "@/hooks/useCurrency";
+import { router } from "@inertiajs/react";
+import confirmToast from "@/utils/confirmToast";
+import RecycleBinButton from "@/Components/RecycleBinButton";
+import { DeleteActionButton } from "@/Components/ActionButtons";
 
 // Soft, readable text colors with subtle background pills for light mode statuses
 const STATUS_CONFIG = {
     pending: {
-        label: 'Pending',
-        text: '#64748b', // Slate
-        bg: '#f8fafc',
-        border: '#e2e8f0',
+        label: "Pending",
+        text: "#64748b", // Slate
+        bg: "#f8fafc",
+        border: "#e2e8f0",
     },
     awaiting_approval: {
-        label: 'Awaiting Approval',
-        text: '#d97706', // Amber
-        bg: '#fef3c7',
-        border: '#fde68a',
+        label: "Awaiting Approval",
+        text: "#d97706", // Amber
+        bg: "#fef3c7",
+        border: "#fde68a",
     },
     auto_approved: {
-        label: 'Auto Approved',
-        text: '#059669', // Emerald
-        bg: '#ecfdf5',
-        border: '#d1fae5',
+        label: "Auto Approved",
+        text: "#059669", // Emerald
+        bg: "#ecfdf5",
+        border: "#d1fae5",
     },
     approved: {
-        label: 'Approved',
-        text: '#00C488', // Accent Green
-        bg: '#f0fdf4',
-        border: '#bbf7d0',
+        label: "Approved",
+        text: "#00C488", // Accent Green
+        bg: "#f0fdf4",
+        border: "#bbf7d0",
     },
     rejected: {
-        label: 'Rejected',
-        text: '#dc2626', // Red
-        bg: '#fef2f2',
-        border: '#fee2e2',
+        label: "Rejected",
+        text: "#dc2626", // Red
+        bg: "#fef2f2",
+        border: "#fee2e2",
     },
-}
+};
 
 function StatusBadge({ status }) {
-    const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending
+    const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending;
     return (
         <span
             className="pr-status"
@@ -51,38 +54,45 @@ function StatusBadge({ status }) {
                 background: config.bg,
                 color: config.text,
                 border: `1px solid ${config.border}`,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '11.5px',
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                fontSize: "11.5px",
                 fontWeight: 500,
-                padding: '3px 10px',
-                borderRadius: '20px'
+                padding: "3px 10px",
+                borderRadius: "20px",
             }}
         >
-            <span style={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                background: config.text,
-                display: 'inline-block'
-            }} />
+            <span
+                style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: config.text,
+                    display: "inline-block",
+                }}
+            />
             {config.label}
         </span>
-    )
+    );
 }
 
 async function handleDelete(id) {
-    const confirmed = await confirmToast("Are you sure you want to delete this purchase request?", "Do not show this warning again.");
+    const confirmed = await confirmToast(
+        "Are you sure you want to delete this purchase request?",
+        "Do not show this warning again.",
+    );
     if (confirmed) {
-        router.delete(route('purchase-requests.destroy', id));
+        router.delete(route("purchase-requests.destroy", id));
     }
 }
 
 function formatDate(dateStr) {
-    return new Date(dateStr).toLocaleDateString('en-PH', {
-        year: 'numeric', month: 'short', day: 'numeric',
-    })
+    return new Date(dateStr).toLocaleDateString("en-PH", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
 }
 
 // function formatPrId(id) {
@@ -90,7 +100,6 @@ function formatDate(dateStr) {
 // }
 
 export default function Index({ purchaseRequests, flash = "" }) {
-   
     return (
         <AuthenticatedLayout header="Purchase Requests">
             <Head title="Purchase Requests" />
@@ -255,14 +264,27 @@ export default function Index({ purchaseRequests, flash = "" }) {
             {/* Header row */}
             <div className="pr-header-row">
                 <div>
-                    <p style={{ fontSize: 13, color: '#64748b', margin: 0, fontWeight: 500 }}>
-                        {purchaseRequests.total} purchase request{purchaseRequests.total !== 1 ? 's' : ''} registered
+                    <p
+                        style={{
+                            fontSize: 13,
+                            color: "#64748b",
+                            margin: 0,
+                            fontWeight: 500,
+                        }}
+                    >
+                        {purchaseRequests.total} purchase request
+                        {purchaseRequests.total !== 1 ? "s" : ""} registered
                     </p>
                 </div>
 
                 <div className="pr-header-btn-wrap">
-                    <RecycleBinButton endpoint={'purchase-requests.recycle-bin.index'} />
-                    <CreateActionButton href={'/purchase-requests/create'} label={'New Request'} />
+                    <RecycleBinButton
+                        endpoint={"purchase-requests.recycle-bin.index"}
+                    />
+                    <CreateActionButton
+                        href={"/purchase-requests/create"}
+                        label={"New Request"}
+                    />
                 </div>
             </div>
 
@@ -270,11 +292,34 @@ export default function Index({ purchaseRequests, flash = "" }) {
             <div className="pr-table-wrap">
                 {purchaseRequests.data.length === 0 ? (
                     <div className="empty-state">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-10.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5-13.5h16.5M6.75 6.75h.008v.008H6.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM11.25 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM15.75 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                        <svg
+                            width="40"
+                            height="40"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#94a3b8"
+                            strokeWidth="1.5"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.25 21h19.5m-18-10.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5-13.5h16.5M6.75 6.75h.008v.008H6.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM11.25 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM15.75 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                            />
                         </svg>
-                        <p style={{ fontSize: 14, fontWeight: 500, color: '#475569' }}>No purchase requests yet</p>
-                        <Link href="/purchase-requests/create" className="pr-btn-primary" style={{ marginTop: 4 }}>
+                        <p
+                            style={{
+                                fontSize: 14,
+                                fontWeight: 500,
+                                color: "#475569",
+                            }}
+                        >
+                            No purchase requests yet
+                        </p>
+                        <Link
+                            href="/purchase-requests/create"
+                            className="pr-btn-primary"
+                            style={{ marginTop: 4 }}
+                        >
                             Submit your first request
                         </Link>
                     </div>
@@ -282,16 +327,16 @@ export default function Index({ purchaseRequests, flash = "" }) {
                     <table className="pr-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '15%' }}>PR ID</th>
-                                <th style={{ width: '25%' }}>Requested By</th>
-                                <th style={{ width: '20%' }}>Total Amount</th>
-                                <th style={{ width: '15%' }}>Status</th>
-                                <th style={{ width: '15%' }}>Date Submitted</th>
-                                <th style={{ width: '10%' }}>Actions</th>
+                                <th style={{ width: "15%" }}>PR ID</th>
+                                <th style={{ width: "25%" }}>Requested By</th>
+                                <th style={{ width: "20%" }}>Total Amount</th>
+                                <th style={{ width: "15%" }}>Status</th>
+                                <th style={{ width: "15%" }}>Date Submitted</th>
+                                <th style={{ width: "10%" }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {purchaseRequests.data.map(pr => (
+                            {purchaseRequests.data.map((pr) => (
                                 <tr key={pr.id}>
                                     <td>
                                         <span className="pr-id-badge">
@@ -299,26 +344,45 @@ export default function Index({ purchaseRequests, flash = "" }) {
                                         </span>
                                     </td>
                                     <td>
-                                        <div style={{ fontWeight: 600, color: '#0f172a' }}>
-                                            {pr.requester?.name ?? '—'}
+                                        <div
+                                            style={{
+                                                fontWeight: 600,
+                                                color: "#0f172a",
+                                            }}
+                                        >
+                                            {pr.requester?.name ?? "—"}
                                         </div>
                                     </td>
                                     <td>
-                                        <span style={{ fontWeight: 600, color: '#334155' }}>
+                                        <span
+                                            style={{
+                                                fontWeight: 600,
+                                                color: "#334155",
+                                            }}
+                                        >
                                             {formatCurrency(pr.total_amount)}
                                         </span>
                                     </td>
                                     <td>
                                         <StatusBadge status={pr.status} />
                                     </td>
-                                    <td style={{ color: '#64748b' }}>
+                                    <td style={{ color: "#64748b" }}>
                                         {formatDate(pr.created_at)}
                                     </td>
                                     <td>
-                                        <div style={{ display: 'flex', gap: 6 }}>
-                                            <ViewActionButton href={`/purchase-requests/${pr.id}`} />
-                                            {pr.status !== 'awaiting_approval' && (
-                                                <DeleteActionButton onClick={() => handleDelete(pr.id)} />
+                                        <div
+                                            style={{ display: "flex", gap: 6 }}
+                                        >
+                                            <ViewActionButton
+                                                href={`/purchase-requests/${pr.id}`}
+                                            />
+                                            {pr.status !==
+                                                "awaiting_approval" && (
+                                                <DeleteActionButton
+                                                    onClick={() =>
+                                                        handleDelete(pr.id)
+                                                    }
+                                                />
                                             )}
                                         </div>
                                     </td>
@@ -335,13 +399,13 @@ export default function Index({ purchaseRequests, flash = "" }) {
                     {purchaseRequests.links.map((link, i) => (
                         <Link
                             key={i}
-                            href={link.url ?? '#'}
-                            className={`pr-pagination-btn ${link.active ? 'active' : ''} ${!link.url ? 'disabled' : ''}`}
+                            href={link.url ?? "#"}
+                            className={`pr-pagination-btn ${link.active ? "active" : ""} ${!link.url ? "disabled" : ""}`}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                         />
                     ))}
                 </div>
             )}
         </AuthenticatedLayout>
-    )
+    );
 }

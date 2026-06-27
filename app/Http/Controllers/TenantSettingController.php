@@ -2,13 +2,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateTenantSettingRequest;
+use App\Models\CatalogItem;
 use App\Models\GrnLineItem;
 use App\Models\GrnRecord;
 use App\Models\PrLineItem;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseRequest;
 use App\Models\StockLedger;
+use App\Models\Supplier;
 use App\Models\TenantSetting;
+use App\Models\Warehouse;
 use DB;
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -89,10 +92,11 @@ class TenantSettingController extends Controller
                 GrnLineItem::whereHas('grnRecord', fn($q) => $q->where('tenant_id', $tenantId))->delete();
                 GrnRecord::where('tenant_id', $tenantId)->delete();
                 PrLineItem::whereHas('purchaseRequest', fn($q) => $q->where('tenant_id', $tenantId))->delete();
-                PurchaseOrder::where('tenant_id', $tenantId)->delete();
-                PurchaseRequest::where('tenant_id', $tenantId)->delete();
-
-
+                PurchaseOrder::withTrashed()->where('tenant_id', $tenantId)->forceDelete();
+                PurchaseRequest::withTrashed()->where('tenant_id', $tenantId)->forceDelete();
+                CatalogItem::withTrashed()->where('tenant_id', $tenantId)->forceDelete();
+                Supplier::withTrashed()->where('tenant_id', $tenantId)->forceDelete();
+                Warehouse::withTrashed()->where('tenant_id', $tenantId)->forceDelete();
             });
         } catch (Throwable $e) {
             return redirect()
@@ -112,7 +116,7 @@ class TenantSettingController extends Controller
         TenantSetting::where('tenant_id', auth()->user()->tenant_id)
             ->update(TenantSetting::DEFAULTS);
 
-            
+
 
 
         return redirect()

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link, usePage } from "@inertiajs/react";
 import { Toaster } from "react-hot-toast";
+import FlashMessage from "@/Components/FlashMessage";
 
 const NAV_ITEMS = [
     {
@@ -231,7 +232,7 @@ function UserAvatar({ name }) {
     return <div className="topbar-avatar">{name.charAt(0).toUpperCase()}</div>;
 }
 
-export default function AuthenticatedLayout({ children, header }) {
+export default function AuthenticatedLayout({ children, header, flash }) {
     const { auth } = usePage().props;
     const { url } = usePage();
     const currentPath = url.split("?")[0];
@@ -255,6 +256,7 @@ export default function AuthenticatedLayout({ children, header }) {
     return (
         <div className="dash-ui">
             {/* Topbar Row */}
+            <FlashMessage flash={flash} />
             <header className="dash-topbar">
                 <div className="dash-topbar-left">
                     <button
@@ -316,7 +318,7 @@ export default function AuthenticatedLayout({ children, header }) {
                                     href={item.href}
                                     className={`dash-nav-item ${isActive ? "active" : ""}`}
                                     title={collapsed ? item.label : undefined}
-                                    prefetch
+                                    // prefetch="hover"
                                 >
                                     {item.icon}
                                     <span>{item.label}</span>
@@ -333,10 +335,10 @@ export default function AuthenticatedLayout({ children, header }) {
                         className="logout-btn"
                         title={collapsed ? "Logout" : undefined}
                         onSuccess={() => {
-                            localStorage.setItem(
-                                "Do not show this warning again.",
-                                false,
-                            );
+                            // localStorage.setItem(
+                            //     "Do not show this warning again.",
+                            //     false,
+                            // );
                             window.location.replace("/login");
                         }}
                     >

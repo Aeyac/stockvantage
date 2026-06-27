@@ -78,8 +78,7 @@ const NAV_ITEMS = [
 ];
 
 // ─── Main export ──────────────────────────────────────────────────────────────
-export default function Index({ settings }) {
-    const { flash } = usePage().props;
+export default function Index({ settings, flash }) {
 
     const [themeMode, setThemeMode] = useState(() => {
         return localStorage.getItem("sv_interface_theme") || "light";
@@ -122,7 +121,6 @@ export default function Index({ settings }) {
         setThemeMode(mode);
         localStorage.setItem("sv_interface_theme", mode);
     };
-    
 
     return (
         <AuthenticatedLayout header="System Configurations">
@@ -132,6 +130,8 @@ export default function Index({ settings }) {
                 rel="stylesheet"
                 href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.30.0/dist/tabler-icons.min.css"
             />
+
+            <FlashMessage flash={flash} />
 
             <div
                 style={{

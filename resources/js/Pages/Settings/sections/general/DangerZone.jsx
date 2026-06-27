@@ -1,17 +1,22 @@
 import Icon from "../../components/Icon";
 import { router } from "@inertiajs/react";
 import confirmToast from "@/utils/confirmToast";
+import { useState } from "react";
 
 export default function DangerZone({ C }) {
-    const handleDeleteProcurementData = async () => {
-        const confirmed = await confirmToast(
-            "Permanently delete all procurement data? This cannot be undone.",
-            "skip-delete-procurement-warning",
-        );
-        if (confirmed) {
-            router.delete(route("settings.destroy-procurement-data"));
-        }
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [checks, setChecks] = useState({ c1: false, c2: false });
+
+    const handleDeleteProcurementData = () => {
+        router.delete(route("settings.destroy-procurement-data"), {
+            onSuccess: () => {
+                setShowConfirm(false);
+                setChecks({ c1: false, c2: false });
+            },
+        });
     };
+
+    // Replace the ACTIONS entry handler with:
 
     const handleResetOrganization = async () => {
         const confirmed = await confirmToast(
@@ -28,7 +33,7 @@ export default function DangerZone({ C }) {
             title: "Delete all procurement data",
             desc: "Permanently removes purchase orders, requests, and vendor records.",
             label: "Delete data",
-            handler: handleDeleteProcurementData,
+            handler: () => setShowConfirm((prev) => !prev),
         },
         {
             title: "Reset organization",
@@ -125,6 +130,126 @@ export default function DangerZone({ C }) {
                     </button>
                 </div>
             ))}
+
+            {showConfirm && (
+                <div
+                    style={{
+                        margin: "0 24px 18px",
+                        background: C.dangerBg,
+                        border: `1px solid ${C.dangerBorder}`,
+                        borderRadius: 10,
+                        overflow: "hidden",
+                    }}
+                >
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            padding: "10px 16px",
+                            borderBottom: `1px solid ${C.dangerBorder}`,
+                        }}
+                    >
+                        <Icon
+                            name="alert-triangle"
+                            size={14}
+                            style={{ color: C.danger }}
+                        />
+                        <span
+                            style={{
+                                fontSize: 13,
+                                fontWeight: 500,
+                                color: C.danger,
+                            }}
+                        >
+                            Confirm before proceeding
+                        </span>
+                    </div>
+                    <div
+                        style={{
+                            padding: "14px 16px",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 10,
+                        }}
+                    >
+                        {[
+                            {
+                                key: "c1",
+                                label: "All purchase requests, orders, GRNs, and stock ledger entries will be permanently erased.",
+                            },
+                            {
+                                key: "c2",
+                                label: "This cannot be undone. There is no way to recover this data after deletion.",
+                            },
+                        ].map(({ key, label }) => (
+                            <label
+                                key={key}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    gap: 10,
+                                    cursor: "pointer",
+                                }}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={checks[key]}
+                                    onChange={() =>
+                                        setChecks((prev) => ({
+                                            ...prev,
+                                            [key]: !prev[key],
+                                        }))
+                                    }
+                                    style={{
+                                        marginTop: 2,
+                                        accentColor: C.danger,
+                                        width: 15,
+                                        height: 15,
+                                        flexShrink: 0,
+                                        cursor: "pointer",
+                                    }}
+                                />
+                                <span
+                                    style={{
+                                        fontSize: 13,
+                                        color: C.muted,
+                                        lineHeight: 1.5,
+                                    }}
+                                >
+                                    {label}
+                                </span>
+                            </label>
+                        ))}
+                        <button
+                            type="button"
+                            disabled={!checks.c1 || !checks.c2}
+                            onClick={handleDeleteProcurementData}
+                            style={{
+                                alignSelf: "flex-start",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: 6,
+                                padding: "7px 14px",
+                                borderRadius: 7,
+                                fontSize: 13,
+                                fontWeight: 500,
+                                fontFamily: "inherit",
+                                cursor:
+                                    checks.c1 && checks.c2
+                                        ? "pointer"
+                                        : "not-allowed",
+                                opacity: checks.c1 && checks.c2 ? 1 : 0.4,
+                                background: C.dangerBg,
+                                color: C.danger,
+                                border: `1px solid ${C.dangerBorder}`,
+                            }}
+                        >
+                            Delete all data
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

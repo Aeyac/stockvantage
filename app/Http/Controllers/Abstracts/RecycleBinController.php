@@ -92,7 +92,7 @@ abstract class RecycleBinController extends Controller
             if ($e->getCode() === '23000') {
                 return redirect()
                     ->route($this->routeName())
-                    ->with('error', "{$this->itemName()} cannot be permanently deleted because related records still reference it.");
+                    ->with('error', "{$this->itemName()} cannot be permanently deleted because related records still reference it. Please check the recycle bin too.");
             }
             throw $e;
         }
