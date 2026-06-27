@@ -98,6 +98,11 @@ Route::middleware(['auth'])->group(function () {
                 'purchase-orders/{purchaseOrder}/send-email',
                 [PurchaseOrderController::class, 'sendEmail']
             )->name('purchase-orders.send-email');
+
+            Route::delete(
+                '/purchase-orders/{purchaseOrder}/delete',
+                [PurchaseOrderController::class, 'destroy']
+            )->name('purchase-orders.destroy');
         });
 
     // -------------------------------------------------------
