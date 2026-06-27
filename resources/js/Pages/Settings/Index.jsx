@@ -8,7 +8,7 @@ import TextInput from "./components/TextInput";
 import NumberInput from "./components/NumberInput";
 import Label from "./components/Label";
 import Hint from "./components/Hint";
-import SelectInput from "./components/Selectinput";
+import SelectInput from "./components/SelectInput";
 import Card from "./components/Card";
 import SettingsRow from "./components/SettingsRow";
 import SectionHeading from "./components/SectionHeading";
