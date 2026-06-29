@@ -10,6 +10,8 @@ import { router } from "@inertiajs/react";
 import confirmToast from "@/utils/confirmToast";
 import RecycleBinButton from "@/Components/RecycleBinButton";
 import { DeleteActionButton } from "@/Components/ActionButtons";
+import SearchBox from "@/Components/SearchBox";
+import { useState } from "react";
 
 // Soft, readable text colors with subtle background pills for light mode statuses
 const STATUS_CONFIG = {
@@ -95,31 +97,44 @@ function formatDate(dateStr) {
     });
 }
 
-// function formatPrId(id) {
-//     return 'PR-' + String(id).padStart(4, '0')
-// }
-
-export default function Index({ purchaseRequests, flash = "" }) {
+export default function Index({ purchaseRequests, filters, flash = "" }) {
     return (
         <AuthenticatedLayout header="Purchase Requests">
             <Head title="Purchase Requests" />
 
             <style>{`
                 /* Fully fluid layout container that wraps under text headers on mobile screens */
-                .pr-header-row {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 24px;
-                    gap: 16px;
-                }
+                /* Header */
+            .pr-header {
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+                margin-bottom: 24px;
+            }
 
-                .pr-header-btn-wrap {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    flex-shrink: 0;
-                }
+            .pr-header-info {
+                display: flex;
+                align-items: center;
+            }
+
+            .pr-header-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .pr-search-wrap {
+                flex: 1;
+                max-width: 420px;
+            }
+
+            .pr-header-btn-wrap {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-shrink: 0;
+            }
 
                 /* Primary Brand Button - Dashboard accent green */
                 .pr-btn-primary {
@@ -156,7 +171,7 @@ export default function Index({ purchaseRequests, flash = "" }) {
                     width: 100%;
                     border-collapse: collapse;
                     font-size: 13.5px;
-                    min-width: 800px; /* Assures columns maintain proper sizing layouts when scaling down */
+                    min-width: 800px;
                 }
                 
                 .pr-table thead tr {
@@ -183,7 +198,6 @@ export default function Index({ purchaseRequests, flash = "" }) {
                 .pr-table tbody tr:last-child td { border-bottom: none; }
                 .pr-table tbody tr:hover td { background: #f8fafc; }
 
-                /* Bold ID Badge using inherited layout font family */
                 .pr-id-badge {
                     font-family: inherit;
                     font-size: 12px; 
@@ -192,7 +206,6 @@ export default function Index({ purchaseRequests, flash = "" }) {
                     letter-spacing: 0.02em;
                 }
                 
-                /* Responsive Pagination Wrappers */
                 .pr-pagination-wrap {
                     display: flex;
                     gap: 6px;
@@ -241,15 +254,20 @@ export default function Index({ purchaseRequests, flash = "" }) {
                 }
 
                 /* Mobile Layout Media Queries */
-                @media (max-width: 640px) {
-                    .pr-header-row {
+               @media (max-width: 768px) {
+                    .pr-header-actions {
                         flex-direction: column;
-                        align-items: flex-start;
+                        align-items: stretch;
                         gap: 12px;
                     }
+
+                    .pr-search-wrap {
+                        max-width: 100%;
+                    }
+
                     .pr-header-btn-wrap {
-                        width: 100%;
                         justify-content: flex-start;
+                        flex-wrap: wrap;
                     }
                 }
                 @media (max-width: 480px) {
@@ -262,8 +280,9 @@ export default function Index({ purchaseRequests, flash = "" }) {
             <FlashMessage flash={flash} />
 
             {/* Header row */}
-            <div className="pr-header-row">
-                <div>
+            {/* Header */}
+            <div className="pr-header">
+                <div className="pr-header-info">
                     <p
                         style={{
                             fontSize: 13,
@@ -277,14 +296,22 @@ export default function Index({ purchaseRequests, flash = "" }) {
                     </p>
                 </div>
 
-                <div className="pr-header-btn-wrap">
-                    <RecycleBinButton
-                        endpoint={"purchase-requests.recycle-bin.index"}
-                    />
-                    <CreateActionButton
-                        href={"/purchase-requests/create"}
-                        label={"New Request"}
-                    />
+                <div className="pr-header-actions">
+                    <div className="pr-search-wrap">
+                        <SearchBox
+                            routeName="purchase-requests.index"
+                            filters={filters}
+                        />
+                    </div>
+
+                    <div className="pr-header-btn-wrap">
+                        <RecycleBinButton endpoint="purchase-requests.recycle-bin.index" />
+
+                        <CreateActionButton
+                            href="/purchase-requests/create"
+                            label="New Request"
+                        />
+                    </div>
                 </div>
             </div>
 
