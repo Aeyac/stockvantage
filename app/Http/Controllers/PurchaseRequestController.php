@@ -9,6 +9,7 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseRequest;
 use App\Models\StockLedger;
 use App\Models\TenantSetting;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
@@ -20,19 +21,37 @@ use User;
 
 class PurchaseRequestController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $query = PurchaseRequest::query()
             ->with('requester')
             ->latest();
 
-        // employees only see their own PRs
         if (auth()->user()->isEmployee() || auth()->user()->isWarehouseStaff()) {
             $query->where('requested_by', auth()->user()->id);
         }
 
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('pr_number', 'like', "%{$search}%")
+                    ->orWhereHas('requester', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // if ($request->filled('category')) {
+        //     $query->where('category', $request->category);
+        // }
+
         return Inertia::render('PurchaseRequests/Index', [
-            'purchaseRequests' => $query->paginate(15),
+            'purchaseRequests' => $query->paginate(15)->withQueryString(),
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 

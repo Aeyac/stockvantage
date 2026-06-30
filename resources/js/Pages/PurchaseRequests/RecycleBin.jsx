@@ -3,21 +3,11 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import confirmToast from "@/utils/confirmToast";
 import BackButton from "@/Components/BackButton";
 import FlashMessage from "@/Components/FlashMessage";
+import SearchBox from "@/Components/SearchBox";
 
-export default function RecycleBin({ deletedItems, flash }) {
-    console.log(deletedItems);
-
+export default function RecycleBin({ deletedItems, flash, filters }) {
     const handleRestore = async (id) => {
-        router.patch(
-            route("purchase-requests.recycle-bin.restore", id),
-            // {},
-            // {
-            //     onSuccess: (page) => {
-            //         const purchaseRequest = page.props.purchaseRequests;
-            //         setData(purchaseRequest);
-            //     },
-            // },
-        );
+        router.patch(route("purchase-requests.recycle-bin.restore", id));
     };
 
     const handleForceDelete = async (id) => {
@@ -64,6 +54,9 @@ export default function RecycleBin({ deletedItems, flash }) {
             marginTop: "4px",
             marginHeight: "1.5",
             margin: 0,
+        },
+        searchWrapper: {
+            marginBottom: "20px",
         },
         emptyCard: {
             backgroundColor: "#FFFFFF",
@@ -251,6 +244,13 @@ export default function RecycleBin({ deletedItems, flash }) {
                             </p>
                         </div>
                     </div>
+                </div>
+
+                <div style={styles.searchWrapper}>
+                    <SearchBox
+                        routeName="purchase-requests.recycle-bin.index"
+                        filters={filters}
+                    />
                 </div>
 
                 {/* Table Data Card Component */}
