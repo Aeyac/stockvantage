@@ -87,4 +87,28 @@ class PurchaseOrder extends Model
     {
         return $this->hasMany(GrnRecord::class, 'po_id');
     }
+
+
+
+    public function scopeFilter($query, array $filters)
+    {
+        // Handle the text search box
+        $query->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('purchase_orders.po_number', 'like', '%' . $search . '%')
+                    ->orWhereHas('purchaseRequest', function ($subQuery) use ($search) {
+                        $subQuery->withTrashed()
+                            ->where('pr_number', 'like', '%' . $search . '%')
+                            ->orWhereHas('requester', function ($userQuery) use ($search) {
+                                $userQuery->where('name', 'like', '%' . $search . '%');
+                            });
+                    });
+            });
+        });
+
+        // Handle dropdown status selectors (e.g., Open, Partial, Fully Received)
+        $query->when($filters['status'] ?? null, function ($query, $status) {
+            $query->where('purchase_orders.status', $status);
+        });
+    }
 }

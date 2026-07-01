@@ -23,34 +23,20 @@ class PurchaseRequestController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = PurchaseRequest::query()
-            ->with('requester')
-            ->latest();
+        abort_if(!auth()->check(), 404);
 
-        if (auth()->user()->isEmployee() || auth()->user()->isWarehouseStaff()) {
-            $query->where('requested_by', auth()->user()->id);
-        }
+        $query = PurchaseRequest::query()->with('requester');
+        $query = $this->applySearch($query, $request->search);
+        $query = $this->applyFilterStatus($query, $request->status);
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('pr_number', 'like', "%{$search}%")
-                    ->orWhereHas('requester', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    });
-            });
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        // if ($request->filled('category')) {
-        //     $query->where('category', $request->category);
+        // if (auth()->user()->isEmployee() || auth()->user()->isWarehouseStaff()) {
+        $query->where('requested_by', auth()->user()->id);
         // }
 
+        $result = $query->latest()->paginate(15)->withQueryString();
+
         return Inertia::render('PurchaseRequests/Index', [
-            'purchaseRequests' => $query->paginate(15)->withQueryString(),
+            'purchaseRequests' => $result,
             'filters' => $request->only(['search', 'status']),
         ]);
     }

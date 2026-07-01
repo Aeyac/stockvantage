@@ -250,6 +250,7 @@ export default function RecycleBin({ deletedItems, flash, filters }) {
                     <SearchBox
                         routeName="purchase-requests.recycle-bin.index"
                         filters={filters}
+                        statusType={"purchaseRequest"}
                     />
                 </div>
 
@@ -283,9 +284,7 @@ export default function RecycleBin({ deletedItems, flash, filters }) {
                             <table style={styles.table}>
                                 <thead style={styles.thead}>
                                     <tr>
-                                        <th style={styles.th("left")}>
-                                            PR Number
-                                        </th>
+                                        <th style={styles.th("left")}>PR ID</th>
                                         <th style={styles.th("left")}>
                                             Requested By
                                         </th>

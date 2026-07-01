@@ -301,6 +301,7 @@ export default function Index({ purchaseRequests, filters, flash = "" }) {
                         <SearchBox
                             routeName="purchase-requests.index"
                             filters={filters}
+                            statusType={"purchaseRequest"}
                         />
                     </div>
 

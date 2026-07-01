@@ -2,21 +2,68 @@ import { router } from "@inertiajs/react";
 import { useState, useCallback } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-const STATUS_OPTIONS = [
-    { value: "pending", label: "Pending" },
-    { value: "auto_approved", label: "Auto Approved" },
-    { value: "partially_approved", label: "Partially Approved" },
-    { value: "awaiting_approval", label: "Awaiting Approval" },
-    { value: "approved", label: "Approved" },
-    { value: "rejected", label: "Rejected" },
-];
+const STATUS_OPTIONS = {
+    purchaseRequest: [
+        { value: "pending", label: "Pending" },
+        { value: "auto_approved", label: "Auto Approved" },
+        { value: "partially_approved", label: "Partially Approved" },
+        { value: "awaiting_approval", label: "Awaiting Approval" },
+        { value: "approved", label: "Approved" },
+        { value: "rejected", label: "Rejected" },
+    ],
+    purchaseOrder: [
+        { value: "open", label: "Open" },
+        { value: "partially_received", label: "Partially Received" },
+        { value: "fully_received", label: "Fully Received" },
+        { value: "cancelled", label: "Cancelled" },
+    ],
+};
+
+// function filterButton(statusType) {
+//     return (
+//         <select
+//             className="sb-select-field"
+//             value={status}
+//             onChange={handleStatusChange}
+//             style={{
+//                 WebkitAppearance: "none",
+//                 MozAppearance: "none",
+//                 appearance:
+//                     "none" /* Strips default engine layouts causing off-center text alignment */,
+//                 lineHeight:
+//                     "36px" /* Matches physical input text box height boundaries */,
+//                 padding:
+//                     "0 32px 0 12px" /* Leave extra space on right for custom chevron */,
+//                 borderRadius: "6px",
+//                 border: "1px solid #e2e8f0",
+//                 background: "#fff",
+//                 fontSize: "13.5px",
+//                 cursor: "pointer",
+//                 outline: "none",
+//                 height: "38px",
+//                 boxSizing: "border-box",
+//                 display: "block",
+//             }}
+//         >
+//             <option value="">All Status</option>
+//             {STATUS_OPTIONS.statusType.map((opt) => (
+//                 <option key={opt.value} value={opt.value}>
+//                     {opt.label}
+//                 </option>
+//             ))}
+//         </select>
+//     );
+// }
 
 export default function SearchBox({
     routeName = "catalog-items.index",
     filters = {},
+    statusType = "",
 }) {
     const [search, setSearch] = useState(filters.search ?? "");
     const [status, setStatus] = useState(filters.status ?? "");
+
+    const statusValues = STATUS_OPTIONS[statusType] ?? [];
 
     // Centralized route update helper
     const applyFilters = useCallback(
@@ -78,7 +125,7 @@ export default function SearchBox({
                 className="sb-input-field"
                 value={search}
                 onChange={handleSearchChange}
-                placeholder="Search by name or PR id..."
+                placeholder="Search by name or id..."
                 style={{
                     padding: "8px 12px",
                     borderRadius: "6px",
@@ -87,7 +134,7 @@ export default function SearchBox({
                     outline: "none",
                     minWidth: "240px",
                     height: "38px",
-                    boxSizing: "border-box"
+                    boxSizing: "border-box",
                 }}
             />
 
@@ -100,9 +147,12 @@ export default function SearchBox({
                     style={{
                         WebkitAppearance: "none",
                         MozAppearance: "none",
-                        appearance: "none", /* Strips default engine layouts causing off-center text alignment */
-                        lineHeight: "36px", /* Matches physical input text box height boundaries */
-                        padding: "0 32px 0 12px", /* Leave extra space on right for custom chevron */
+                        appearance:
+                            "none" /* Strips default engine layouts causing off-center text alignment */,
+                        lineHeight:
+                            "36px" /* Matches physical input text box height boundaries */,
+                        padding:
+                            "0 32px 0 12px" /* Leave extra space on right for custom chevron */,
                         borderRadius: "6px",
                         border: "1px solid #e2e8f0",
                         background: "#fff",
@@ -111,29 +161,40 @@ export default function SearchBox({
                         outline: "none",
                         height: "38px",
                         boxSizing: "border-box",
-                        display: "block"
+                        display: "block",
                     }}
                 >
                     <option value="">All Status</option>
-                    {STATUS_OPTIONS.map((opt) => (
+                    {statusValues.map((opt) => (
                         <option key={opt.value} value={opt.value}>
                             {opt.label}
                         </option>
                     ))}
                 </select>
-                
+
                 {/* SVG Custom UI Indicator arrow perfectly centered vertically on top */}
-                <div style={{
-                    position: "absolute",
-                    right: "12px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    pointerEvents: "none",
-                    display: "flex",
-                    alignItems: "center",
-                    color: "#64748b"
-                }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <div
+                    style={{
+                        position: "absolute",
+                        right: "12px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        pointerEvents: "none",
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#64748b",
+                    }}
+                >
+                    <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                 </div>

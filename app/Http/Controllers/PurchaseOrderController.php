@@ -6,21 +6,31 @@ use App\Mail\SupplierPurchaseOrderMail;
 use App\Models\PurchaseOrder;
 use Exception;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class PurchaseOrderController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $filterInputs = $request->only(['search', 'status']);
+
         $purchaseOrders = PurchaseOrder::with([
             'purchaseRequest' => fn($q) => $q->withTrashed()->with('requester'),
-        ])->latest()->paginate(15);
+        ])
+            ->filter($filterInputs) // 2. Pass all inputs safely into your scope method
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
 
         return Inertia::render(
             'PurchaseOrders/Index',
-            ['purchaseOrders' => $purchaseOrders]
+            [
+                'purchaseOrders' => $purchaseOrders,
+                'filters' => $filterInputs,
+            ]
         );
     }
 

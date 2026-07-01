@@ -37,17 +37,20 @@ abstract class RecycleBinController extends Controller
     }
 
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $deleted = $this->baseQuery()
-            ->latest('deleted_at')
+        $query = $this->baseQuery();
+        $query = $this->applySearch($query, $request->search);
+        $query = $this->applyFilterStatus($query, $request->status);
+
+        $result = $query->latest('deleted_at')
             ->paginate(20);
 
         $resourceClass = $this->resource();
 
         $items = $resourceClass
-            ? $resourceClass::collection($deleted)
-            : $deleted;
+            ? $resourceClass::collection($result)
+            : $result;
 
         return Inertia::render($this->viewName(), [
             'deletedItems' => $items,
