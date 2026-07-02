@@ -32,7 +32,7 @@ class PurchaseRequestController extends Controller
         // if (auth()->user()->isEmployee() || auth()->user()->isWarehouseStaff()) {
         $query->where('requested_by', auth()->user()->id);
         // }
-
+                                                                                            
         $result = $query->latest()->paginate(15)->withQueryString();
 
         return Inertia::render('PurchaseRequests/Index', [

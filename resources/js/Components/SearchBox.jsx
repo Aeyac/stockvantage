@@ -17,43 +17,11 @@ const STATUS_OPTIONS = {
         { value: "fully_received", label: "Fully Received" },
         { value: "cancelled", label: "Cancelled" },
     ],
+    catalogItem: [
+        { value: 1, label: "Active" },
+        { value: 0, label: "Inactive" },
+    ],
 };
-
-// function filterButton(statusType) {
-//     return (
-//         <select
-//             className="sb-select-field"
-//             value={status}
-//             onChange={handleStatusChange}
-//             style={{
-//                 WebkitAppearance: "none",
-//                 MozAppearance: "none",
-//                 appearance:
-//                     "none" /* Strips default engine layouts causing off-center text alignment */,
-//                 lineHeight:
-//                     "36px" /* Matches physical input text box height boundaries */,
-//                 padding:
-//                     "0 32px 0 12px" /* Leave extra space on right for custom chevron */,
-//                 borderRadius: "6px",
-//                 border: "1px solid #e2e8f0",
-//                 background: "#fff",
-//                 fontSize: "13.5px",
-//                 cursor: "pointer",
-//                 outline: "none",
-//                 height: "38px",
-//                 boxSizing: "border-box",
-//                 display: "block",
-//             }}
-//         >
-//             <option value="">All Status</option>
-//             {STATUS_OPTIONS.statusType.map((opt) => (
-//                 <option key={opt.value} value={opt.value}>
-//                     {opt.label}
-//                 </option>
-//             ))}
-//         </select>
-//     );
-// }
 
 export default function SearchBox({
     routeName = "catalog-items.index",

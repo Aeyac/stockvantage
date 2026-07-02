@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -79,5 +80,24 @@ class CatalogItem extends Model
     public function isBelowSafetyStock(?int $warehouseId = null): bool
     {
         return $this->currentStock($warehouseId) <= $this->safety_stock;
+    }
+
+
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+        if (!$search)
+            return $query;
+
+        return $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+                ->orWhere('sku', 'like', "%{$search}%");
+        });
+    }
+
+    public function scopeFilterStatus(Builder $query, ?string $status): Builder
+    {
+        if (!$status && $status !== '0')
+            return $query;
+        return $query->where('is_active', $status);
     }
 }

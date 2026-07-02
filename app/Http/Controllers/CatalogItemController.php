@@ -6,21 +6,28 @@ use App\Http\Requests\StoreCatalogItemRequest;
 use App\Http\Requests\UpdateCatalogItemRequest;
 use App\Models\CatalogItem;
 use App\Models\Supplier;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class CatalogItemController extends Controller
 {
 
-    public function index(): Response
+
+    public function index(Request $request): Response
     {
-        $catalogItems = CatalogItem::query()
+        $result = CatalogItem::query()
+            ->search($request->search)
+            ->filterStatus($request->status)
             ->with('supplier')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         return Inertia::render('CatalogItems/Index', [
-            'catalogItems' => $catalogItems
+            'catalogItems' => $result,
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 
@@ -37,7 +44,7 @@ class CatalogItemController extends Controller
 
     public function store(StoreCatalogItemRequest $request): RedirectResponse
     {
-        
+
         abort_if(!auth()->user()->isAdmin(), 403, 'Unauthorized action.');
 
         CatalogItem::create($request->validated());

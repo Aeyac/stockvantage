@@ -1,19 +1,27 @@
-import { Head, Link, router } from '@inertiajs/react'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import FlashMessage from '@/Components/FlashMessage'
-import { useAuth } from '@/hooks/useAuth'
-import { EditActionButton, DeleteActionButton, CreateActionButton } from '@/Components/ActionButtons'
-import { formatCurrency } from '@/hooks/useCurrency'
-import confirmToast from '@/utils/confirmToast'
-import RecycleBinButton from '@/Components/RecycleBinButton'
+import { Head, Link, router } from "@inertiajs/react";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import FlashMessage from "@/Components/FlashMessage";
+import { useAuth } from "@/hooks/useAuth";
+import {
+    EditActionButton,
+    DeleteActionButton,
+    CreateActionButton,
+} from "@/Components/ActionButtons";
+import { formatCurrency } from "@/hooks/useCurrency";
+import confirmToast from "@/utils/confirmToast";
+import RecycleBinButton from "@/Components/RecycleBinButton";
+import SearchBox from "@/Components/SearchBox";
 
-export default function Index({ catalogItems, flash }) {
+export default function Index({ catalogItems, filters, flash }) {
     const { isAdmin } = useAuth();
 
     async function handleDelete(id) {
-        const confirmed = await confirmToast("Are you sure you want to delete this catalog item?", "Do not show this warning again.");
+        const confirmed = await confirmToast(
+            "Are you sure you want to delete this catalog item?",
+            "Do not show this warning again.",
+        );
         if (confirmed) {
-            router.delete(`/catalog-items/${id}`)
+            router.delete(`/catalog-items/${id}`);
         }
     }
 
@@ -25,9 +33,16 @@ export default function Index({ catalogItems, flash }) {
                 /* Fixed Layout Header Actions Section */
                 .sv-header-row {
                     display: flex;
+                    flex-direction: column;
+                    margin-bottom: 24px;
+                    gap: 16px;
+                }
+                
+                .sv-controls-row {
+                    display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    margin-bottom: 24px;
+                    width: 100%;
                     gap: 16px;
                 }
                 
@@ -200,31 +215,79 @@ export default function Index({ catalogItems, flash }) {
 
             <FlashMessage flash={flash} />
 
-            {/* Header row - Kept aligned and row-based everywhere */}
+            {/* Header Layout Container Block */}
             <div className="sv-header-row">
+                {/* 1. Item Count Title */}
                 <div>
-                    <p style={{ fontSize: 13, color: '#64748b', margin: 0, fontWeight: 500 }}>
-                        {catalogItems.total} item{catalogItems.total !== 1 ? 's' : ''} in catalog
+                    <p
+                        style={{
+                            fontSize: 13,
+                            color: "#64748b",
+                            margin: 0,
+                            fontWeight: 500,
+                        }}
+                    >
+                        {catalogItems.total} item
+                        {catalogItems.total !== 1 ? "s" : ""} in catalog
                     </p>
                 </div>
-                {isAdmin && (
-                    <div className="sv-header-btn-wrap">
-                        <RecycleBinButton endpoint={'catalog-items.recycle-bin.index'} />
-                        <CreateActionButton href={'/catalog-items/create'} label={'Add Item'} />
+
+                {/* 2. Control Row: Searchbox on Left, Actions on Right */}
+                <div className="sv-controls-row">
+                    <div>
+                        <SearchBox
+                            routeName={"catalog-items.index"}
+                            filters={filters}
+                            statusType={"catalogItem"}
+                        />
                     </div>
-                )}
+                    {isAdmin && (
+                        <div className="sv-header-btn-wrap">
+                            <RecycleBinButton
+                                endpoint={"catalog-items.recycle-bin.index"}
+                            />
+                            <CreateActionButton
+                                href={"/catalog-items/create"}
+                                label={"Add Item"}
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Table wrapper */}
             <div className="sv-table-wrap">
                 {catalogItems.data.length === 0 ? (
                     <div className="empty-state">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 19.5A2.5 2.5 0 016.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                        <svg
+                            width="40"
+                            height="40"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#94a3b8"
+                            strokeWidth="1.5"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M4 19.5A2.5 2.5 0 016.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"
+                            />
                         </svg>
-                        <p style={{ fontSize: 14, fontWeight: 500, color: '#475569' }}>No catalog items yet</p>
+                        <p
+                            style={{
+                                fontSize: 14,
+                                fontWeight: 500,
+                                color: "#475569",
+                            }}
+                        >
+                            No catalog items yet
+                        </p>
                         {isAdmin && (
-                            <Link href="/catalog-items/create" className="sv-btn-primary" style={{ marginTop: 4 }}>
+                            <Link
+                                href="/catalog-items/create"
+                                className="sv-btn-primary"
+                                style={{ marginTop: 4 }}
+                            >
                                 Add your first item
                             </Link>
                         )}
@@ -233,18 +296,20 @@ export default function Index({ catalogItems, flash }) {
                     <table className="sv-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '12%' }}>SKU</th>
-                                <th style={{ width: '23%' }}>Item</th>
-                                <th style={{ width: '20%' }}>Supplier</th>
-                                <th style={{ width: '15%' }}>Category</th>
-                                <th style={{ width: '10%' }}>Unit Cost</th>
-                                <th style={{ width: '10%' }}>Safety Stock</th>
-                                <th style={{ width: '10%' }}>Status</th>
-                                {isAdmin && <th style={{ width: '10%' }}>Actions</th>}
+                                <th style={{ width: "12%" }}>SKU</th>
+                                <th style={{ width: "23%" }}>Item</th>
+                                <th style={{ width: "20%" }}>Supplier</th>
+                                <th style={{ width: "15%" }}>Category</th>
+                                <th style={{ width: "10%" }}>Unit Cost</th>
+                                <th style={{ width: "10%" }}>Safety Stock</th>
+                                <th style={{ width: "10%" }}>Status</th>
+                                {isAdmin && (
+                                    <th style={{ width: "10%" }}>Actions</th>
+                                )}
                             </tr>
                         </thead>
                         <tbody>
-                            {catalogItems.data.map(item => (
+                            {catalogItems.data.map((item) => (
                                 <tr key={item.id}>
                                     <td>
                                         <span className="sv-sku">
@@ -252,45 +317,92 @@ export default function Index({ catalogItems, flash }) {
                                         </span>
                                     </td>
                                     <td>
-                                        <div style={{ fontWeight: 600, color: '#0f172a' }}>{item.name}</div>
+                                        <div
+                                            style={{
+                                                fontWeight: 600,
+                                                color: "#0f172a",
+                                            }}
+                                        >
+                                            {item.name}
+                                        </div>
                                     </td>
                                     <td>
-                                        <div style={{ color: '#334155' }}>
-                                            {item.supplier?.name ?? <span style={{ opacity: 0.4 }}>—</span>}
+                                        <div style={{ color: "#334155" }}>
+                                            {item.supplier?.name ?? (
+                                                <span style={{ opacity: 0.4 }}>
+                                                    —
+                                                </span>
+                                            )}
                                         </div>
                                     </td>
                                     <td>
                                         {item.category ? (
-                                            <span className="sv-category">{item.category}</span>
+                                            <span className="sv-category">
+                                                {item.category}
+                                            </span>
                                         ) : (
-                                            <span style={{ opacity: 0.3 }}>—</span>
+                                            <span style={{ opacity: 0.3 }}>
+                                                —
+                                            </span>
                                         )}
                                     </td>
                                     <td>
-                                        <span style={{ fontWeight: 600, color: '#0f172a' }}>
+                                        <span
+                                            style={{
+                                                fontWeight: 600,
+                                                color: "#0f172a",
+                                            }}
+                                        >
                                             {formatCurrency(item.unit_cost)}
                                         </span>
                                     </td>
                                     <td>
-                                        <span className={item.safety_stock <= 5 ? 'sv-stock-warn' : ''}>
+                                        <span
+                                            className={
+                                                item.safety_stock <= 5
+                                                    ? "sv-stock-warn"
+                                                    : ""
+                                            }
+                                        >
                                             {item.safety_stock} units
                                         </span>
                                     </td>
                                     <td>
-                                        <span className={`sv-status ${item.is_active ? 'active' : 'inactive'}`}>
-                                            <span style={{
-                                                width: 6, height: 6, borderRadius: '50%',
-                                                background: item.is_active ? '#16a34a' : '#dc2626',
-                                                display: 'inline-block'
-                                            }} />
-                                            {item.is_active ? 'Active' : 'Inactive'}
+                                        <span
+                                            className={`sv-status ${item.is_active ? "active" : "inactive"}`}
+                                        >
+                                            <span
+                                                style={{
+                                                    width: 6,
+                                                    height: 6,
+                                                    borderRadius: "50%",
+                                                    background: item.is_active
+                                                        ? "#16a34a"
+                                                        : "#dc2626",
+                                                    display: "inline-block",
+                                                }}
+                                            />
+                                            {item.is_active
+                                                ? "Active"
+                                                : "Inactive"}
                                         </span>
                                     </td>
                                     {isAdmin && (
                                         <td>
-                                            <div style={{ display: 'flex', gap: 6 }}>
-                                                <EditActionButton href={`/catalog-items/${item.id}/edit`} />
-                                                <DeleteActionButton onClick={() => handleDelete(item.id)} />
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    gap: 6,
+                                                }}
+                                            >
+                                                <EditActionButton
+                                                    href={`/catalog-items/${item.id}/edit`}
+                                                />
+                                                <DeleteActionButton
+                                                    onClick={() =>
+                                                        handleDelete(item.id)
+                                                    }
+                                                />
                                             </div>
                                         </td>
                                     )}
@@ -307,13 +419,13 @@ export default function Index({ catalogItems, flash }) {
                     {catalogItems.links.map((link, i) => (
                         <Link
                             key={i}
-                            href={link.url ?? '#'}
-                            className={`sv-pagination-btn ${link.active ? 'active' : ''} ${!link.url ? 'disabled' : ''}`}
+                            href={link.url ?? "#"}
+                            className={`sv-pagination-btn ${link.active ? "active" : ""} ${!link.url ? "disabled" : ""}`}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                         />
                     ))}
                 </div>
             )}
         </AuthenticatedLayout>
-    )
+    );
 }
