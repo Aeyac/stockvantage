@@ -79,9 +79,10 @@ class PurchaseOrder extends Model
     }
 
     public function purchaseRequest()
-    {
-        return $this->belongsTo(PurchaseRequest::class, 'pr_id');
-    }
+{
+    return $this->belongsTo(PurchaseRequest::class, 'pr_id')
+        ->withTrashed();
+}
 
     public function grnRecords()
     {
@@ -89,11 +90,9 @@ class PurchaseOrder extends Model
     }
 
 
-
-    public function scopeFilter($query, array $filters)
+    public function scopeSearch($query, ?string $searchInput)
     {
-        // Handle the text search box
-        $query->when($filters['search'] ?? null, function ($query, $search) {
+        $query->when($searchInput ?? null, function ($query, $search) {
             $query->where(function ($q) use ($search) {
                 $q->where('purchase_orders.po_number', 'like', '%' . $search . '%')
                     ->orWhereHas('purchaseRequest', function ($subQuery) use ($search) {
@@ -105,9 +104,12 @@ class PurchaseOrder extends Model
                     });
             });
         });
+    }
 
+    public function scopeFilterStatus($query, ?string $statusInput)
+    {
         // Handle dropdown status selectors (e.g., Open, Partial, Fully Received)
-        $query->when($filters['status'] ?? null, function ($query, $status) {
+        $query->when($statusInput ?? null, function ($query, $status) {
             $query->where('purchase_orders.status', $status);
         });
     }

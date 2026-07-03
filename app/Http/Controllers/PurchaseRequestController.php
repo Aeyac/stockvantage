@@ -25,18 +25,14 @@ class PurchaseRequestController extends Controller
     {
         abort_if(!auth()->check(), 404);
 
-        $query = PurchaseRequest::query()->with('requester');
-        $query = $this->applySearch($query, $request->search);
-        $query = $this->applyFilterStatus($query, $request->status);
-
-        // if (auth()->user()->isEmployee() || auth()->user()->isWarehouseStaff()) {
-        $query->where('requested_by', auth()->user()->id);
-        // }
-                                                                                            
-        $result = $query->latest()->paginate(15)->withQueryString();
+        $items = PurchaseRequest::query()->with('requester')
+            ->search($request->search)
+            ->filterStatus($request->status)
+            ->where('requested_by', auth()->user()->id)
+            ->latest()->paginate(15)->withQueryString();
 
         return Inertia::render('PurchaseRequests/Index', [
-            'purchaseRequests' => $result,
+            'purchaseRequests' => $items,
             'filters' => $request->only(['search', 'status']),
         ]);
     }

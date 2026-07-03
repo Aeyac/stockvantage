@@ -17,6 +17,7 @@ class CatalogItemResource extends JsonResource
         return [
             'id' => $this->id,
             'tenant_id' => $this->tenant_id,
+            'name' => $this->name,
             'sku' => $this->sku,
             'category' => $this->category,
             'unit_cost' => $this->unit_cost,

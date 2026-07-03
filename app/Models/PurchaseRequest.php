@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -102,4 +103,33 @@ class PurchaseRequest extends Model
     {
         return $this->hasOne(PurchaseOrder::class, 'pr_id');
     }
+
+
+
+
+    // -------------------------------------------------------
+    // HELPER METHODS
+    // -------------------------------------------------------
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+        if (!$search)
+            return $query;
+
+        return $query->where(function ($q) use ($search) {
+            $q->where('pr_number', 'like', "%{$search}%")
+                ->orWhereHas('requester', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+        });
+    }
+
+
+    public function scopeFilterStatus(Builder $query, ?string $status): Builder
+    {
+        if (!$status)
+            return $query;
+
+        return $query->where('status', $status);
+    }
+
 }

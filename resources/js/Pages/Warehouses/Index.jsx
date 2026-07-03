@@ -1,28 +1,33 @@
-import { Head, Link, router } from '@inertiajs/react'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import FlashMessage from '@/Components/FlashMessage'
-import { EditActionButton, DeleteActionButton, CreateActionButton } from '@/Components/ActionButtons'
-import confirmToast from '@/utils/confirmToast'
-import RecycleBinButton from '@/Components/RecycleBinButton'
+import { Head, Link, router } from "@inertiajs/react";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import FlashMessage from "@/Components/FlashMessage";
+import {
+    EditActionButton,
+    DeleteActionButton,
+    CreateActionButton,
+} from "@/Components/ActionButtons";
+import confirmToast from "@/utils/confirmToast";
+import RecycleBinButton from "@/Components/RecycleBinButton";
+import SearchBox from "@/Components/SearchBox";
 
 // Soft, readable text colors with subtle background pills for light mode statuses
 const STATUS_CONFIG = {
     active: {
-        label: 'Active',
-        text: '#00C488', // Accent Green
-        bg: '#f0fdf4',
-        border: '#bbf7d0',
+        label: "Active",
+        text: "#00C488", // Accent Green
+        bg: "#f0fdf4",
+        border: "#bbf7d0",
     },
     inactive: {
-        label: 'Inactive',
-        text: '#dc2626', // Red
-        bg: '#fef2f2',
-        border: '#fee2e2',
+        label: "Inactive",
+        text: "#dc2626", // Red
+        bg: "#fef2f2",
+        border: "#fee2e2",
     },
-}
+};
 
 function StatusBadge({ isActive }) {
-    const config = isActive ? STATUS_CONFIG.active : STATUS_CONFIG.inactive
+    const config = isActive ? STATUS_CONFIG.active : STATUS_CONFIG.inactive;
     return (
         <span
             className="wh-status"
@@ -30,35 +35,39 @@ function StatusBadge({ isActive }) {
                 background: config.bg,
                 color: config.text,
                 border: `1px solid ${config.border}`,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '10px',
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                fontSize: "10px",
                 fontWeight: 500,
-                padding: '3px 10px',
-                borderRadius: '20px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em'
+                padding: "3px 10px",
+                borderRadius: "20px",
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
             }}
         >
-            <span style={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                background: config.text,
-                display: 'inline-block'
-            }} />
+            <span
+                style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: config.text,
+                    display: "inline-block",
+                }}
+            />
             {config.label}
         </span>
-    )
+    );
 }
 
-export default function Index({ warehouses, flash }) {
-
+export default function Index({ warehouses, filters, flash }) {
     async function handleDelete(id) {
-        const confirmed = await confirmToast("Are you sure you want to delete this purchase request?", "Do not show this warning again.");
+        const confirmed = await confirmToast(
+            "Are you sure you want to delete this purchase request?",
+            "Do not show this warning again.",
+        );
         if (confirmed) {
-            router.delete(`/warehouses/${id}`)
+            router.delete(`/warehouses/${id}`);
         }
     }
 
@@ -67,13 +76,9 @@ export default function Index({ warehouses, flash }) {
             <Head title="Warehouses" />
 
             <style>{`
-                /* Container setup matching the button baseline to the meta text row */
-                .wh-header-sub-row {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-end; /* Formats elements cleanly onto the exact same baseline */
-                    margin-bottom: 24px;
-                    gap: 16px;
+                /* Container setup for registered count row */
+                .wh-header-top-row {
+                    margin-bottom: 12px;
                 }
 
                 .wh-meta-text {
@@ -83,8 +88,17 @@ export default function Index({ warehouses, flash }) {
                     font-weight: 500;
                     line-height: 1.2;
                 }
+
+                /* Aligns search box to left, buttons to right */
+                .wh-actions-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center; 
+                    margin-bottom: 24px;
+                    gap: 16px;
+                }
                 
-                /* ✅ FIXED: Added flex layout to cleanly group and gap the header buttons */
+                /* Groups the header action buttons cleanly */
                 .wh-header-btn-wrap {
                     display: flex;
                     align-items: center;
@@ -203,16 +217,15 @@ export default function Index({ warehouses, flash }) {
 
                 /* Mobile Sizing Adapters */
                 @media (max-width: 640px) {
-                    .wh-header-sub-row {
+                    .wh-actions-row {
                         flex-direction: column;
-                        align-items: flex-start;
+                        align-items: stretch;
                         gap: 12px;
                     }
-                    /* ✅ FIXED: Ensures elements keep full layout structure on mobile view */
                     .wh-header-btn-wrap {
                         width: 100%;
                         display: flex;
-                        justify-content: flex-start;
+                        justify-content: space-between;
                         flex-wrap: wrap;
                     }
                 }
@@ -225,16 +238,30 @@ export default function Index({ warehouses, flash }) {
 
             <FlashMessage flash={flash} />
 
-            {/* Header sub-row containing metadata and button on the exact same row alignment */}
-            <div className="wh-header-sub-row">
-                <div>
-                    <p className="wh-meta-text">
-                        {warehouses.total} warehouse{warehouses.total !== 1 ? 's' : ''} registered
-                    </p>
-                </div>
+            {/* Row 1: Total registrations count */}
+            <div className="wh-header-top-row">
+                <p className="wh-meta-text">
+                    {warehouses.total} warehouse
+                    {warehouses.total !== 1 ? "s" : ""} registered
+                </p>
+            </div>
+
+            {/* Row 2: Searchbox on the left, Buttons on the right */}
+            <div className="wh-actions-row">
+                <SearchBox
+                    routeName={"warehouses.index"}
+                    filters={filters}
+                    statusType={"warehouse"}
+                />
+
                 <div className="wh-header-btn-wrap">
-                    <RecycleBinButton endpoint={'warehouses.recycle-bin.index'} />
-                    <CreateActionButton href={"/warehouses/create"} label={"Add Warehouse"} />
+                    <RecycleBinButton
+                        endpoint={"warehouses.recycle-bin.index"}
+                    />
+                    <CreateActionButton
+                        href={"/warehouses/create"}
+                        label={"Add Warehouse"}
+                    />
                 </div>
             </div>
 
@@ -242,11 +269,34 @@ export default function Index({ warehouses, flash }) {
             <div className="wh-table-wrap">
                 {warehouses.data.length === 0 ? (
                     <div className="empty-state">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-10.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5-13.5h16.5M6.75 6.75h.008v.008H6.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM11.25 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM15.75 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                        <svg
+                            width="40"
+                            height="40"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#94a3b8"
+                            strokeWidth="1.5"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.25 21h19.5m-18-10.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5-13.5h16.5M6.75 6.75h.008v.008H6.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM11.25 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM15.75 6.75h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                            />
                         </svg>
-                        <p style={{ fontSize: 14, fontWeight: 500, color: '#475569' }}>No warehouses yet</p>
-                        <Link href="/warehouses/create" className="wh-btn-primary" style={{ marginTop: 4 }}>
+                        <p
+                            style={{
+                                fontSize: 14,
+                                fontWeight: 500,
+                                color: "#475569",
+                            }}
+                        >
+                            No warehouses yet
+                        </p>
+                        <Link
+                            href="/warehouses/create"
+                            className="wh-btn-primary"
+                            style={{ marginTop: 4 }}
+                        >
                             Add first warehouse
                         </Link>
                     </div>
@@ -254,17 +304,22 @@ export default function Index({ warehouses, flash }) {
                     <table className="wh-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '30%' }}>Name</th>
-                                <th style={{ width: '40%' }}>Location</th>
-                                <th style={{ width: '15%' }}>Status</th>
-                                <th style={{ width: '15%' }}>Actions</th>
+                                <th style={{ width: "30%" }}>Name</th>
+                                <th style={{ width: "40%" }}>Location</th>
+                                <th style={{ width: "15%" }}>Status</th>
+                                <th style={{ width: "15%" }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {warehouses.data.map(warehouse => (
+                            {warehouses.data.map((warehouse) => (
                                 <tr key={warehouse.id}>
                                     <td>
-                                        <div style={{ fontWeight: 600, color: '#0f172a' }}>
+                                        <div
+                                            style={{
+                                                fontWeight: 600,
+                                                color: "#0f172a",
+                                            }}
+                                        >
                                             {warehouse.name}
                                         </div>
                                     </td>
@@ -272,16 +327,33 @@ export default function Index({ warehouses, flash }) {
                                         {warehouse.location ? (
                                             warehouse.location
                                         ) : (
-                                            <span style={{ color: '#64748b', opacity: 0.4 }}>—</span>
+                                            <span
+                                                style={{
+                                                    color: "#64748b",
+                                                    opacity: 0.4,
+                                                }}
+                                            >
+                                                —
+                                            </span>
                                         )}
                                     </td>
                                     <td>
-                                        <StatusBadge isActive={warehouse.is_active} />
+                                        <StatusBadge
+                                            isActive={warehouse.is_active}
+                                        />
                                     </td>
                                     <td>
-                                        <div style={{ display: 'flex', gap: 6 }}>
-                                            <EditActionButton href={`/warehouses/${warehouse.id}/edit`} />
-                                            <DeleteActionButton onClick={() => handleDelete(warehouse.id)} />
+                                        <div
+                                            style={{ display: "flex", gap: 6 }}
+                                        >
+                                            <EditActionButton
+                                                href={`/warehouses/${warehouse.id}/edit`}
+                                            />
+                                            <DeleteActionButton
+                                                onClick={() =>
+                                                    handleDelete(warehouse.id)
+                                                }
+                                            />
                                         </div>
                                     </td>
                                 </tr>
@@ -297,13 +369,13 @@ export default function Index({ warehouses, flash }) {
                     {warehouses.links.map((link, i) => (
                         <Link
                             key={i}
-                            href={link.url ?? '#'}
-                            className={`wh-pagination-btn ${link.active ? 'active' : ''} ${!link.url ? 'disabled' : ''}`}
+                            href={link.url ?? "#"}
+                            className={`wh-pagination-btn ${link.active ? "active" : ""} ${!link.url ? "disabled" : ""}`}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                         />
                     ))}
                 </div>
             )}
         </AuthenticatedLayout>
-    )
+    );
 }

@@ -15,12 +15,11 @@ class PurchaseOrderController extends Controller
 {
     public function index(Request $request): Response
     {
-        $filterInputs = $request->only(['search', 'status']);
-
         $purchaseOrders = PurchaseOrder::with([
             'purchaseRequest' => fn($q) => $q->withTrashed()->with('requester'),
         ])
-            ->filter($filterInputs) // 2. Pass all inputs safely into your scope method
+            ->search($request->search) // 2. Pass all inputs safely into your scope method
+            ->filterStatus($request->status) // 2. Pass all inputs safely into your scope method
             ->latest()
             ->paginate(15)
             ->withQueryString();
@@ -29,7 +28,7 @@ class PurchaseOrderController extends Controller
             'PurchaseOrders/Index',
             [
                 'purchaseOrders' => $purchaseOrders,
-                'filters' => $filterInputs,
+                'filters' => $request->only(['search', 'status']),
             ]
         );
     }

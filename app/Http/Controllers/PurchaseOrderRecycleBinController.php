@@ -25,7 +25,7 @@ class PurchaseOrderRecycleBinController extends RecycleBinController
                 'status',
                 'total_amount',
                 'deleted_at',
-                'tenant_id'
+                'tenant_id',
             ])
             ->with(PurchaseOrder::RECYCLE_BIN_RELATIONS)
             ->where('status', 'fully_received');

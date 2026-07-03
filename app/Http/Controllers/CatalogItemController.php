@@ -15,12 +15,11 @@ use Inertia\Response;
 class CatalogItemController extends Controller
 {
 
-
     public function index(Request $request): Response
     {
         $result = CatalogItem::query()
-            ->search($request->search)
-            ->filterStatus($request->status)
+            ->search($request->search) // access from the instanced model
+            ->filterStatus($request->status) // access from the instanced model
             ->with('supplier')
             ->paginate(15)
             ->withQueryString();

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Abstracts\RecycleBinController;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Inertia\Response;
+use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Override;
 
@@ -16,7 +18,7 @@ class UserRecycleBinController extends RecycleBinController
         return ['tenant_admin'];
     }
 
-    public function baseQuery()
+    protected function baseQuery()
     {
         return parent::baseQuery()->select([
             'id',
@@ -24,6 +26,28 @@ class UserRecycleBinController extends RecycleBinController
             'email',
             'role',
             'deleted_at',
+        ]);
+    }
+
+    public function index(Request $request): Response
+    {
+        $query = $this->baseQuery()
+            ->search($request->search)
+            ->filterStatus($request->status)
+            ->filterRole($request->role);
+
+        $result = $query->latest('deleted_at')
+            ->paginate(20);
+
+        $resourceClass = $this->resource();
+
+        $items = $resourceClass
+            ? $resourceClass::collection($result)
+            : $result;
+
+        return Inertia::render($this->viewName(), [
+            'deletedItems' => $items,
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 

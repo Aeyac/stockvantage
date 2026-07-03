@@ -15,10 +15,18 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $users = auth()->user()->tenant->users()
+            ->search($request->search)
+            ->filterStatus($request->status)
+            ->filterRole($request->role)
+            ->orderBy('name')
+            ->paginate(15);
+
+
         return Inertia::render('Users/Index', [
-            'users' => auth()->user()->tenant->users()->orderBy('name')->paginate(15),
+            'users' => $users
         ]);
     }
 
@@ -32,6 +40,8 @@ class UserController extends Controller
     {
         $validated = $request->validated();
         $validated['password'] = Hash::make($validated['password']);
+        $validated['tenant_id'] = auth()->user()->tenant_id;
+
         User::create($validated);
 
         return redirect()

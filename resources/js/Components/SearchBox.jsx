@@ -21,17 +21,37 @@ const STATUS_OPTIONS = {
         { value: 1, label: "Active" },
         { value: 0, label: "Inactive" },
     ],
+    warehouse: [
+        { value: 1, label: "Active" },
+        { value: 0, label: "Inactive" },
+    ],
+    user: [
+        { value: 1, label: "Active" },
+        { value: 0, label: "Inactive" },
+    ],
+};
+
+const ROLE_OPTIONS = {
+    user: [
+        { value: "tenant_admin", label: "Tenant Admin" },
+        { value: "department_manager", label: "Department Manager" },
+        { value: "warehouse_staff", label: "Warehouse Staff" },
+        { value: "employee", label: "Employee" },
+    ],
 };
 
 export default function SearchBox({
     routeName = "catalog-items.index",
     filters = {},
     statusType = "",
+    roleType = "",
 }) {
     const [search, setSearch] = useState(filters.search ?? "");
     const [status, setStatus] = useState(filters.status ?? "");
+    const [role, setRole] = useState(filters.role ?? "");
 
-    const statusValues = STATUS_OPTIONS[statusType] ?? [];
+    const statusValues = STATUS_OPTIONS[statusType] ?? null;
+    const roleValues = ROLE_OPTIONS[roleType] ?? null;
 
     // Centralized route update helper
     const applyFilters = useCallback(
@@ -59,6 +79,12 @@ export default function SearchBox({
         const value = e.target.value;
         setStatus(value);
         applyFilters({ status: value, page: 1 });
+    };
+
+    const hanldeRoleChange = (e) => {
+        const value = e.target.value;
+        setRole(value);
+        applyFilters({ role: value, page: 1 });
     };
 
     return (
@@ -108,64 +134,133 @@ export default function SearchBox({
 
             {/* Status Dropdown Selector wrapper to enable clean custom arrows */}
             <div style={{ position: "relative", display: "inline-block" }}>
-                <select
-                    className="sb-select-field"
-                    value={status}
-                    onChange={handleStatusChange}
-                    style={{
-                        WebkitAppearance: "none",
-                        MozAppearance: "none",
-                        appearance:
-                            "none" /* Strips default engine layouts causing off-center text alignment */,
-                        lineHeight:
-                            "36px" /* Matches physical input text box height boundaries */,
-                        padding:
-                            "0 32px 0 12px" /* Leave extra space on right for custom chevron */,
-                        borderRadius: "6px",
-                        border: "1px solid #e2e8f0",
-                        background: "#fff",
-                        fontSize: "13.5px",
-                        cursor: "pointer",
-                        outline: "none",
-                        height: "38px",
-                        boxSizing: "border-box",
-                        display: "block",
-                    }}
-                >
-                    <option value="">All Status</option>
-                    {statusValues.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                        </option>
-                    ))}
-                </select>
+                {statusValues && (
+                    <>
+                        <select
+                            className="sb-select-field"
+                            value={status}
+                            onChange={handleStatusChange}
+                            style={{
+                                WebkitAppearance: "none",
+                                MozAppearance: "none",
+                                appearance:
+                                    "none" /* Strips default engine layouts causing off-center text alignment */,
+                                lineHeight:
+                                    "36px" /* Matches physical input text box height boundaries */,
+                                padding:
+                                    "0 32px 0 12px" /* Leave extra space on right for custom chevron */,
+                                borderRadius: "6px",
+                                border: "1px solid #e2e8f0",
+                                background: "#fff",
+                                fontSize: "13.5px",
+                                cursor: "pointer",
+                                outline: "none",
+                                height: "38px",
+                                boxSizing: "border-box",
+                                display: "block",
+                            }}
+                        >
+                            <option value="">All Status</option>
+                            {statusValues.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                </option>
+                            ))}
+                        </select>
 
-                {/* SVG Custom UI Indicator arrow perfectly centered vertically on top */}
-                <div
-                    style={{
-                        position: "absolute",
-                        right: "12px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        pointerEvents: "none",
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#64748b",
-                    }}
-                >
-                    <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                </div>
+                        {/* SVG Custom UI Indicator arrow perfectly centered vertically on top */}
+                        <div
+                            style={{
+                                position: "absolute",
+                                right: "12px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                pointerEvents: "none",
+                                display: "flex",
+                                alignItems: "center",
+                                color: "#64748b",
+                            }}
+                        >
+                            <svg
+                                width="12"
+                                height="12"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                    </>
+                )}
+            </div>
+
+            <div style={{ position: "relative", display: "inline-block" }}>
+                {roleValues && (
+                    <>
+                        <select
+                            className="sb-select-field"
+                            value={role}
+                            onChange={hanldeRoleChange}
+                            style={{
+                                WebkitAppearance: "none",
+                                MozAppearance: "none",
+                                appearance:
+                                    "none" /* Strips default engine layouts causing off-center text alignment */,
+                                lineHeight:
+                                    "36px" /* Matches physical input text box height boundaries */,
+                                padding:
+                                    "0 32px 0 12px" /* Leave extra space on right for custom chevron */,
+                                borderRadius: "6px",
+                                border: "1px solid #e2e8f0",
+                                background: "#fff",
+                                fontSize: "13.5px",
+                                cursor: "pointer",
+                                outline: "none",
+                                height: "38px",
+                                boxSizing: "border-box",
+                                display: "block",
+                            }}
+                        >
+                            <option value="">All Roles</option>
+                            {roleValues.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                </option>
+                            ))}
+                        </select>
+
+                        {/* SVG Custom UI Indicator arrow perfectly centered vertically on top */}
+                        <div
+                            style={{
+                                position: "absolute",
+                                right: "12px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                pointerEvents: "none",
+                                display: "flex",
+                                alignItems: "center",
+                                color: "#64748b",
+                            }}
+                        >
+                            <svg
+                                width="12"
+                                height="12"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

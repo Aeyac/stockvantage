@@ -6,17 +6,22 @@ use App\Http\Requests\StoreWarehouseRequest;
 use App\Http\Requests\UpdateWarehouseRequest;
 use App\Models\Warehouse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class WarehouseController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $warehouses = Warehouse::paginate(15);
+        $warehouses = Warehouse::
+            search($request->search)
+            ->filterStatus($request->status)
+            ->paginate(15)->withQueryString();
 
         return Inertia::render('Warehouses/Index', [
             'warehouses' => $warehouses,
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 

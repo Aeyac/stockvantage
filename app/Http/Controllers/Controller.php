@@ -12,24 +12,13 @@ abstract class Controller
         abort_if(!in_array(auth()->user()->role, $roles), 403, 'Unauthorized Action!');
     }
 
-    public function applySearch(Builder $query, ?string $search): Builder
-    {
-        if (!$search)
-            return $query;
+    
 
-        return $query->where(function ($q) use ($search) {
-            $q->where('pr_number', 'like', "%{$search}%")
-                ->orWhereHas('requester', function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%");
-                });
-        });
-    }
+    // public function applyFilterStatus(Builder $query, ?string $status): Builder
+    // {
+    //     if (!$status)
+    //         return $query;
 
-    public function applyFilterStatus(Builder $query, ?string $status): Builder
-    {
-        if (!$status)
-            return $query;
-
-        return $query->where('status', $status);
-    }
+    //     return $query->where('status', $status);
+    // }
 }

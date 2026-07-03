@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -37,5 +38,26 @@ class Warehouse extends Model
     public function stockLedgers()
     {
         return $this->hasMany(StockLedger::class);
+    }
+
+    // -------------------------------------------------------
+    // HELPER METHODS
+    // -------------------------------------------------------
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+        if (!$search)
+            return $query;
+
+        return $query->where('name', 'like', "%{$search}%");
+    }
+
+
+    public function scopeFilterStatus(Builder $query, ?string $status): Builder
+    {
+        if ($status === null || $status === '') {
+            return $query;
+        }
+
+        return $query->where('is_active', $status);
     }
 }

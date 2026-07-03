@@ -297,7 +297,7 @@ export default function Index({ purchaseOrders, filters, flash }) {
                                             width: "15%",
                                         }}
                                     >
-                                        PO Number
+                                        PO ID Number
                                     </th>
                                     <th
                                         style={{

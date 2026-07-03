@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -88,5 +89,36 @@ class User extends Authenticatable
     public function stockLedgers()
     {
         return $this->hasMany(StockLedger::class, 'performed_by');
+    }
+
+
+    // -------------------------------------------------------
+    // HELPER METHODS
+    // -------------------------------------------------------
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+        if (!$search)
+            return $query;
+
+        return $query->where('name', 'like', "%{$search}%");
+    }
+
+
+    public function scopeFilterStatus(Builder $query, ?string $status): Builder
+    {
+        if ($status === null || $status === '') {
+            return $query;
+        }
+
+        return $query->where('is_active', $status);
+    }
+
+    public function scopeFilterRole(Builder $query, ?string $role): Builder
+    {
+        if ($role === null || $role === '') {
+            return $query;
+        }
+
+        return $query->where('role', $role);
     }
 }

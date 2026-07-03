@@ -7,6 +7,7 @@ import {
     CreateActionButton,
 } from "@/Components/ActionButtons";
 import RecycleBinButton from "@/Components/RecycleBinButton";
+import SearchBox from "@/Components/SearchBox";
 
 const C = {
     bg: "#F4F5F8",
@@ -75,7 +76,7 @@ function RoleBadge({ role }) {
     );
 }
 
-export default function Index({ users, flash }) {
+export default function Index({ users, filters, flash }) {
     const { auth } = usePage().props;
     const currentUserId = auth.user.id;
 
@@ -91,20 +92,30 @@ export default function Index({ users, flash }) {
 
             <style>{`
                 /* Structural Responsive Elements */
-                .usr-header-row {
+                .usr-header-block {
                     display: flex;
-                    justify-content: space-between;
-                    align-items: center;
+                    flex-direction: column;
                     margin-bottom: 24px;
-                    gap: 16px;
+                    width: 100%;
+                    gap: 12px;
                 }
                 .usr-header-meta {
                     font-size: 14px;
                     color: ${C.onSurfaceVar};
                     margin: 0;
+                    padding: 0;
+                    line-height: 1.5;
                 }
-                .usr-header-action {
-                    flex-shrink: 0;
+                .usr-controls-row {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between; /* Pushes content to opposite edges */
+                    gap: 16px;
+                    width: 100%;
+                }
+                .usr-search-container {
+                    max-width: 360px;
+                    width: 100%;
                 }
 
                 .usr-btn-primary {
@@ -218,13 +229,19 @@ export default function Index({ users, flash }) {
 
                 /* Mobile Viewport Targets */
                 @media (max-width: 640px) {
-                    .usr-header-row {
+                    .usr-controls-row {
                         flex-direction: column;
                         align-items: flex-start;
                         gap: 12px;
                     }
-                    .usr-header-action {
+                    .usr-search-container {
+                        max-width: 100%;
+                    }
+                    .usr-action-buttons {
+                        display: flex;
                         width: 100%;
+                        justify-content: flex-start;
+                        gap: 8px;
                     }
                 }
                 @media (max-width: 480px) {
@@ -237,41 +254,36 @@ export default function Index({ users, flash }) {
             <FlashMessage flash={flash} />
 
             {/* Header Layout Control Block */}
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: 24,
-                    width: "100%",
-                    gap: 16,
-                }}
-            >
-                <p
-                    style={{
-                        fontSize: 14,
-                        color: C.onSurfaceVar,
-                        margin: 0,
-                        padding: 0,
-                        lineHeight: "38px",
-                        display: "inline-block",
-                    }}
-                >
+            <div className="usr-header-block">
+                <p className="usr-header-meta">
                     {users.total} user{users.total !== 1 ? "s" : ""}
                 </p>
-                <div
-                    style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 8,
-                        flexShrink: 0,
-                    }}
-                >
-                    <RecycleBinButton endpoint={"users.recycle-bin.index"} />
-                    <CreateActionButton
-                        href={"/users/create"}
-                        label={"Add User"}
-                    />
+
+                <div className="usr-controls-row">
+                    <div className="usr-search-container">
+                        <SearchBox
+                            routeName="users.index"
+                            filters={filters}
+                            statusType="user"
+                            roleType="user"
+                        />
+                    </div>
+                    <div
+                        className="usr-action-buttons"
+                        style={{
+                            display: "inline-flex",
+                            gap: 8,
+                            alignItems: "center",
+                        }}
+                    >
+                        <RecycleBinButton
+                            endpoint={"users.recycle-bin.index"}
+                        />
+                        <CreateActionButton
+                            href={"/users/create"}
+                            label={"Add User"}
+                        />
+                    </div>
                 </div>
             </div>
 
