@@ -16,12 +16,16 @@ use Illuminate\Support\Facades\DB;
 
 class GrnController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $grns = GrnRecord::with('purchaseOrder')->paginate(15);
+        $grns = GrnRecord::with('purchaseOrder')
+            ->search($request->search)
+            ->filterStatus($request->status)
+            ->paginate(15)->withQueryString();
 
         return Inertia::render('Grns/Index', [
             'grns' => $grns,
+            'filters' => $request->only(['search', 'status'])
         ]);
     }
 

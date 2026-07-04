@@ -109,7 +109,7 @@ class User extends Authenticatable
         if ($status === null || $status === '') {
             return $query;
         }
-
+                                                                            
         return $query->where('is_active', $status);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class GrnRecord extends Model
@@ -66,5 +67,24 @@ class GrnRecord extends Model
     public function lineItems()
     {
         return $this->hasMany(GrnLineItem::class, 'grn_id');
+    }
+
+    //HELPER FUNCTIONS
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+        if (!$search || $search === '') {
+            return $query;
+        }
+
+        return $query->where('id', 'like', $search);
+    }
+
+    public function scopeFilterStatus(Builder $query, ?string $status): Builder
+    {
+        if ($status === null || $status === '') {
+            return $query;
+        }
+
+        return $query->where('status', $status);
     }
 }

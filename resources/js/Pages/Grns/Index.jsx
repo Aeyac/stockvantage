@@ -1,79 +1,115 @@
-import { Head, Link } from '@inertiajs/react'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import FlashMessage from '@/Components/FlashMessage'
-import { CreateActionButton, ViewActionButton } from '@/Components/ActionButtons'
+import { Head, Link } from "@inertiajs/react";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import FlashMessage from "@/Components/FlashMessage";
+import {
+    CreateActionButton,
+    ViewActionButton,
+} from "@/Components/ActionButtons";
+import SearchBox from "@/Components/SearchBox";
 
 const C = {
-    bg: '#f8fafc', // Slate 50
-    surface: '#ffffff', // Pure White
-    surfaceLow: '#ffffff',
-    surfaceHigh: '#f1f5f9', // Slate 100 (Table hover background)
-    outline: '#e2e8f0', // Slate 200
-    primary: '#00C488', // Premium Dashboard Accent Green
-    secondary: '#d97706', // Amber / Warning
-    tertiary: '#ffb95f',
-    textMain: '#0f172a',       // High-contrast main text
-    onSurface: '#1e293b', // Slate 800 (Dark text)
-    onSurfaceVar: '#64748b', // Slate 500 (Muted text/labels)
-    onPrimary: '#ffffff', // White text on green button
-    error: '#dc2626', // Bright Red 600
-}
+    bg: "#f8fafc", // Slate 50
+    surface: "#ffffff", // Pure White
+    surfaceLow: "#ffffff",
+    surfaceHigh: "#f1f5f9", // Slate 100 (Table hover background)
+    outline: "#e2e8f0", // Slate 200
+    primary: "#00C488", // Premium Dashboard Accent Green
+    secondary: "#d97706", // Amber / Warning
+    tertiary: "#ffb95f",
+    textMain: "#0f172a", // High-contrast main text
+    onSurface: "#1e293b", // Slate 800 (Dark text)
+    onSurfaceVar: "#64748b", // Slate 500 (Muted text/labels)
+    onPrimary: "#ffffff", // White text on green button
+    error: "#dc2626", // Bright Red 600
+};
 
 const STATUS_CONFIG = {
     complete: {
-        label: 'Complete', color: '#059669', bg: '#ecfdf5', border: '#d1fae5',
+        label: "Complete",
+        color: "#059669",
+        bg: "#ecfdf5",
+        border: "#d1fae5",
     },
     partially_received: {
-        label: 'Partial', color: '#d97706', bg: '#fef3c7', border: '#fde68a',
+        label: "Partial",
+        color: "#d97706",
+        bg: "#fef3c7",
+        border: "#fde68a",
     },
     discrepancy: {
-        label: 'Discrepancy', color: '#dc2626', bg: '#fef2f2', border: '#fee2e2',
+        label: "Discrepancy",
+        color: "#dc2626",
+        bg: "#fef2f2",
+        border: "#fee2e2",
     },
-}
+};
 
 function StatusBadge({ status }) {
-    const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.complete
+    const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.complete;
     return (
-        <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            fontSize: '11.5px', fontWeight: 600, padding: '3px 10px',
-            borderRadius: 20, background: config.bg, color: config.color,
-            border: `1px solid ${config.border}`,
-            whiteSpace: 'nowrap',
-        }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }} />
+        <span
+            style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: "11.5px",
+                fontWeight: 600,
+                padding: "3px 10px",
+                borderRadius: 20,
+                background: config.bg,
+                color: config.color,
+                border: `1px solid ${config.border}`,
+                whiteSpace: "nowrap",
+            }}
+        >
+            <span
+                style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: "currentColor",
+                    display: "inline-block",
+                }}
+            />
             {config.label}
         </span>
-    )
+    );
 }
 
 function formatDate(dateStr) {
-    return new Date(dateStr).toLocaleDateString('en-PH', {
-        year: 'numeric', month: 'short', day: 'numeric',
-    })
+    return new Date(dateStr).toLocaleDateString("en-PH", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
 }
 
-export default function Index({ grns, flash }) {
+export default function Index({ grns, filters, flash }) {
     return (
         <AuthenticatedLayout header="Goods Received Notes">
             <Head title="GRN" />
 
             <style>{`
-                /* Fluid layout structure for the page meta row */
-                .grn-header-row {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
+                /* Container setup for header elements */
+                .grn-header-section {
                     margin-bottom: 24px;
-                    gap: 16px;
                     width: 100%;
                 }
 
                 .grn-header-meta {
                     font-size: 13px;
                     color: ${C.onSurfaceVar};
-                    fontWeight: 500;
-                    margin: 0;
+                    font-weight: 500;
+                    margin: 0 0 12px 0;
+                }
+
+                /* Aligns search box to the left and action buttons to the right */
+                .grn-search-actions-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 16px;
+                    width: 100%;
                 }
 
                 .grn-header-action-wrap {
@@ -106,7 +142,7 @@ export default function Index({ grns, flash }) {
                     width: 100%; 
                     border-collapse: collapse; 
                     font-size: 13.5px; 
-                    min-width: 800px; /* Safeguards structural alignment across dynamic display bounds */
+                    min-width: 800px; 
                 }
 
                 .grn-table thead tr { background: #f8fafc; }
@@ -177,7 +213,7 @@ export default function Index({ grns, flash }) {
 
                 /* Mobile Viewport Adapters */
                 @media (max-width: 640px) {
-                    .grn-header-row {
+                    .grn-search-actions-row {
                         flex-direction: column;
                         align-items: flex-start;
                         gap: 12px;
@@ -196,15 +232,25 @@ export default function Index({ grns, flash }) {
 
             <FlashMessage flash={flash} />
 
-            {/* Header Content Wrapper */}
-            <div className="grn-header-row">
-                <div>
-                    <p className="grn-header-meta">
-                        {grns.total} record{grns.total !== 1 ? 's' : ''} registered
-                    </p>
-                </div>
-                <div className="grn-header-action-wrap">
-                    <CreateActionButton href={"/grn/create"} label={'Record GRN'} />
+            {/* Header Layout wrapper */}
+            <div className="grn-header-section">
+                <p className="grn-header-meta">
+                    {grns.total} record{grns.total !== 1 ? "s" : ""} registered
+                </p>
+
+                <div className="grn-search-actions-row">
+                    <SearchBox
+                        routeName="grn.index"
+                        filters={filters}
+                        statusType="grn"
+                    />
+
+                    <div className="grn-header-action-wrap">
+                        <CreateActionButton
+                            href={"/grn/create"}
+                            label={"Record GRN"}
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -212,13 +258,42 @@ export default function Index({ grns, flash }) {
             <div className="grn-card">
                 {grns.data.length === 0 ? (
                     <div className="grn-empty">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5">
+                        <svg
+                            width="40"
+                            height="40"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#94a3b8"
+                            strokeWidth="1.5"
+                        >
                             <polyline points="9 11 12 14 22 4" />
                             <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
                         </svg>
-                        <p style={{ fontSize: 14, fontWeight: 500, color: '#475569', margin: 0 }}>No GRN records yet</p>
-                        <p style={{ fontSize: 13, color: C.onSurfaceVar, margin: 0 }}>Record a goods receipt against an open purchase order</p>
-                        <Link href="/grn/create" className="grn-btn-primary" style={{ marginTop: 4 }}>
+                        <p
+                            style={{
+                                fontSize: 14,
+                                fontWeight: 500,
+                                color: "#475569",
+                                margin: 0,
+                            }}
+                        >
+                            No GRN records yet
+                        </p>
+                        <p
+                            style={{
+                                fontSize: 13,
+                                color: C.onSurfaceVar,
+                                margin: 0,
+                            }}
+                        >
+                            Record a goods receipt against an open purchase
+                            order
+                        </p>
+                        <Link
+                            href="/grn/create"
+                            className="grn-btn-primary"
+                            style={{ marginTop: 4 }}
+                        >
                             Record first GRN
                         </Link>
                     </div>
@@ -226,45 +301,65 @@ export default function Index({ grns, flash }) {
                     <table className="grn-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '15%' }}>GRN ID</th>
-                                <th style={{ width: '18%' }}>Purchase Order</th>
-                                <th style={{ width: '15%' }}>Status</th>
-                                <th style={{ width: '25%' }}>Notes</th>
-                                <th style={{ width: '17%' }}>Date Received</th>
-                                <th style={{ width: '10%' }}>Actions</th>
+                                <th style={{ width: "15%" }}>GRN ID</th>
+                                <th style={{ width: "18%" }}>Purchase Order</th>
+                                <th style={{ width: "15%" }}>Status</th>
+                                <th style={{ width: "25%" }}>Notes</th>
+                                <th style={{ width: "17%" }}>Date Received</th>
+                                <th style={{ width: "10%" }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {grns.data.map(grn => (
+                            {grns.data.map((grn) => (
                                 <tr key={grn.id}>
                                     <td>
                                         <span className="grn-id-badge">
-                                            GRN-{String(grn.id).padStart(4, '0')}
+                                            GRN-
+                                            {String(grn.id).padStart(4, "0")}
                                         </span>
                                     </td>
                                     <td>
                                         <span className="grn-po-badge">
-                                            {grn.purchase_order?.po_number ?? '—'}
+                                            {grn.purchase_order?.po_number ??
+                                                "—"}
                                         </span>
                                     </td>
                                     <td>
                                         <StatusBadge status={grn.status} />
                                     </td>
-                                    <td style={{ whiteSpace: 'normal', minWidth: '180px' }}>
+                                    <td
+                                        style={{
+                                            whiteSpace: "normal",
+                                            minWidth: "180px",
+                                        }}
+                                    >
                                         {grn.notes ? (
-                                            <span style={{ fontSize: 13, color: '#334155' }}>
-                                                {grn.notes.length > 50 ? `${grn.notes.substring(0, 50)}...` : grn.notes}
+                                            <span
+                                                style={{
+                                                    fontSize: 13,
+                                                    color: "#334155",
+                                                }}
+                                            >
+                                                {grn.notes.length > 50
+                                                    ? `${grn.notes.substring(0, 50)}...`
+                                                    : grn.notes}
                                             </span>
                                         ) : (
-                                            <span style={{ opacity: 0.4 }}>—</span>
+                                            <span style={{ opacity: 0.4 }}>
+                                                —
+                                            </span>
                                         )}
                                     </td>
                                     <td style={{ color: C.onSurfaceVar }}>
                                         {formatDate(grn.created_at)}
                                     </td>
                                     <td>
-                                        <div style={{ display: 'flex', gap: 4 }}>
-                                            <ViewActionButton href={`/grn/${grn.id}`} />
+                                        <div
+                                            style={{ display: "flex", gap: 4 }}
+                                        >
+                                            <ViewActionButton
+                                                href={`/grn/${grn.id}`}
+                                            />
                                         </div>
                                     </td>
                                 </tr>
@@ -280,13 +375,13 @@ export default function Index({ grns, flash }) {
                     {grns.links.map((link, i) => (
                         <Link
                             key={i}
-                            href={link.url ?? '#'}
-                            className={`grn-pg-btn ${link.active ? 'active' : ''} ${!link.url ? 'disabled' : ''}`}
+                            href={link.url ?? "#"}
+                            className={`grn-pg-btn ${link.active ? "active" : ""} ${!link.url ? "disabled" : ""}`}
                             dangerouslySetInnerHTML={{ __html: link.label }}
                         />
                     ))}
                 </div>
             )}
         </AuthenticatedLayout>
-    )
+    );
 }

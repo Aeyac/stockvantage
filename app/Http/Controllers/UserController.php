@@ -22,7 +22,8 @@ class UserController extends Controller
             ->filterStatus($request->status)
             ->filterRole($request->role)
             ->orderBy('name')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
 
         return Inertia::render('Users/Index', [

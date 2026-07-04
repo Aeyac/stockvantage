@@ -29,7 +29,19 @@ const STATUS_OPTIONS = {
         { value: 1, label: "Active" },
         { value: 0, label: "Inactive" },
     ],
+    grn: [
+        { value: "complete", label: "Complete" },
+        { value: "partially_received", label: "Partially Received" },
+        { value: "discrepancy", label: "With Discrepancy" },
+    ],
 };
+
+// STATUS_DISCREPANCY;
+//     }
+
+//     public function isPartial(): bool
+//     {
+//         return $this->status === self::STATUS_PARTIALLY_RECEIVED;
 
 const ROLE_OPTIONS = {
     user: [

@@ -354,18 +354,7 @@ export default function Show({ purchaseOrder }) {
                         <div style={{ height: 1, background: '#0d1514', margin: '16px 0 18px', borderRadius: 1 }} />
 
                         {/* ── Document Footer Metrics ── */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-                            <div style={{
-                                display: 'inline-flex', alignItems: 'center', gap: 7,
-                                padding: '7px 14px', borderRadius: 100,
-                                background: status.bg, color: status.color,
-                                border: `1px solid ${status.border}`,
-                                fontSize: 12, fontWeight: 600,
-                            }}>
-                                {status.icon}
-                                {status.label}
-                            </div>
-
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 12 }}>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                                 <div style={{
                                     fontFamily: "'DM Mono', monospace", fontSize: 24,
