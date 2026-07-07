@@ -27,22 +27,14 @@ class WarehouseController extends Controller
 
     public function create(): Response
     {
-        abort_if(
-            !auth()->user()->isAdmin() && !auth()->user()->isWarehouseStaff(),
-            403,
-            'Unauthorized action.'
-        );
+        $this->abortUnlessRole(['tenant_admin', 'department_manager']);
 
         return Inertia::render('Warehouses/Create');
     }
 
     public function store(StoreWarehouseRequest $request): RedirectResponse
     {
-        abort_if(
-            !auth()->user()->isAdmin() && !auth()->user()->isWarehouseStaff(),
-            403,
-            'Unauthorized action.'
-        );
+        $this->abortUnlessRole(['tenant_admin', 'department_manager']);
 
         Warehouse::create($request->validated());
 
@@ -69,6 +61,8 @@ class WarehouseController extends Controller
 
     public function destroy(Warehouse $warehouse): RedirectResponse
     {
+        $this->abortUnlessRole(['tenant_admin', 'department_manager']);
+
         if ($warehouse->stockLedgers()->exists()) {
             return redirect()
                 ->route('warehouses.index')

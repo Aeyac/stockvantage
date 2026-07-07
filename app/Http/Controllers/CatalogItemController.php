@@ -43,9 +43,7 @@ class CatalogItemController extends Controller
 
     public function store(StoreCatalogItemRequest $request): RedirectResponse
     {
-
-        abort_if(!auth()->user()->isAdmin(), 403, 'Unauthorized action.');
-
+        $this->abortUnlessRole(['tenant_admin', 'department_manager']);
         CatalogItem::create($request->validated());
 
         return redirect()
@@ -65,6 +63,7 @@ class CatalogItemController extends Controller
 
     public function update(UpdateCatalogItemRequest $request, CatalogItem $catalogItem): RedirectResponse
     {
+        $this->abortUnlessRole(['tenant_admin', 'department_manager']);
         $catalogItem->update($request->validated());
 
         return redirect()->
@@ -74,9 +73,9 @@ class CatalogItemController extends Controller
 
     public function destroy(CatalogItem $catalogItem): RedirectResponse
     {
+        $this->abortUnlessRole(['tenant_admin', 'department_manager']);
 
-        // Check if any line items are using this catalog item
-        if ($catalogItem->prLineItems()->exists()) { // Assumes you have the relationship defined
+        if ($catalogItem->prLineItems()->exists()) {
             return redirect()
                 ->back()
                 ->with('error', 'Cannot delete this item because it is currently linked to active line items.');

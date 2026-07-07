@@ -13,6 +13,8 @@ class StockLedgerController extends Controller
 
     public function index(): Response
     {
+        $this->abortUnlessRole(['tenant_admin', 'department_manager']);
+
         $stockLedgers = StockLedger::query()
             ->with(['warehouse', 'catalogItem', 'performer'])
             ->orderByDesc('created_at')

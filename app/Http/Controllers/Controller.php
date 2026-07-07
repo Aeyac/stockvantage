@@ -11,14 +11,6 @@ abstract class Controller
     {
         abort_if(!in_array(auth()->user()->role, $roles), 403, 'Unauthorized Action!');
     }
-
     
 
-    // public function applyFilterStatus(Builder $query, ?string $status): Builder
-    // {
-    //     if (!$status)
-    //         return $query;
-
-    //     return $query->where('status', $status);
-    // }
 }

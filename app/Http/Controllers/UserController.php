@@ -17,6 +17,8 @@ class UserController extends Controller
 {
     public function index(Request $request): Response
     {
+        $this->abortUnlessRole(['tenant_admin']);
+
         $users = auth()->user()->tenant->users()
             ->search($request->search)
             ->filterStatus($request->status)
@@ -39,6 +41,8 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request): RedirectResponse
     {
+        $this->abortUnlessRole(['tenant_admin']);
+
         $validated = $request->validated();
         $validated['password'] = Hash::make($validated['password']);
         $validated['tenant_id'] = auth()->user()->tenant_id;
@@ -59,6 +63,7 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
+        $this->abortUnlessRole(['tenant_admin']);
         $user->update($request->validated());
 
         return redirect()
@@ -68,7 +73,8 @@ class UserController extends Controller
 
     public function destroy(User $user): RedirectResponse
     {
-        abort_if($user->id === auth()->id(), 403, 'You cannot delete your own account.');
+        $this->abortUnlessRole(['tenant_admin']);
+
         $user->delete();
 
         return redirect()
