@@ -62,12 +62,10 @@ class PurchaseRequestService
     public function approveRequest(PurchaseRequest $purchaseRequest, int $userId): void
     {
         DB::transaction(function () use ($purchaseRequest, $userId) {
-            // Lock the specific purchase request row for update
             $lockedRequest = PurchaseRequest::where('id', $purchaseRequest->id)
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            // Perform check to ensure it hasn't already been approved
             if ($lockedRequest->status === PurchaseRequest::STATUS_APPROVED) {
                 throw new \Exception('This request has already been approved.');
             }

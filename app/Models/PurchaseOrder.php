@@ -44,11 +44,16 @@ class PurchaseOrder extends Model
     const STATUS_PARTIALLY_RECEIVED = 'partially_received';
     const STATUS_FULLY_RECEIVED = 'fully_received';
     const STATUS_CANCELLED = 'cancelled';
+    const IS_EMAIL_SENT = true;
 
     // -------------------------------------------------------
     // Status helpers
     // -------------------------------------------------------
+    public function isEmailSent(): bool
+    {
+        return $this->is_email_sent === self::IS_EMAIL_SENT;
 
+    }
     public function isOpen(): bool
     {
         return $this->status === self::STATUS_OPEN;
@@ -79,10 +84,10 @@ class PurchaseOrder extends Model
     }
 
     public function purchaseRequest()
-{
-    return $this->belongsTo(PurchaseRequest::class, 'pr_id')
-        ->withTrashed();
-}
+    {
+        return $this->belongsTo(PurchaseRequest::class, 'pr_id')
+            ->withTrashed();
+    }
 
     public function grnRecords()
     {

@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\SupplierPurchaseOrderMail;
 use App\Models\PurchaseOrder;
+use App\Services\PurchaseOrderService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -46,22 +45,14 @@ class PurchaseOrderController extends Controller
         ]);
     }
 
-    public function sendEmail(PurchaseOrder $purchaseOrder): RedirectResponse
+    public function sendEmail(PurchaseOrder $purchaseOrder, PurchaseOrderService $service): RedirectResponse
     {
         $this->abortUnlessRole(['tenant_admin', 'department_manager']);
 
         try {
-            $firstItem = $purchaseOrder->purchaseRequest->lineItems()->first();
-            $supplierEmail = $firstItem?->catalogItem?->supplier?->contact_email;
-
-            if ($supplierEmail) {
-                Mail::to($supplierEmail)->send(new SupplierPurchaseOrderMail($purchaseOrder));
-            }
-
-            $purchaseOrder->update([
-                'is_email_sent' => true,
-            ]);
+            $service->sendPoEmail($purchaseOrder);
         } catch (Exception $e) {
+            dd($e->getMessage());
             logger()->error('PO Email Failed: ' . $e->getMessage());
 
             return redirect()
