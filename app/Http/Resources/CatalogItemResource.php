@@ -23,6 +23,7 @@ class CatalogItemResource extends JsonResource
             'unit_cost' => $this->unit_cost,
             'safety_stock' => $this->safety_stock,
             'supplier_name' => $this->supplier?->name,
+            'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
         ];
     }

@@ -22,6 +22,7 @@ class UpdateCatalogItemRequest extends FormRequest
             'unit_cost' => 'required|numeric|min:0',
             'safety_stock' => 'required|integer|min:0',
             'is_active' => 'required|boolean',
+            'updated_at' => ['required', 'date'],
         ];
     }
 

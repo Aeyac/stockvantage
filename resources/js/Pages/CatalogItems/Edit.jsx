@@ -2,6 +2,7 @@ import { Head, Link, useForm } from '@inertiajs/react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import BackButton from '@/Components/BackButton'
 import { useAuth } from '@/hooks/useAuth'
+import FlashMessage from '@/Components/FlashMessage'
 
 // Refactored to light mode tokens matching the reference form design
 const C = {
@@ -23,7 +24,7 @@ const C = {
     skuText: '#b45309',     // Amber-700 for a readable tech font accent in light mode
 }
 
-export default function Edit({ catalogItem, suppliers }) {
+export default function Edit({ catalogItem, suppliers, flash }) {
     const { data, setData, put, processing, errors } = useForm({
         supplier_id: catalogItem.supplier_id,
         sku: catalogItem.sku,
@@ -32,7 +33,9 @@ export default function Edit({ catalogItem, suppliers }) {
         unit_cost: catalogItem.unit_cost,
         safety_stock: catalogItem.safety_stock,
         is_active: catalogItem.is_active,
+        updated_at: catalogItem.updated_at,
     })
+    console.log(catalogItem.updated_at)
 
     const { currencySymbol } = useAuth();
 
@@ -160,7 +163,7 @@ export default function Edit({ catalogItem, suppliers }) {
             {/* Light-Theme Normalized Back Navigation Link Wrapper */}
             <BackButton link={"/catalog-items"} text={"Back to Catalog"} />
 
-
+            <FlashMessage flash={flash} />
             <div className="ci-card">
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
