@@ -75,7 +75,7 @@ function formatPrId(id) {
 
 export default function Show({ purchaseRequest }) {
     const { user } = useAuth();
-
+    console.log(purchaseRequest);
     const canActOnRequest =
         purchaseRequest.status === 'awaiting_approval' &&
         (user.role === 'tenant_admin' || user.role === 'department_manager')

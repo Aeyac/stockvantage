@@ -1,16 +1,20 @@
 <?php
 
 namespace App\Services;
+use App\Exceptions\AlreadyApprovedException;
 use App\Models\CatalogItem;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseRequest;
 use App\Models\TenantSetting;
 use App\Mail\SupplierPurchaseOrderMail;
+use App\Models\Traits\ChecksOptimisticLock;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 
 class PurchaseRequestService
 {
+    use ChecksOptimisticLock;
+
     public function createRequest(array $itemsData, string $justification, $user): PurchaseRequest
     {
         return DB::transaction(function () use ($itemsData, $justification, $user) {
@@ -67,8 +71,12 @@ class PurchaseRequestService
                 ->firstOrFail();
 
             if ($lockedRequest->status === PurchaseRequest::STATUS_APPROVED) {
-                throw new \Exception('This request has already been approved.');
+                throw new AlreadyApprovedException();
             }
+
+            $this->assertNotStale($lockedRequest, $purchaseRequest->updated_at);
+
+            sleep(5); // TEMP: testing only, remove before shipping
 
             $lockedRequest->update([
                 'status' => PurchaseRequest::STATUS_APPROVED,

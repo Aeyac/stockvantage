@@ -1,11 +1,15 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Exceptions\AlreadyApprovedException;
+use App\Exceptions\StaleUpdateException;
 use App\Http\Requests\StorePurchaseRequestRequest;
 use App\Models\CatalogItem;
 use App\Models\PurchaseRequest;
 use App\Models\TenantSetting;
 use App\Services\PurchaseRequestService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -20,11 +24,15 @@ class PurchaseRequestController extends Controller
     {
         abort_if(!auth()->check(), 404);
 
-        $items = PurchaseRequest::query()->with('requester')
+        $query = PurchaseRequest::query()->with('requester')
             ->search($request->search)
-            ->filterStatus($request->status)
-            ->where('requested_by', auth()->user()->id)
-            ->latest()->paginate(15)->withQueryString();
+            ->filterStatus($request->status);
+
+        if (auth()->user()->isEmployee() || auth()->user()->isWarehouseStaff()) {
+            $query->where('requested_by', auth()->user()->id);
+        }
+
+        $items = $query->latest()->paginate(15)->withQueryString();
 
         return Inertia::render('PurchaseRequests/Index', [
             'purchaseRequests' => $items,
@@ -75,16 +83,37 @@ class PurchaseRequestController extends Controller
     public function approve(PurchaseRequest $purchaseRequest, PurchaseRequestService $prService): RedirectResponse
     {
         abort_if(!auth()->user()->isAdmin() && !auth()->user()->isManager(), 403, 'Unauthorized action.');
-        abort_if(!$purchaseRequest->isAwaitingApproval(), 403, 'This request cannot be approved.');
+        if (!$purchaseRequest->isAwaitingApproval()) {
+            return redirect()
+                ->route('purchase-requests.index')
+                ->with('error', 'This request has already been processed and can no longer be approved.');
+        }
 
-        $prService->approveRequest($purchaseRequest, auth()->id());
+        try {
+            $prService->approveRequest($purchaseRequest, auth()->id());
 
-        $isAutoSendEmail = TenantSetting::where('tenant_id', auth()->user()->tenant_id)
-            ->value('auto_send_email');
+            $isAutoSendEmail = TenantSetting::where('tenant_id', auth()->user()->tenant_id)
+                ->value('auto_send_email');
 
-        $toastMessage = $isAutoSendEmail
-            ? 'Purchase request approved and purchase order is transmitted to the supplier.'
-            : 'Purchase request approved.';
+            $toastMessage = $isAutoSendEmail
+                ? 'Purchase request approved and purchase order is transmitted to the supplier.'
+                : 'Purchase request approved.';
+
+        } catch (StaleUpdateException | AlreadyApprovedException $e) {
+            return redirect()
+                ->route('purchase-request.edit', $purchaseRequest)
+                ->with('error', $e->getMessage());
+
+        } catch (ModelNotFoundException $e) {
+            return redirect()
+                ->route('purchase-requests.index')
+                ->with('error', 'This purchase request could not be found or may have been deleted.');
+
+        } catch (QueryException $e) {
+            return redirect()
+                ->route('purchase-requests.index')
+                ->with('error', 'This request is currently being processed. Please try again in a moment.');
+        }
 
         return redirect()
             ->route('purchase-requests.index')

@@ -79,7 +79,6 @@ class CatalogItemController extends Controller
 
                 $this->assertNotStale($locked, $request->validated('updated_at'));
 
-                sleep(5);
                 $locked->update($request->except('updated_at'));
             });
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { light } from '../tokens';
 import AuthPanel from '@/Components/AuthPanel';
+import FlashMessage from '@/Components/FlashMessage';
 
 // ─── Icon helper ──────────────────────────────────────────────────────────────
 function Icon({ name, size = 16, style: s }) {
@@ -311,7 +312,7 @@ function StepTransition({ stepKey, direction, children }) {
 }
 
 // ─── Register Page ────────────────────────────────────────────────────────────
-export default function Register() {
+export default function Register({ flash }) {
     const C = light;
     const [step, setStep] = useState(1);
     const [direction, setDirection] = useState('forward'); // 'forward' | 'back'
@@ -361,189 +362,190 @@ export default function Register() {
     return (
         <AuthPanel C={C} tagline={step === 1 ? 'Create your workspace' : 'Set up your admin account'}>
 
+            <FlashMessage flash={flash} />
             <StepIndicator step={step} C={C} />
 
             {step === 1 && (
                 <StepTransition stepKey="step1" direction={direction}>
-                <form onSubmit={goToStep2} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    <Field
-                        id="company_name"
-                        label="Company name"
-                        value={data.company_name}
-                        onChange={e => setData('company_name', e.target.value)}
-                        error={errors.company_name}
-                        autoComplete="organization"
-                        C={C}
-                    />
+                    <form onSubmit={goToStep2} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <Field
+                            id="company_name"
+                            label="Company name"
+                            value={data.company_name}
+                            onChange={e => setData('company_name', e.target.value)}
+                            error={errors.company_name}
+                            autoComplete="organization"
+                            C={C}
+                        />
 
-                    <Field
-                        id="subdomain"
-                        label="Subdomain"
-                        value={data.subdomain}
-                        onChange={e => {
-                            setSubdomainTouched(true);
-                            setData('subdomain', slugify(e.target.value));
-                        }}
-                        error={errors.subdomain}
-                        autoComplete="off"
-                        suffix=".stockvantage.com"
-                        C={C}
-                    />
-                    <p style={{ fontSize: 11.5, color: C.faint, margin: '-8px 0 0 2px' }}>
-                        Reserved for future use — you'll sign in normally for now.
-                    </p>
-
-                    <div>
-                        <p style={{ fontSize: 12.5, fontWeight: 600, color: C.ink, margin: '4px 0 8px' }}>
-                            Choose a plan
+                        <Field
+                            id="subdomain"
+                            label="Subdomain"
+                            value={data.subdomain}
+                            onChange={e => {
+                                setSubdomainTouched(true);
+                                setData('subdomain', slugify(e.target.value));
+                            }}
+                            error={errors.subdomain}
+                            autoComplete="off"
+                            suffix=".stockvantage.com"
+                            C={C}
+                        />
+                        <p style={{ fontSize: 11.5, color: C.faint, margin: '-8px 0 0 2px' }}>
+                            Reserved for future use — you'll sign in normally for now.
                         </p>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-                            {PLANS.map(plan => (
-                                <PlanCard
-                                    key={plan.id}
-                                    plan={plan}
-                                    selected={data.plan === plan.id}
-                                    onSelect={(id) => setData('plan', id)}
-                                    C={C}
-                                />
-                            ))}
-                        </div>
-                        {errors.plan && (
-                            <p style={{ fontSize: 12, color: C.danger, margin: '6px 0 0 2px', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                <Icon name="alert-circle" size={13} style={{ color: C.danger }} />
-                                {errors.plan}
-                            </p>
-                        )}
-                    </div>
 
-                    <button
-                        type="submit"
-                        disabled={!stage1Valid}
-                        style={{
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                            width: '100%', padding: '11px 16px',
-                            fontSize: 14, fontWeight: 600,
-                            background: stage1Valid ? C.signal : C.border,
-                            color: '#fff',
-                            border: 'none', borderRadius: 9,
-                            cursor: stage1Valid ? 'pointer' : 'not-allowed',
-                            fontFamily: 'inherit',
-                            transition: 'background .12s',
-                            marginTop: 2,
-                        }}
-                        onMouseEnter={e => { if (stage1Valid) e.currentTarget.style.background = C.signalHover; }}
-                        onMouseLeave={e => { if (stage1Valid) e.currentTarget.style.background = C.signal; }}
-                    >
-                        Continue
-                        <Icon name="arrow-right" size={16} />
-                    </button>
-                </form>
+                        <div>
+                            <p style={{ fontSize: 12.5, fontWeight: 600, color: C.ink, margin: '4px 0 8px' }}>
+                                Choose a plan
+                            </p>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+                                {PLANS.map(plan => (
+                                    <PlanCard
+                                        key={plan.id}
+                                        plan={plan}
+                                        selected={data.plan === plan.id}
+                                        onSelect={(id) => setData('plan', id)}
+                                        C={C}
+                                    />
+                                ))}
+                            </div>
+                            {errors.plan && (
+                                <p style={{ fontSize: 12, color: C.danger, margin: '6px 0 0 2px', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                    <Icon name="alert-circle" size={13} style={{ color: C.danger }} />
+                                    {errors.plan}
+                                </p>
+                            )}
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={!stage1Valid}
+                            style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                                width: '100%', padding: '11px 16px',
+                                fontSize: 14, fontWeight: 600,
+                                background: stage1Valid ? C.signal : C.border,
+                                color: '#fff',
+                                border: 'none', borderRadius: 9,
+                                cursor: stage1Valid ? 'pointer' : 'not-allowed',
+                                fontFamily: 'inherit',
+                                transition: 'background .12s',
+                                marginTop: 2,
+                            }}
+                            onMouseEnter={e => { if (stage1Valid) e.currentTarget.style.background = C.signalHover; }}
+                            onMouseLeave={e => { if (stage1Valid) e.currentTarget.style.background = C.signal; }}
+                        >
+                            Continue
+                            <Icon name="arrow-right" size={16} />
+                        </button>
+                    </form>
                 </StepTransition>
             )}
 
             {step === 2 && (
                 <StepTransition stepKey="step2" direction={direction}>
-                <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    {/* Workspace summary chip */}
-                    <button
-                        type="button"
-                        onClick={backToStep1}
-                        style={{
-                            display: 'flex', alignItems: 'center', gap: 8,
-                            padding: '8px 12px',
-                            background: C.surface,
-                            border: `1px solid ${C.border}`,
-                            borderRadius: 8,
-                            cursor: 'pointer',
-                            fontFamily: 'inherit',
-                            width: '100%',
-                            textAlign: 'left',
-                        }}
-                    >
-                        <Icon name="arrow-left" size={14} style={{ color: C.faint }} />
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                            <span style={{ fontSize: 12.5, fontWeight: 600, color: C.ink }}>
-                                {data.company_name || 'Your workspace'}
-                            </span>
-                            <span style={{ fontSize: 11, color: C.faint }}>
-                                {data.subdomain}.stockvantage.com · {PLANS.find(p => p.id === data.plan)?.name} plan
-                            </span>
-                        </div>
-                    </button>
+                    <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        {/* Workspace summary chip */}
+                        <button
+                            type="button"
+                            onClick={backToStep1}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: 8,
+                                padding: '8px 12px',
+                                background: C.surface,
+                                border: `1px solid ${C.border}`,
+                                borderRadius: 8,
+                                cursor: 'pointer',
+                                fontFamily: 'inherit',
+                                width: '100%',
+                                textAlign: 'left',
+                            }}
+                        >
+                            <Icon name="arrow-left" size={14} style={{ color: C.faint }} />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                <span style={{ fontSize: 12.5, fontWeight: 600, color: C.ink }}>
+                                    {data.company_name || 'Your workspace'}
+                                </span>
+                                <span style={{ fontSize: 11, color: C.faint }}>
+                                    {data.subdomain}.stockvantage.com · {PLANS.find(p => p.id === data.plan)?.name} plan
+                                </span>
+                            </div>
+                        </button>
 
-                    <Field
-                        id="name"
-                        label="Full name"
-                        value={data.name}
-                        onChange={e => setData('name', e.target.value)}
-                        error={errors.name}
-                        autoComplete="name"
-                        C={C}
-                    />
-                    <Field
-                        id="email"
-                        label="Work email"
-                        type="email"
-                        value={data.email}
-                        onChange={e => setData('email', e.target.value)}
-                        error={errors.email}
-                        autoComplete="username"
-                        C={C}
-                    />
-                    <div>
                         <Field
-                            id="password"
-                            label="Password"
+                            id="name"
+                            label="Full name"
+                            value={data.name}
+                            onChange={e => setData('name', e.target.value)}
+                            error={errors.name}
+                            autoComplete="name"
+                            C={C}
+                        />
+                        <Field
+                            id="email"
+                            label="Work email"
+                            type="email"
+                            value={data.email}
+                            onChange={e => setData('email', e.target.value)}
+                            error={errors.email}
+                            autoComplete="username"
+                            C={C}
+                        />
+                        <div>
+                            <Field
+                                id="password"
+                                label="Password"
+                                type="password"
+                                value={data.password}
+                                onChange={e => setData('password', e.target.value)}
+                                error={errors.password}
+                                autoComplete="new-password"
+                                C={C}
+                            />
+                            <PasswordStrength password={data.password} C={C} />
+                        </div>
+                        <Field
+                            id="password_confirmation"
+                            label="Confirm password"
                             type="password"
-                            value={data.password}
-                            onChange={e => setData('password', e.target.value)}
-                            error={errors.password}
+                            value={data.password_confirmation}
+                            onChange={e => setData('password_confirmation', e.target.value)}
+                            error={errors.password_confirmation}
                             autoComplete="new-password"
                             C={C}
                         />
-                        <PasswordStrength password={data.password} C={C} />
-                    </div>
-                    <Field
-                        id="password_confirmation"
-                        label="Confirm password"
-                        type="password"
-                        value={data.password_confirmation}
-                        onChange={e => setData('password_confirmation', e.target.value)}
-                        error={errors.password_confirmation}
-                        autoComplete="new-password"
-                        C={C}
-                    />
 
-                    <p style={{ fontSize: 12, color: C.faint, margin: 0, lineHeight: 1.6 }}>
-                        By creating an account you agree to our{' '}
-                        <a href="/terms" style={{ color: C.muted, fontWeight: 500 }}>Terms of Service</a>
-                        {' '}and{' '}
-                        <a href="/privacy" style={{ color: C.muted, fontWeight: 500 }}>Privacy Policy</a>.
-                    </p>
+                        <p style={{ fontSize: 12, color: C.faint, margin: 0, lineHeight: 1.6 }}>
+                            By creating an account you agree to our{' '}
+                            <a href="/terms" style={{ color: C.muted, fontWeight: 500 }}>Terms of Service</a>
+                            {' '}and{' '}
+                            <a href="/privacy" style={{ color: C.muted, fontWeight: 500 }}>Privacy Policy</a>.
+                        </p>
 
-                    <button
-                        type="submit"
-                        disabled={processing}
-                        style={{
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                            width: '100%', padding: '11px 16px',
-                            fontSize: 14, fontWeight: 600,
-                            background: processing ? C.signalHover : C.signal,
-                            color: '#fff',
-                            border: 'none', borderRadius: 9,
-                            cursor: processing ? 'not-allowed' : 'pointer',
-                            fontFamily: 'inherit',
-                            opacity: processing ? 0.7 : 1,
-                            transition: 'background .12s, opacity .12s',
-                            marginTop: 2,
-                        }}
-                        onMouseEnter={e => { if (!processing) e.currentTarget.style.background = C.signalHover; }}
-                        onMouseLeave={e => { if (!processing) e.currentTarget.style.background = C.signal; }}
-                    >
-                        <Icon name={processing ? 'loader' : 'user-plus'} size={16} />
-                        {processing ? 'Creating workspace…' : 'Create workspace'}
-                    </button>
-                </form>
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                                width: '100%', padding: '11px 16px',
+                                fontSize: 14, fontWeight: 600,
+                                background: processing ? C.signalHover : C.signal,
+                                color: '#fff',
+                                border: 'none', borderRadius: 9,
+                                cursor: processing ? 'not-allowed' : 'pointer',
+                                fontFamily: 'inherit',
+                                opacity: processing ? 0.7 : 1,
+                                transition: 'background .12s, opacity .12s',
+                                marginTop: 2,
+                            }}
+                            onMouseEnter={e => { if (!processing) e.currentTarget.style.background = C.signalHover; }}
+                            onMouseLeave={e => { if (!processing) e.currentTarget.style.background = C.signal; }}
+                        >
+                            <Icon name={processing ? 'loader' : 'user-plus'} size={16} />
+                            {processing ? 'Creating workspace…' : 'Create workspace'}
+                        </button>
+                    </form>
                 </StepTransition>
             )}
 
