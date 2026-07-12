@@ -19,11 +19,14 @@ class Supplier extends Model
         'entity_number',
         'payment_terms',
         'is_active',
+        'updated_at'
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'updated_at' => 'datetime',
     ];
+
 
     // -------------------------------------------------------
     // Relationships

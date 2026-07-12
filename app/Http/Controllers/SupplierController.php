@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\StaleUpdateException;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
+use App\Models\Traits\ChecksOptimisticLock;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
 
 class SupplierController extends Controller
 {
+    use ChecksOptimisticLock;
     public function index(): Response
     {
         $suppliers = Supplier::query()
@@ -55,7 +61,35 @@ class SupplierController extends Controller
 
     public function update(UpdateSupplierRequest $request, Supplier $supplier): RedirectResponse
     {
-        $supplier->update($request->validated());
+        $this->abortUnlessRole(['tenant_admin', 'department_manager', 'warehouse_staff']);
+
+        try {
+            DB::transaction(function () use ($supplier, $request) {
+
+                $locked = Supplier::where('id', $supplier->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $this->assertNotStale($locked, $request->validated('updated_at'));
+
+                $locked->update($request->except('updated_at'));
+            });
+
+        } catch (StaleUpdateException $e) {
+            return redirect()
+                ->route('suppliers.index', $supplier)
+                ->with('error', $e->getMessage() . ' Please review the latest version before saving again.');
+
+        } catch (ModelNotFoundException $e) {
+            return redirect()
+                ->route('suppliers.index')
+                ->with('error', 'Update Failed: This supplier could not be found or may have been deleted.');
+
+        } catch (QueryException $e) {
+            return redirect()
+                ->route('suppliers.edit')
+                ->with('error', 'Update Failed: This supplier is currently being edited. Please try again in a moment.');
+        }
 
         return redirect()
             ->route('suppliers.index')

@@ -21,6 +21,7 @@ class UpdateSupplierRequest extends FormRequest
             'entity_number' => 'nullable|string|max:100',
             'payment_terms' => 'required|in:Net30,Net60,Net90,COD',
             'is_active' => 'required|boolean',
+            'updated_at' => ['required', 'date'],
         ];
     }
 

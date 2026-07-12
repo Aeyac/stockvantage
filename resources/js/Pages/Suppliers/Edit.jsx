@@ -11,7 +11,10 @@ export default function Edit({ supplier }) {
         entity_number: supplier.entity_number ?? '',
         payment_terms: supplier.payment_terms,
         is_active: supplier.is_active,
+        updated_at: supplier.updated_at,
     })
+    
+
 
     function handleSubmit(e) {
         e.preventDefault()
