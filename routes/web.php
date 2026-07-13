@@ -87,7 +87,7 @@ Route::middleware(['auth'])->group(function () {
 
 
             Route::resource('/purchase-orders', PurchaseOrderController::class)
-                ->only(['index', 'show', 'destroy']);
+                ->only(['index', 'show']);
 
             Route::get(
                 '/purchase-orders/{purchaseOrder}/export-pdf',
