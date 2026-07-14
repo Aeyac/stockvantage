@@ -64,7 +64,7 @@ class GrnController extends Controller
         $this->abortUnlessRole(['tenant_admin', 'warehouse_staff']);
 
         try {
-            $service->createGRN($request);
+            $service->createGRN($request->validated());
         } catch (\Exception $e) {
             \Log::error($e->getMessage());
             return redirect()->back()->with('error', 'Something went wrong. Please try again.');

@@ -22,8 +22,10 @@ export default function Edit({ warehouse }) {
         name: warehouse.name,
         location: warehouse.location ?? '',
         is_active: warehouse.is_active,
+        updated_at: warehouse.updated_at,
     })
 
+    console.log(warehouse.updated_at)
     function handleSubmit(e) {
         e.preventDefault()
         put(`/warehouses/${warehouse.id}`)

@@ -72,6 +72,7 @@ class SupplierController extends Controller
 
                 $this->assertNotStale($locked, $request->validated('updated_at'));
 
+
                 $locked->update($request->except('updated_at'));
             });
 

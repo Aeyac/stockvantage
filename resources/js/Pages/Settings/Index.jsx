@@ -1,24 +1,8 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { useState, useRef, useCallback, useEffect } from "react";
-import { Head, useForm, usePage } from "@inertiajs/react";
+import { useState, useCallback, useEffect } from "react";
+import { Head, useForm } from "@inertiajs/react";
 import FlashMessage from "@/Components/FlashMessage";
 import SideNav from "./sections/SideNav";
-import Icon from "./components/Icon";
-import TextInput from "./components/TextInput";
-import NumberInput from "./components/NumberInput";
-import Label from "./components/Label";
-import Hint from "./components/Hint";
-import SelectInput from "./components/Selectinput";
-import Card from "./components/Card";
-import SettingsRow from "./components/SettingsRow";
-import SectionHeading from "./components/SectionHeading";
-import ThemeSegmented from "./components/ThemeSegmented";
-import ThemeBadge from "./components/ThemeBadge";
-import LogoUploader from "./sections/general/LogoUpLoader";
-import ThresholdNote from "./sections/general/ThresholdNote";
-import Toggle from "./components/Toggle";
-import DangerZone from "./sections/general/DangerZone";
-import Toast from "./components/Toggle";
 import General from "./sections/general/General";
 import Notifications from "./sections/notifications/Notifications";
 import FooterActionBar from "./sections/FooterActionBar";
@@ -91,8 +75,11 @@ export default function Index({ settings, flash }) {
         approval_threshold: settings.approval_threshold ?? 500.0,
         auto_send_email: settings.auto_send_email ?? false,
         show_delete_warning: settings.show_delete_warning ?? true, // Added field here
-        logo: null,
+        logo: settings.logo_url,
     });
+    console.log(settings.logo_url)
+    console.log(settings)
+
 
     const [logoPreview, setLogoPreview] = useState(settings.logo_url ?? null);
     const [activeSection, setActiveSection] = useState("general");

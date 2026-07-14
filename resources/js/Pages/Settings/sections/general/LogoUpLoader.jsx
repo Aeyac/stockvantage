@@ -19,7 +19,7 @@ export default function LogoUploader({ logoPreview, onLogoChange, C }) {
                     flexShrink: 0,
                 }}
             >
-                {logoPreview === null ? (
+                {logoPreview ? (
                     <img
                         src={logoPreview}
                         alt="Logo preview"

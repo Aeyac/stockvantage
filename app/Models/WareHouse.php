@@ -16,10 +16,12 @@ class Warehouse extends Model
         'name',
         'location',
         'is_active',
+        'updated_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'updated_at' => 'datetime',
     ];
 
     public const RECYCLE_BIN_RELATIONS = [

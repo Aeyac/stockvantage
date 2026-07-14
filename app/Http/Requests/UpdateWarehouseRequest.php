@@ -18,6 +18,7 @@ class UpdateWarehouseRequest extends FormRequest
             'name' => 'required|string|max:255',
             'location' => 'nullable|string|max:255',
             'is_active' => 'required|boolean',
+            'updated_at' => ['required', 'date'],
         ];
     }
 

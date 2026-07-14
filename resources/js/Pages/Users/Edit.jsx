@@ -33,6 +33,7 @@ export default function Edit({ user }) {
         email: user.email,
         role: user.role,
         is_active: user.is_active,
+        updated_at: user.updated_at,
     })
 
     function handleSubmit(e) {

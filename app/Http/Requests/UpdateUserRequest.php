@@ -25,6 +25,7 @@ class UpdateUserRequest extends FormRequest
             ],
             'role' => 'required|in:tenant_admin,department_manager,warehouse_staff,employee',
             'is_active' => 'required|boolean',
+            'updated_at' => ['required', 'date'],
         ];
     }
 
