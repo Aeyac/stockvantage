@@ -1,0 +1,68 @@
+/* ==========================================================
+   Header Layout
+========================================================== */
+
+.page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.page-header-info {
+    display: flex;
+    align-items: center;
+}
+
+.page-header-count {
+    margin: 0;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    color: #64748b;
+}
+
+/* ==========================================================
+   Header Actions
+========================================================== */
+
+.page-header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.page-search-wrap {
+    flex: 1;
+    max-width: 420px;
+}
+
+.page-header-btn-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+/* ==========================================================
+   Responsive
+========================================================== */
+
+@media (max-width: 768px) {
+    .page-header-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .page-search-wrap {
+        max-width: 100%;
+    }
+
+    .page-header-btn-wrap {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}

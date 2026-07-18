@@ -1,0 +1,214 @@
+/* ==========================================================
+   Table Card
+========================================================== */
+
+.table-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* ==========================================================
+   Table
+========================================================== */
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.items-table th {
+    padding: 12px 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+    white-space: nowrap;
+}
+
+.items-table td {
+    padding: 15px 20px;
+    font-size: 13.5px;
+    color: #64748b;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.items-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.items-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.items-table tbody tr:hover td {
+    background: rgba(248, 250, 252, 0.5);
+}
+
+/* ==========================================================
+   Common Cell Styles
+========================================================== */
+
+.table-code {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: 0.02em;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.table-link {
+    display: inline-block;
+    font-family: "Courier New", monospace;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #4338ca;
+    background: #eef2ff;
+    border: 1px solid #e0e7ff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.table-link:hover {
+    background: #e0e7ff;
+    border-color: #c7d2fe;
+}
+
+.table-text-strong {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.table-text-muted {
+    color: #64748b;
+}
+
+.table-number {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+/* ==========================================================
+   Action Column
+========================================================== */
+
+.table-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 90px;
+}
+
+.table-action {
+    flex-shrink: 0;
+}
+
+.table-action-placeholder {
+    width: 50px;
+}
+
+/* ==========================================================
+   Empty State
+========================================================== */
+
+.table-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    padding: 72px 24px;
+
+    color: #64748b;
+}
+
+.table-empty svg {
+    color: #64748b;
+    opacity: 0.6;
+}
+
+.table-empty-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.table-empty-description {
+    margin: 0;
+    text-align: center;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.sv-stock-warn {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+/* ==========================================================
+   Pagination
+========================================================== */
+
+.table-pagination {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 24px;
+}
+
+.table-pagination-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 34px;
+    height: 34px;
+    padding: 0 12px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+
+    background: #ffffff;
+    color: #64748b;
+
+    font-size: 13px;
+    text-decoration: none;
+
+    transition: all 0.15s ease;
+}
+
+.table-pagination-button:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+.table-pagination-button.active {
+    background: #17aa54;
+    color: #ffffff;
+    border-color: #17aa54;
+    font-weight: 700;
+}
+
+.table-pagination-button.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}

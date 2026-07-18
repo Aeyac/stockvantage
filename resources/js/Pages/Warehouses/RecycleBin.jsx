@@ -3,7 +3,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import confirmToast from "@/utils/confirmToast";
 import BackButton from "@/Components/BackButton";
 import FlashMessage from "@/Components/FlashMessage";
-import SearchBox from "@/Components/SearchBox";
+import SearchBox from "@/Components/SearchBox/SearchBox";
 
 export default function WarehouseRecycleBin({ deletedItems, filters, flash }) {
     console.log(deletedItems);
@@ -317,12 +317,12 @@ export default function WarehouseRecycleBin({ deletedItems, filters, flash }) {
                                             key={item.id}
                                             style={styles.tr}
                                             onMouseEnter={(e) =>
-                                                (e.currentTarget.style.backgroundColor =
-                                                    "#F8FAFC")
+                                            (e.currentTarget.style.backgroundColor =
+                                                "#F8FAFC")
                                             }
                                             onMouseLeave={(e) =>
-                                                (e.currentTarget.style.backgroundColor =
-                                                    "transparent")
+                                            (e.currentTarget.style.backgroundColor =
+                                                "transparent")
                                             }
                                         >
                                             {/* Item Functional Label Name */}
@@ -367,12 +367,12 @@ export default function WarehouseRecycleBin({ deletedItems, filters, flash }) {
                                                             styles.btnRestore
                                                         }
                                                         onMouseEnter={(e) =>
-                                                            (e.currentTarget.style.backgroundColor =
-                                                                "#D1FAE5")
+                                                        (e.currentTarget.style.backgroundColor =
+                                                            "#D1FAE5")
                                                         }
                                                         onMouseLeave={(e) =>
-                                                            (e.currentTarget.style.backgroundColor =
-                                                                "#E8F7F2")
+                                                        (e.currentTarget.style.backgroundColor =
+                                                            "#E8F7F2")
                                                         }
                                                         title="Restore data profile to live stock tracking"
                                                     >
@@ -397,12 +397,12 @@ export default function WarehouseRecycleBin({ deletedItems, filters, flash }) {
                                                         }
                                                         style={styles.btnPurge}
                                                         onMouseEnter={(e) =>
-                                                            (e.currentTarget.style.backgroundColor =
-                                                                "#FCA5A530")
+                                                        (e.currentTarget.style.backgroundColor =
+                                                            "#FCA5A530")
                                                         }
                                                         onMouseLeave={(e) =>
-                                                            (e.currentTarget.style.backgroundColor =
-                                                                "#FFEBEB")
+                                                        (e.currentTarget.style.backgroundColor =
+                                                            "#FFEBEB")
                                                         }
                                                         title="Purge inventory item records permanently"
                                                     >

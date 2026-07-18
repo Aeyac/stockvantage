@@ -1,110 +1,17 @@
 import { Head, Link, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import FlashMessage from "@/Components/FlashMessage";
 import { ViewActionButton } from "@/Components/ActionButtons";
-import { formatCurrency } from "@/hooks/useCurrency";
-import RecycleBinButton from "@/Components/RecycleBinButton";
 import confirmToast from "@/utils/confirmToast";
 import { DeleteActionButton } from "@/Components/ActionButtons";
-import SearchBox from "@/Components/SearchBox";
+import ItemsTable from "@/Components/ItemsTable/ItemsTable";
+import purchaseOrdersColumns from "./purchaseOrders.columns";
+import PageHeader from "@/Components/PageHeader/PageHeader";
+import FlashMessage from "@/Components/FlashMessage";
 
-// Unified Light Mode Visual System Tokens
-const C = {
-    bg: "#ffffff",
-    surface: "#ffffff",
-    surfaceLow: "#ffffff",
-    surfaceHigh: "#f8fafc", // Used for table header rows and action hovers
-    outline: "#e2e8f0",
-    borderInput: "#cbd5e1",
-    primary: "#17aa54", // Brand green color
-    primaryHover: "#1a8f4b",
-    onPrimary: "#ffffff",
-    textMain: "#0f172a", // Strong primary emphasis
-    textMuted: "#64748b", // Subdued values and description labels
-    textLabel: "#475569", // Structured subtitle metrics/subheadings
-    error: "#dc2626", // Accessible deep red alert tone
-    errorBg: "#fef2f2",
-    errorBorder: "#fca5a5",
-    tertiary: "#b45309", // Deep golden amber for warning/partial states
-    secondary: "#4338ca", // High-contrast indigo for system links and badges
-};
-
-const STATUS_CONFIG = {
-    open: {
-        label: "Open",
-        color: "#2563eb", // Accessible high-contrast blue text
-        bg: "#eff6ff",
-        border: "#bfdbfe",
-    },
-    partially_received: {
-        label: "Partial",
-        color: C.tertiary,
-        bg: "#fffbeb",
-        border: "#fef3c7",
-    },
-    fully_received: {
-        label: "Fully Received",
-        color: C.primary,
-        bg: "#f0fdf4",
-        border: "#bbf7d0",
-    },
-    cancelled: {
-        label: "Cancelled",
-        color: C.error,
-        bg: C.errorBg,
-        border: C.errorBorder,
-    },
-};
-
-function StatusBadge({ status }) {
-    const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.open;
-    return (
-        <span
-            style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                fontSize: 10,
-                fontWeight: 700,
-                padding: "4px 10px",
-                borderRadius: 6,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                background: config.bg,
-                color: config.color,
-                border: `1px solid ${config.border}`,
-                whiteSpace: "nowrap",
-            }}
-        >
-            <span
-                style={{
-                    width: 5,
-                    height: 5,
-                    borderRadius: "50%",
-                    background: "currentColor",
-                    display: "inline-block",
-                }}
-            />
-            {config.label}
-        </span>
-    );
-}
-
-function formatDate(dateStr) {
-    return new Date(dateStr).toLocaleDateString("en-PH", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-    });
-}
-
-function formatPrId(id) {
-    return "PR-" + String(id).padStart(4, "0");
-}
 
 async function handleDelete(id) {
     const confirmed = await confirmToast(
-        "Are you sure you want to delete this purchase request?",
+        "Are you sure you want to delete this purchase order?",
         "Do not show this warning again.",
     );
     if (confirmed) {
@@ -117,355 +24,38 @@ export default function Index({ purchaseOrders, filters, flash }) {
     return (
         <AuthenticatedLayout header="Purchase Orders">
             <Head title="Purchase Orders" />
-
-            <style>{`
-                /* Card wrap and table structural frames */
-                .po-card {
-                    background: ${C.surface} !important; 
-                    border: 1px solid ${C.outline} !important;
-                    border-radius: 12px !important; 
-                    overflow: hidden !important;
-                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
-                }
-                
-                .po-table-wrapper {
-                    width: 100%;
-                    overflow-x: auto;
-                }
-                
-                .po-table { width: 100% !important; border-collapse: collapse !important; }
-                
-                .po-table th {
-                    padding: 12px 20px !important;
-                    font-size: 11px !important; 
-                    font-weight: 700 !important; 
-                    color: ${C.textLabel} !important;
-                    text-transform: uppercase; 
-                    letter-spacing: 0.05em;
-                    border-bottom: 1px solid ${C.outline} !important;
-                    background: ${C.surfaceHigh} !important;
-                    white-space: nowrap;
-                }
-                
-                .po-table td {
-                    padding: 15px 20px !important; 
-                    color: ${C.textMuted} !important;
-                    border-bottom: 1px solid ${C.outline} !important; 
-                    font-size: 13.5px !important;
-                    white-space: nowrap;
-                    vertical-align: middle;
-                }
-                .po-table tbody tr:last-child td { border-bottom: none !important; }
-                .po-table tbody tr { transition: background 0.1s; }
-                .po-table tbody tr:hover td { background: ${C.surfaceHigh}50 !important; }
-                
-                /* Pagination dynamic buttons control links template state wrappers */
-                .po-pg-btn {
-                    display: inline-flex !important; align-items: center !important; justify-content: center !important;
-                    min-width: 34px !important; height: 34px !important; padding: 0 12px !important; 
-                    border-radius: 6px !important; font-size: 13px !important; 
-                    color: ${C.textMuted} !important; background: #ffffff !important;
-                    border: 1px solid ${C.outline} !important; text-decoration: none !important; transition: all 0.15s !important;
-                }
-                .po-pg-btn:hover { color: ${C.textMain} !important; border-color: ${C.borderInput} !important; background: ${C.surfaceHigh} !important; }
-                .po-pg-btn.active {
-                    background: ${C.primary} !important; 
-                    color: ${C.onPrimary} !important;
-                    border-color: ${C.primary} !important; 
-                    font-weight: 700 !important;
-                }
-                .po-pg-btn.disabled { opacity: 0.4 !important; pointer-events: none !important; }
-                
-                /* Empty state feedback wrapper layout structures */
-                .po-empty {
-                    display: flex !important; flex-direction: column !important; align-items: center !important;
-                    justify-content: center !important; padding: 72px 24px !important; gap: 12px !important;
-                    color: ${C.textMuted} !important;
-                }
-                
-                /* Clean code identifiers monospace structural tags */
-                .po-number {
-                    font-size: 11.5px;
-                    font-weight: 700; color: ${C.textMain};
-                    padding: 4px 8px; border-radius: 4px; letter-spacing: 0.02em;
-                }
-                
-                .po-pr-link {
-                    font-family: 'Courier New', monospace; font-size: 11.5px;
-                    font-weight: 700; color: ${C.secondary};
-                    background: #eef2ff; border: 1px solid #e0e7ff;
-                    padding: 3px 8px; border-radius: 4px; text-decoration: none;
-                    transition: all 0.15s;
-                }
-                .po-pr-link:hover { background: #e0e7ff; border-color: #c7d2fe; }
-            `}</style>
-
             <FlashMessage flash={flash} />
+            <PageHeader
+                total={purchaseOrders.total}
+                itemLabel="Purchase Order"
+                filters={filters}
+                searchRoute="purchase-orders.index"
+                recycleRoute="purchase-orders.recycle-bin.index"
+                statusType="purchaseOrder"
+            />
 
-            {/* Header Controls Block */}
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 12,
-                    marginBottom: 24,
-                }}
-            >
-                {/* Metrics Line */}
-                <p
-                    style={{
-                        fontSize: 14,
-                        color: C.textMuted,
-                        margin: 0,
-                        fontWeight: 500,
-                    }}
-                >
-                    {purchaseOrders.total} order
-                    {purchaseOrders.total !== 1 ? "s" : ""} found
-                </p>
-
-                {/* Splitting controls row: Search to Left, Trash to Right */}
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 12,
-                    }}
-                >
-                    <div>
-                        <SearchBox
-                            routeName={"purchase-orders.index"}
-                            filters={filters}
-                            statusType={"purchaseOrder"}
+            <ItemsTable
+                data={purchaseOrders.data}
+                pagination={purchaseOrders}
+                columns={purchaseOrdersColumns}
+                actions={(po) => (
+                    <>
+                        <ViewActionButton
+                            href={route("purchase-orders.show", po.id)}
                         />
-                    </div>
-                    <div>
-                        <RecycleBinButton
-                            endpoint={"purchase-orders.recycle-bin.index"}
-                        />
-                    </div>
-                </div>
-            </div>
+                        {po.status === "fully_received" && (
 
-            {/* Table Matrix Container */}
-            <div className="po-card">
-                {purchaseOrders.data.length === 0 ? (
-                    <div className="po-empty">
-                        <svg
-                            width="40"
-                            height="40"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            style={{ color: C.textMuted, opacity: 0.6 }}
-                        >
-                            <rect x="2" y="3" width="20" height="14" rx="2" />
-                            <path d="M8 21h8M12 17v4" />
-                        </svg>
-                        <p
-                            style={{
-                                fontSize: 15,
-                                fontWeight: 600,
-                                color: C.textMain,
-                                margin: 0,
-                            }}
-                        >
-                            No purchase orders yet
-                        </p>
-                        <p
-                            style={{
-                                fontSize: 13,
-                                color: C.textMuted,
-                                margin: 0,
-                                textAlign: "center",
-                            }}
-                        >
-                            POs are generated automatically when a purchase
-                            request is approved.
-                        </p>
-                    </div>
-                ) : (
-                    <div className="po-table-wrapper">
-                        <table className="po-table">
-                            <thead>
-                                <tr>
-                                    <th
-                                        style={{
-                                            textAlign: "left",
-                                            width: "15%",
-                                        }}
-                                    >
-                                        PO ID Number
-                                    </th>
-                                    <th
-                                        style={{
-                                            textAlign: "left",
-                                            width: "10%",
-                                        }}
-                                    >
-                                        Linked PR
-                                    </th>
-                                    <th
-                                        style={{
-                                            textAlign: "left",
-                                            width: "20%",
-                                        }}
-                                    >
-                                        Requested By
-                                    </th>
-                                    <th
-                                        style={{
-                                            textAlign: "left",
-                                            width: "16%",
-                                        }}
-                                    >
-                                        Total Amount
-                                    </th>
-                                    <th
-                                        style={{
-                                            textAlign: "center",
-                                            width: "15%",
-                                        }}
-                                    >
-                                        Status
-                                    </th>
-                                    <th
-                                        style={{
-                                            textAlign: "left",
-                                            width: "12%",
-                                        }}
-                                    >
-                                        Date Created
-                                    </th>
-                                    <th
-                                        style={{
-                                            textAlign: "left",
-                                            width: "12%",
-                                        }}
-                                    >
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {purchaseOrders.data.map((po) => (
-                                    <tr key={po.id}>
-                                        <td style={{ textAlign: "left" }}>
-                                            <span className="po-number">
-                                                {po.po_number}
-                                            </span>
-                                        </td>
-                                        <td style={{ textAlign: "left" }}>
-                                            <Link
-                                                href={`/purchase-requests/${po.purchase_request?.id}`}
-                                                className="po-pr-link"
-                                            >
-                                                {po.purchase_request?.pr_number}
-                                            </Link>
-                                        </td>
-                                        <td style={{ textAlign: "left" }}>
-                                            <span
-                                                style={{
-                                                    fontWeight: 600,
-                                                    color: C.textMain,
-                                                }}
-                                            >
-                                                {po.purchase_request?.requester
-                                                    ?.name ?? "—"}
-                                            </span>
-                                        </td>
-                                        <td
-                                            style={{
-                                                textAlign: "left",
-                                                fontWeight: 600,
-                                                color: C.textMain,
-                                            }}
-                                        >
-                                            {formatCurrency(po.total_amount)}
-                                        </td>
-                                        <td style={{ textAlign: "center" }}>
-                                            <StatusBadge status={po.status} />
-                                        </td>
-                                        <td
-                                            style={{
-                                                textAlign: "left",
-                                                color: C.textMuted,
-                                            }}
-                                        >
-                                            {formatDate(po.created_at)}
-                                        </td>
-                                        <td style={{ textAlign: "left" }}>
-                                            {/* Stationary Action Row Frame */}
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    gap: 12,
-                                                    minWidth: "90px",
-                                                }}
-                                            >
-                                                <div style={{ flexShrink: 0 }}>
-                                                    <ViewActionButton
-                                                        href={`/purchase-orders/${po.id}`}
-                                                    />
-                                                </div>
-                                                <div
-                                                    style={{
-                                                        flexShrink: 0,
-                                                        minWidth: "50px",
-                                                    }}
-                                                >
-                                                    {po.status ===
-                                                    "fully_received" ? (
-                                                        <DeleteActionButton
-                                                            onClick={() =>
-                                                                handleDelete(
-                                                                    po.id,
-                                                                )
-                                                            }
-                                                        />
-                                                    ) : (
-                                                        <span
-                                                            style={{
-                                                                display:
-                                                                    "block",
-                                                                width: "50px",
-                                                            }}
-                                                        />
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                            <DeleteActionButton
+                                onClick={() => handleDelete(po.id)}
+                            />
+                        )}
+                    </>
+
                 )}
-            </div>
+                emptyTitle="No Purchase Orders"
+                emptyDescription="NONE"
 
-            {/* Pagination Controls */}
-            {purchaseOrders.last_page > 1 && (
-                <div
-                    style={{
-                        display: "flex",
-                        gap: 6,
-                        marginTop: 24,
-                        justifyContent: "flex-end",
-                    }}
-                >
-                    {purchaseOrders.links.map((link, i) => (
-                        <Link
-                            key={i}
-                            href={link.url ?? "#"}
-                            className={`po-pg-btn ${link.active ? "active" : ""} ${!link.url ? "disabled" : ""}`}
-                            dangerouslySetInnerHTML={{ __html: link.label }}
-                        />
-                    ))}
-                </div>
-            )}
+            />
         </AuthenticatedLayout>
     );
 }

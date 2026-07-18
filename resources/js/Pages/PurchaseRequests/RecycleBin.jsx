@@ -3,7 +3,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import confirmToast from "@/utils/confirmToast";
 import BackButton from "@/Components/BackButton";
 import FlashMessage from "@/Components/FlashMessage";
-import SearchBox from "@/Components/SearchBox";
+import SearchBox from "@/Components/SearchBox/SearchBox";
 
 export default function RecycleBin({ deletedItems, flash, filters }) {
     const handleRestore = async (id) => {
@@ -305,12 +305,12 @@ export default function RecycleBin({ deletedItems, flash, filters }) {
                                             key={pr.id}
                                             style={styles.tr}
                                             onMouseEnter={(e) =>
-                                                (e.currentTarget.style.backgroundColor =
-                                                    "#F8FAFC")
+                                            (e.currentTarget.style.backgroundColor =
+                                                "#F8FAFC")
                                             }
                                             onMouseLeave={(e) =>
-                                                (e.currentTarget.style.backgroundColor =
-                                                    "transparent")
+                                            (e.currentTarget.style.backgroundColor =
+                                                "transparent")
                                             }
                                         >
                                             {/* PR Number */}
@@ -351,16 +351,16 @@ export default function RecycleBin({ deletedItems, flash, filters }) {
                                                 <span style={styles.dateText}>
                                                     {pr.deleted_at
                                                         ? new Date(
-                                                              pr.deleted_at,
-                                                          ).toLocaleString(
-                                                              "en-US",
-                                                              {
-                                                                  dateStyle:
-                                                                      "short",
-                                                                  timeStyle:
-                                                                      "short",
-                                                              },
-                                                          )
+                                                            pr.deleted_at,
+                                                        ).toLocaleString(
+                                                            "en-US",
+                                                            {
+                                                                dateStyle:
+                                                                    "short",
+                                                                timeStyle:
+                                                                    "short",
+                                                            },
+                                                        )
                                                         : "—"}
                                                 </span>
                                             </td>
@@ -380,12 +380,12 @@ export default function RecycleBin({ deletedItems, flash, filters }) {
                                                             styles.btnRestore
                                                         }
                                                         onMouseEnter={(e) =>
-                                                            (e.currentTarget.style.backgroundColor =
-                                                                "#D1FAE5")
+                                                        (e.currentTarget.style.backgroundColor =
+                                                            "#D1FAE5")
                                                         }
                                                         onMouseLeave={(e) =>
-                                                            (e.currentTarget.style.backgroundColor =
-                                                                "#E8F7F2")
+                                                        (e.currentTarget.style.backgroundColor =
+                                                            "#E8F7F2")
                                                         }
                                                         title="Restore record"
                                                     >
@@ -410,12 +410,12 @@ export default function RecycleBin({ deletedItems, flash, filters }) {
                                                         }
                                                         style={styles.btnPurge}
                                                         onMouseEnter={(e) =>
-                                                            (e.currentTarget.style.backgroundColor =
-                                                                "#FCA5A530")
+                                                        (e.currentTarget.style.backgroundColor =
+                                                            "#FCA5A530")
                                                         }
                                                         onMouseLeave={(e) =>
-                                                            (e.currentTarget.style.backgroundColor =
-                                                                "#FFEBEB")
+                                                        (e.currentTarget.style.backgroundColor =
+                                                            "#FFEBEB")
                                                         }
                                                         title="Delete permanently"
                                                     >

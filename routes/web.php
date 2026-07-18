@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
             // read-only catalog for non-admins
             Route::get('/catalog-items', [CatalogItemController::class, 'index'])
                 ->name('catalog-items.index');
+                
 
             Route::prefix('purchase-requests/recycle-bin')
                 ->name('purchase-requests.recycle-bin')

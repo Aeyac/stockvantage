@@ -3,7 +3,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import confirmToast from "@/utils/confirmToast";
 import BackButton from "@/Components/BackButton";
 import FlashMessage from "@/Components/FlashMessage";
-import SearchBox from "@/Components/SearchBox";
 
 export default function RecycleBin({ deletedItems, filters, flash }) {
     console.log(deletedItems.data);
@@ -307,12 +306,12 @@ export default function RecycleBin({ deletedItems, filters, flash }) {
                                             key={po.id}
                                             style={styles.tr}
                                             onMouseEnter={(e) =>
-                                                (e.currentTarget.style.backgroundColor =
-                                                    "#F8FAFC")
+                                            (e.currentTarget.style.backgroundColor =
+                                                "#F8FAFC")
                                             }
                                             onMouseLeave={(e) =>
-                                                (e.currentTarget.style.backgroundColor =
-                                                    "transparent")
+                                            (e.currentTarget.style.backgroundColor =
+                                                "transparent")
                                             }
                                         >
                                             {/* PO Number Identifier */}
@@ -368,16 +367,16 @@ export default function RecycleBin({ deletedItems, filters, flash }) {
                                                 <span style={styles.dateText}>
                                                     {po.deleted_at
                                                         ? new Date(
-                                                              po.deleted_at,
-                                                          ).toLocaleString(
-                                                              "en-US",
-                                                              {
-                                                                  dateStyle:
-                                                                      "short",
-                                                                  timeStyle:
-                                                                      "short",
-                                                              },
-                                                          )
+                                                            po.deleted_at,
+                                                        ).toLocaleString(
+                                                            "en-US",
+                                                            {
+                                                                dateStyle:
+                                                                    "short",
+                                                                timeStyle:
+                                                                    "short",
+                                                            },
+                                                        )
                                                         : "—"}
                                                 </span>
                                             </td>
@@ -397,12 +396,12 @@ export default function RecycleBin({ deletedItems, filters, flash }) {
                                                             styles.btnRestore
                                                         }
                                                         onMouseEnter={(e) =>
-                                                            (e.currentTarget.style.backgroundColor =
-                                                                "#D1FAE5")
+                                                        (e.currentTarget.style.backgroundColor =
+                                                            "#D1FAE5")
                                                         }
                                                         onMouseLeave={(e) =>
-                                                            (e.currentTarget.style.backgroundColor =
-                                                                "#E8F7F2")
+                                                        (e.currentTarget.style.backgroundColor =
+                                                            "#E8F7F2")
                                                         }
                                                         title="Restore order tracking"
                                                     >
@@ -427,12 +426,12 @@ export default function RecycleBin({ deletedItems, filters, flash }) {
                                                         }
                                                         style={styles.btnPurge}
                                                         onMouseEnter={(e) =>
-                                                            (e.currentTarget.style.backgroundColor =
-                                                                "#FCA5A530")
+                                                        (e.currentTarget.style.backgroundColor =
+                                                            "#FCA5A530")
                                                         }
                                                         onMouseLeave={(e) =>
-                                                            (e.currentTarget.style.backgroundColor =
-                                                                "#FFEBEB")
+                                                        (e.currentTarget.style.backgroundColor =
+                                                            "#FFEBEB")
                                                         }
                                                         title="Erase records permanently"
                                                     >

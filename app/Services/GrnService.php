@@ -12,24 +12,24 @@ use Illuminate\Support\Facades\DB;
 
 class GrnService
 {
-    public function createGRN(StoreGrnRequest $request): GrnRecord
+    public function createGRN(array $request): GrnRecord
     {
         return DB::transaction(function () use ($request) {
             $po = PurchaseOrder::with('purchaseRequest.lineItems')
-                ->findOrFail($request->po_id);
+                ->findOrFail($request['po_id']);
 
             // 1. create the GRN record
             $grn = GrnRecord::create([
-                'po_id' => $request->po_id,
+                'po_id' => $request['po_id'],
                 'received_by' => auth()->id(),
-                'notes' => $request->notes,
+                'notes' => $request['notes'],
                 'status' => GrnRecord::STATUS_COMPLETE,
             ]);
 
             // 2. process each line item
             $hasDiscrepancy = false;
 
-            foreach ($request->line_items as $lineItem) {
+            foreach ($request['line_items'] as $lineItem) {
                 $prLineItem = $po->purchaseRequest->lineItems
                     ->firstWhere('catalog_item_id', $lineItem['catalog_item_id']);
 
@@ -68,7 +68,7 @@ class GrnService
                 // 4. update stock ledger
                 if ($quantityReceived > 0) {
                     StockLedger::create([
-                        'warehouse_id' => $request->warehouse_id,
+                        'warehouse_id' => $request['warehouse_id'],
                         'catalog_item_id' => $lineItem['catalog_item_id'],
                         'quantity_change' => $quantityReceived,
                         'movement_type' => StockLedger::MOVEMENT_RECEIVED_SHIPMENT,
