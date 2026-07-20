@@ -76,7 +76,6 @@ class PurchaseRequestService
 
             $this->assertNotStale($lockedRequest, $purchaseRequest->updated_at);
 
-            sleep(5); // TEMP: testing only, remove before shipping
 
             $lockedRequest->update([
                 'status' => PurchaseRequest::STATUS_APPROVED,

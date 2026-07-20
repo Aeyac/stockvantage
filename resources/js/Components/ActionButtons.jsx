@@ -131,3 +131,30 @@ export const DeleteActionButton = ({ onClick, label = "Delete" }) => {
         </button>
     );
 };
+
+
+// resources/js/Components/Actions/ApproveActionButton.jsx
+export function ApproveActionButton({ onClick }) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className="inline-flex items-center px-2.5 py-1 text-xs font-medium text-emerald-700 bg-emerald-50 rounded-md border border-emerald-200/60 hover:bg-emerald-100 transition-colors"
+        >
+            Approve
+        </button>
+    );
+}
+
+// resources/js/Components/Actions/RejectActionButton.jsx
+export function RejectActionButton({ onClick }) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className="inline-flex items-center px-2.5 py-1 text-xs font-medium text-rose-700 bg-rose-50 rounded-md border border-rose-200/60 hover:bg-rose-100 transition-colors"
+        >
+            Reject
+        </button>
+    );
+}

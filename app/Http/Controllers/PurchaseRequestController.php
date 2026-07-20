@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Exceptions\AlreadyApprovedException;
@@ -14,12 +15,17 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Facades\DB;
-
-
 
 class PurchaseRequestController extends Controller
 {
+    /**
+     * Inject only the service layer into the constructor.
+     * Eloquent models should not be injected here.
+     */
+    public function __construct(protected PurchaseRequestService $prService)
+    {
+    }
+
     public function index(Request $request): Response
     {
         abort_if(!auth()->check(), 404);
@@ -51,6 +57,7 @@ class PurchaseRequestController extends Controller
 
     public function show(PurchaseRequest $purchaseRequest): Response
     {
+        // Route model binding automatically loads the correct instance here
         $purchaseRequest->load(
             'lineItems.catalogItem',
             'lineItems.catalogItem.supplier:id,name',
@@ -62,10 +69,10 @@ class PurchaseRequestController extends Controller
         ]);
     }
 
-    public function store(StorePurchaseRequestRequest $request, PurchaseRequestService $prService): RedirectResponse
+    public function store(StorePurchaseRequestRequest $request): RedirectResponse
     {
         try {
-            $prService->createRequest(
+            $this->prService->createRequest(
                 $request->items,
                 $request->justification,
                 auth()->user()
@@ -80,9 +87,10 @@ class PurchaseRequestController extends Controller
             ->with('success', 'Purchase request submitted successfully.');
     }
 
-    public function approve(PurchaseRequest $purchaseRequest, PurchaseRequestService $prService): RedirectResponse
+    public function approve(PurchaseRequest $purchaseRequest): RedirectResponse
     {
         abort_if(!auth()->user()->isAdmin() && !auth()->user()->isManager(), 403, 'Unauthorized action.');
+
         if (!$purchaseRequest->isAwaitingApproval()) {
             return redirect()
                 ->route('purchase-requests.index')
@@ -90,7 +98,7 @@ class PurchaseRequestController extends Controller
         }
 
         try {
-            $prService->approveRequest($purchaseRequest, auth()->id());
+            $this->prService->approveRequest($purchaseRequest, auth()->id());
 
             $isAutoSendEmail = TenantSetting::where('tenant_id', auth()->user()->tenant_id)
                 ->value('auto_send_email');
@@ -150,7 +158,4 @@ class PurchaseRequestController extends Controller
         return redirect()->route('purchase-requests.index')
             ->with('success', 'Purchase request moved to recycle bin.');
     }
-
-
-
 }

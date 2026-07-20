@@ -57,6 +57,7 @@
     background: rgba(248, 250, 252, 0.5);
 }
 
+
 /* ==========================================================
    Common Cell Styles
 ========================================================== */
@@ -110,8 +111,8 @@
 
 .table-actions {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    justify-content: flex-end; /* Ensures alignment starts from the right */
+    gap: 8px;
     min-width: 90px;
 }
 
