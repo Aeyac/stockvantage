@@ -7,7 +7,7 @@ const C = {
     outline: "#e2e8f0",
     onSurface: "#0f172a", // High-contrast main headings/text
     onSurfaceVar: "#64748b", // Subdued description / textMuted
-    error: "#dc2626", // Accessible destructive alert indicator
+    error: "#dc2626", // Accessible destructive alert indicator 
 };
 
 // Common base style mimicking your .usr-action class perfectly

@@ -6,15 +6,20 @@ import userColumns from "./user.columns";
 import PageHeader from "@/Components/PageHeader/PageHeader";
 import ItemsTable from "@/Components/ItemsTable/ItemsTable";
 import './users.css';
-
+import RowActionsMenu from "@/Components/RowActionsMenu";
+import confirmToast from "@/utils/confirmToast";
 
 
 export default function Index({ users, filters, flash }) {
 
     const { auth } = usePage().props;
     const currentUserId = auth.user.id;
-    function handleDelete(id) {
-        if (confirm("Are you sure you want to delete this user?")) {
+    async function handleDelete(id) {
+        const confirmed = await confirmToast(
+            "Are you sure you want to delete this user?",
+        );
+
+        if (confirmed) {
             router.delete(`/users/${id}`);
         }
     }
@@ -38,20 +43,22 @@ export default function Index({ users, filters, flash }) {
                 columns={userColumns}
                 actions={(user) => (
                     <>
+                        <RowActionsMenu
+                            onDelete={() => handleDelete(user.id)}
+                            canDelete={(user.status)}
+                        />
                         <EditActionButton
                             href={route("users.edit", user.id)}
                         />
 
-                        {user.id !== currentUserId && (
-                            <DeleteActionButton
-                                onClick={() => handleDelete(user.id)}
-                            />
-                        )}
                     </>
                 )}
                 emptyTitle="No users yet"
                 emptyDescription="Click the add button to add your first user."
             />
+
+
+
         </AuthenticatedLayout>
     );
 }

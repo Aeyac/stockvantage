@@ -1,4 +1,3 @@
-// Components/ItemsTable/ItemsTable.jsx
 import "./ItemsTable.css";
 import { Link } from "@inertiajs/react";
 import EmptyState from "./EmptyState";
@@ -27,8 +26,17 @@ export default function ItemsTable({
                                     {columns.map((column, index) => (
                                         <th
                                             key={column.header || index}
-                                            className={column.headerClassName || column.className || ""}
-                                            style={column.align ? { textAlign: column.align } : {}}
+                                            className={
+                                                column.headerClassName || ""
+                                            }
+                                            style={
+                                                column.align
+                                                    ? {
+                                                          textAlign:
+                                                              column.align,
+                                                      }
+                                                    : {}
+                                            }
                                         >
                                             {column.header}
                                         </th>
@@ -45,15 +53,32 @@ export default function ItemsTable({
                             <tbody>
                                 {data.map((item) => (
                                     <tr key={item.id}>
-                                        {columns.map((column, index) => (
-                                            <td
-                                                key={column.header || index}
-                                                className={column.className || ""}
-                                                style={column.align ? { textAlign: column.align } : {}}
-                                            >
-                                                {column.render(item)}
-                                            </td>
-                                        ))}
+                                        {columns.map((column, index) => {
+                                            const className =
+                                                typeof column.className ===
+                                                "function"
+                                                    ? column.className(item)
+                                                    : column.className || "";
+
+                                            return (
+                                                <td
+                                                    key={
+                                                        column.header || index
+                                                    }
+                                                    className={className}
+                                                    style={
+                                                        column.align
+                                                            ? {
+                                                                  textAlign:
+                                                                      column.align,
+                                                              }
+                                                            : {}
+                                                    }
+                                                >
+                                                    {column.render(item)}
+                                                </td>
+                                            );
+                                        })}
 
                                         {actions && (
                                             <td className="text-right">
@@ -76,9 +101,9 @@ export default function ItemsTable({
                         <Link
                             key={index}
                             href={link.url ?? "#"}
-                            className={`table-pagination-button
-                            ${link.active ? " active" : ""}
-                            ${!link.url ? " disabled" : ""}`}
+                            className={`table-pagination-button ${
+                                link.active ? "active" : ""
+                            } ${!link.url ? "disabled" : ""}`}
                             dangerouslySetInnerHTML={{
                                 __html: link.label,
                             }}
