@@ -1,5 +1,7 @@
 import { formatCurrency } from "@/hooks/useCurrency";
 
+const LOW_STOCK_THRESHOLD = 5;
+
 const catalogItemsColumns = [
     {
         header: "SKU",
@@ -27,22 +29,26 @@ const catalogItemsColumns = [
 
     {
         header: "Unit Cost",
+        align: "right",
         render: (item) => formatCurrency(item.unit_cost),
+        className: "table-number",
     },
 
     {
         header: "Safety Stock",
-        render: (item) => (
-            <span
-                className={
-                    item.safety_stock <= 5
-                        ? "sv-stock-warn"
-                        : ""
-                }
-            >
-                {item.safety_stock}
-            </span>
-        ),
+        align: "right",
+        render: (item) => {
+            const isLow = item.safety_stock <= LOW_STOCK_THRESHOLD;
+            return (
+                <span className={`stock-badge ${isLow ? "stock-badge--low" : "stock-badge--ok"}`}>
+                    {isLow ? `Low Stock: ${item.safety_stock}` : item.safety_stock}
+                    {
+
+
+                    }
+                </span>
+            );
+        },
     },
 ];
 

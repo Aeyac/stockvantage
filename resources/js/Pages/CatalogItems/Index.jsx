@@ -6,6 +6,7 @@ import ItemsTable from "@/Components/ItemsTable/ItemsTable";
 import RowActionsMenu from "@/Components/RowActionsMenu";
 import confirmToast from "@/utils/confirmToast";
 import catalogItemsColumns from "./catalogItems.columns";
+import { EditActionButton } from "@/Components/ActionButtons";
 
 export default function Index({ catalogItems, filters, flash }) {
     async function handleDelete(id) {
@@ -18,6 +19,8 @@ export default function Index({ catalogItems, filters, flash }) {
             router.delete(route("catalog-items.destroy", id));
         }
     }
+
+    const hasActiveFilters = Boolean(filters?.search) || Boolean(filters?.status);
 
     return (
         <AuthenticatedLayout header="Catalog Items">
@@ -40,13 +43,23 @@ export default function Index({ catalogItems, filters, flash }) {
                 pagination={catalogItems}
                 columns={catalogItemsColumns}
                 actions={(item) => (
-                    <RowActionsMenu
-                        viewRoute={route("catalog-items.show", item.id)}
-                        onDelete={() => handleDelete(item.id)}
-                    />
+                    <>
+                        <RowActionsMenu
+                            onDelete={() => handleDelete(item.id)}
+                            editRoute={route("catalog-items.edit", item.id)}
+                        />
+                    </>
                 )}
-                emptyTitle="No Catalog Items"
-                emptyDescription="There are currently no catalog items."
+                emptyTitle={
+                    hasActiveFilters
+                        ? "No matching items"
+                        : "No Catalog Items"
+                }
+                emptyDescription={
+                    hasActiveFilters
+                        ? "Try adjusting your search or filter."
+                        : "There are currently no catalog items."
+                }
             />
         </AuthenticatedLayout>
     );

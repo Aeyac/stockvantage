@@ -1,7 +1,6 @@
 import { Head, router, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import FlashMessage from "@/Components/FlashMessage";
-import { EditActionButton, DeleteActionButton, } from "@/Components/ActionButtons";
 import userColumns from "./user.columns";
 import PageHeader from "@/Components/PageHeader/PageHeader";
 import ItemsTable from "@/Components/ItemsTable/ItemsTable";
@@ -46,11 +45,8 @@ export default function Index({ users, filters, flash }) {
                         <RowActionsMenu
                             onDelete={() => handleDelete(user.id)}
                             canDelete={(user.status)}
+                            editRoute={route("users.edit", user.id)}
                         />
-                        <EditActionButton
-                            href={route("users.edit", user.id)}
-                        />
-
                     </>
                 )}
                 emptyTitle="No users yet"

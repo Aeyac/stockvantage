@@ -352,7 +352,7 @@ export default function Dashboard({ metrics, recentRequests, spendChart }) {
                                             <strong>{metrics.pending_approvals} PR{metrics.pending_approvals !== 1 ? 's' : ''} awaiting approval</strong>
                                             Review and approve or reject
                                         </div>
-                                        <Link href="/purchase-requests" className="db-small-link">Review →</Link>
+                                        <Link href="/purchase-requests?page=1&role=&search=&status=awaiting_approval" className="db-small-link">Review →</Link>
                                     </div>
                                 )}
                             </>

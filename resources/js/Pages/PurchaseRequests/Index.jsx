@@ -1,7 +1,6 @@
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import FlashMessage from "@/Components/FlashMessage";
-import { router } from "@inertiajs/react";
 import confirmToast from "@/utils/confirmToast";
 import ItemsTable from "@/Components/ItemsTable/ItemsTable";
 import purchaseRequestsColumns from "./purchaseRequests.columns";
@@ -39,6 +38,9 @@ async function handleReject(id) {
 }
 
 export default function Index({ purchaseRequests, filters, flash = "" }) {
+
+    const hasActiveFilters = Boolean(filters?.search) || Boolean(filters?.status);
+
     return (
         <AuthenticatedLayout header="Purchase Requests">
             <Head title="Purchase Requests" />
@@ -66,8 +68,12 @@ export default function Index({ purchaseRequests, filters, flash = "" }) {
                         onReject={() => handleReject(pr.id)}
                     />
                 )}
-                emptyTitle="No Purchase Requests"
-                emptyDescription="POs are generated automatically after approval."
+                emptyTitle={hasActiveFilters ? "No matching items" : "No Purchase Requests"}
+                emptyDescription={
+                    hasActiveFilters
+                        ? "Try adjusting your search or filter."
+                        : "POs are generated automatically after approval."
+                }
             />
         </AuthenticatedLayout>
     );

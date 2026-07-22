@@ -22,7 +22,7 @@ const purchaseRequestsColumns = [
     },
     {
         header: "Amount",
-        align: "right", 
+        // align: "right", 
         render: (pr) => formatCurrency(pr.total_amount),
     },
     {

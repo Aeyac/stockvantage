@@ -34,10 +34,14 @@
     border-bottom: 1px solid #e2e8f0;
     background: #f8fafc;
     white-space: nowrap;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .items-table td {
-    padding: 15px 20px;
+    padding: 12px 20px;
     font-size: 13.5px;
     color: #64748b;
     border-bottom: 1px solid #e2e8f0;
@@ -57,6 +61,12 @@
     background: rgba(248, 250, 252, 0.5);
 }
 
+/* Actions column shrinks to content instead of stretching */
+.items-table th:last-child,
+.items-table td:last-child {
+    width: 1%;
+    white-space: nowrap;
+}
 
 /* ==========================================================
    Common Cell Styles
@@ -106,22 +116,40 @@
 }
 
 /* ==========================================================
+   Stock Badge
+========================================================== */
+
+.stock-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.stock-badge--low {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.stock-badge--ok {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+/* ==========================================================
    Action Column
 ========================================================== */
 
 .table-actions {
     display: flex;
-    justify-content: flex-end; /* Ensures alignment starts from the right */
+    justify-content: flex-end;
     gap: 8px;
-    min-width: 90px;
 }
 
 .table-action {
     flex-shrink: 0;
-}
-
-.table-action-placeholder {
-    width: 50px;
 }
 
 /* ==========================================================
@@ -157,11 +185,6 @@
     text-align: center;
     font-size: 13px;
     color: #64748b;
-}
-
-.sv-stock-warn {
-    color: #dc2626;
-    font-weight: 600;
 }
 
 /* ==========================================================
