@@ -7,6 +7,8 @@ import ItemsTable from "@/Components/ItemsTable/ItemsTable";
 import stockLedgerColumns from "./stockLedger.columns";
 
 export default function Index({ stockLedgers, filters, flash }) {
+    const hasActiveFilters = Boolean(filters?.search) || Boolean(filters?.status);
+    
     return (
         <AuthenticatedLayout header="Stock Ledger">
             <Head title="Stock Ledger" />
@@ -18,14 +20,19 @@ export default function Index({ stockLedgers, filters, flash }) {
                 itemLabel="Movement"
                 filters={filters}
                 searchRoute="stock-ledger.index"
+                statusType="stockLedger"
             />
 
             <ItemsTable
                 data={stockLedgers.data}
                 pagination={stockLedgers}
                 columns={stockLedgerColumns}
-                emptyTitle="No stock movements yet"
-                emptyDescription="Movements are recorded when GRNs are submitted or Purchase Requests are approved."
+                emptyTitle={hasActiveFilters ? "No matching items" : "No Stock Ledger"}
+                emptyDescription={
+                    hasActiveFilters
+                        ? "Try adjusting your search or filter."
+                        : "Stock ledgers are generated automatically after performing a GRN record."
+                }
             />
         </AuthenticatedLayout>
     );

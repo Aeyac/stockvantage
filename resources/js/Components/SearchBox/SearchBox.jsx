@@ -42,6 +42,16 @@ const STATUS_OPTIONS = {
         { value: "partially_received", label: "Partially Received" },
         { value: "discrepancy", label: "With Discrepancy" },
     ],
+    stockLedger: [
+        { value: "received_shipment", label: "Received" },
+        { value: "internal_consumption", label: "Internal Consumption" },
+        { value: "manual_adjustment", label: "Adjusment" },
+
+    ],
+    supplier: [
+        { value: true, label: "Active" },
+        { value: false, label: "Inactive" },
+    ],
 };
 
 const ROLE_OPTIONS = {

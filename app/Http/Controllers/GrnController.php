@@ -21,7 +21,7 @@ class GrnController extends Controller
     {
         $grns = GrnRecord::with('purchaseOrder')
             ->search($request->search)
-            ->filterStatus($request->status)
+            ->filterStatus($request->status)->orderByDESC('created_at')
             ->paginate(15)->withQueryString();
 
         return Inertia::render('Grns/Index', [

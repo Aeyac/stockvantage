@@ -17,7 +17,7 @@ export default function Index({ grns, filters, flash }) {
                 total={grns.total}
                 itemLabel="GRN"
                 filters={filters}
-                createRoute="grn.create"
+                createRoute="grn/create"
                 searchRoute="grn.index"
                 statusType="grn"
             />

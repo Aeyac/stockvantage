@@ -11,17 +11,19 @@ class StockLedgerController extends Controller
 {
 
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $this->abortUnlessRole(['tenant_admin', 'department_manager']);
 
-        $stockLedgers = StockLedger::query()
-            ->with(['warehouse', 'catalogItem', 'performer'])
-            ->orderByDesc('created_at')
-            ->paginate(15);
+        $query = StockLedger::query()->with(['warehouse', 'catalogItem', 'performer'])
+            ->search($request->search)
+            ->filterStatus($request->status);
+
+        $stockLedgers = $query->latest()->orderByDesc('created_at')->paginate(15)->withQueryString();
 
         return Inertia::render('StockLedgers/Index', [
             'stockLedgers' => $stockLedgers,
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class StockLedger extends Model
@@ -85,5 +86,26 @@ class StockLedger extends Model
     public function performer()
     {
         return $this->belongsTo(User::class, 'performed_by');
+    }
+
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+        if (!$search)
+            return $query;
+
+        return $query->where(function ($q) use ($search) {
+            $q->where('reference_id', 'like', "%{$search}%")
+                ->orWhereHas('performer', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+        });
+    }
+
+    public function scopeFilterStatus(Builder $query, ?string $status): Builder
+    {
+        if (!$status)
+            return $query;
+
+        return $query->where('movement_type', $status);
     }
 }

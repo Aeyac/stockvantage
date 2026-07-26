@@ -7,7 +7,7 @@ const grnColumns = [
         header: "GRN ID",
         render: (grn) => (
             <span className="table-code">
-                {grn.id}
+                {`GRN-${grn.id}`}
             </span>
         ),
     },
