@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 // Note: No BelongsToTenant trait here.
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PrLineItem extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'pr_id',
         'catalog_item_id',
