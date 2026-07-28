@@ -18,8 +18,10 @@ class TenantFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->company(),
-
+            'name' => $this->faker->name . " Inc.",
+            'subdomain' => $this->faker->unique()->slug(2),
+            'plan' => "basic",
+            'is_active' => true,
             //
         ];
     }

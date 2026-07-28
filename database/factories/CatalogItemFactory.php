@@ -17,15 +17,12 @@ class CatalogItemFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    // CatalogItemFactory
     public function definition(): array
     {
-
-        $tenant = Tenant::factory()->create();
-        $supplier = Supplier::factory()->create();
-
         return [
-            'tenant_id' => $tenant->id,
-            'supplier_id' => $supplier->id,
+            'tenant_id' => Tenant::factory(),
+            'supplier_id' => Supplier::factory(),
             'sku' => 'SKU-' . $this->faker->unique()->numerify('####'),
             'name' => $this->faker->name(),
             'category' => 'Shoes',
@@ -34,4 +31,5 @@ class CatalogItemFactory extends Factory
             'is_active' => true,
         ];
     }
+
 }
