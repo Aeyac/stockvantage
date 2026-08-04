@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+use App\Events\PurchaseRequestUpdated;
 use App\Exceptions\AlreadyApprovedException;
 use App\Models\CatalogItem;
 use App\Models\PurchaseOrder;
@@ -8,6 +9,7 @@ use App\Models\PurchaseRequest;
 use App\Models\TenantSetting;
 use App\Mail\SupplierPurchaseOrderMail;
 use App\Models\Traits\ChecksOptimisticLock;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 
@@ -76,12 +78,18 @@ class PurchaseRequestService
 
             $this->assertNotStale($lockedRequest, $purchaseRequest->updated_at);
 
-
             $lockedRequest->update([
                 'status' => PurchaseRequest::STATUS_APPROVED,
                 'approved_by' => $userId,
                 'approved_at' => now(),
             ]);
+
+            $actorName = User::find($userId)->name ?? "System";
+            // send notification to others aside from the sender/action doer
+            \Log::info('Broadcasting with socket exclusion', [
+                'request_socket_id' => request()->header('X-Socket-Id'),
+            ]);
+            broadcast(new PurchaseRequestUpdated($lockedRequest, PurchaseRequest::STATUS_APPROVED, $actorName))->toOthers();
 
             $this->generatePurchaseOrder($lockedRequest);
         });

@@ -1,4 +1,5 @@
-import { Head, router } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
+import { useCallback } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import FlashMessage from "@/Components/FlashMessage";
 import confirmToast from "@/utils/confirmToast";
@@ -6,6 +7,9 @@ import ItemsTable from "@/Components/ItemsTable/ItemsTable";
 import purchaseRequestsColumns from "./purchaseRequests.columns";
 import PageHeader from "@/Components/PageHeader/PageHeader";
 import RowActionsMenu from "@/Components/RowActionsMenu";
+import { usePurchaseRequestChannel } from "@/hooks/usePurchaseRequestChannel";
+import toast from "react-hot-toast";
+
 
 async function handleDelete(id) {
     const confirmed = await confirmToast(
@@ -38,8 +42,23 @@ async function handleReject(id) {
 }
 
 export default function Index({ purchaseRequests, filters, flash = "" }) {
+    const { auth } = usePage().props;
+    const tenantId = auth.user.tenant_id;
 
     const hasActiveFilters = Boolean(filters?.search) || Boolean(filters?.status);
+
+    const handleRealtimeUpdate = useCallback((event) => {
+
+        console.log(event.updated_by)
+        console.log(auth.user.name)
+        if (event.updated_by !== auth.user.name) {
+            toast(`PR #${event.id} was ${event.action} by ${event.updated_by}`);
+        }
+
+        router.reload({ only: ["purchaseRequests"] });
+    }, []);
+
+    usePurchaseRequestChannel(tenantId, { onUpdate: handleRealtimeUpdate });
 
     return (
         <AuthenticatedLayout header="Purchase Requests">
